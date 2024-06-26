@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -35,6 +37,7 @@ export class UserService {
         username: user.username,
       });
       if (existUser) {
+        this.logger.error(MessageService.USERNAME_ALREADY_USED);
         throw new HttpException(
           MessageService.USERNAME_ALREADY_USED,
           HttpStatus.BAD_REQUEST,

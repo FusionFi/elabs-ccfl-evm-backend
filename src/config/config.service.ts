@@ -21,4 +21,16 @@ export class ConfigService {
   static EncryptConfig = {
     key: process.env.ENCRYPT_KEY,
   };
+
+  static Logger = {
+    folder: process.env.LOG_FOLDER,
+  };
+
+  static App = {
+    port: process.env.APP_PORT,
+  };
+
+  static Cors = {
+    origin: process.env.CORS_ORIGIN,
+  };
 }
