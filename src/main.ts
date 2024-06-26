@@ -2,13 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from 'src/config/config.service';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import * as winstonDailyRotateFile from 'winston-daily-rotate-file';
 import helmet from 'helmet';
 
 async function bootstrap() {
+  const logger = new Logger('HTTP');
+
   const transports = {
     console: new winston.transports.Console({
       level: 'debug',
@@ -105,6 +107,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(ConfigService.App.port);
+  logger.log(`Starting server at port ${ConfigService.App.port}`);
 }
 
 bootstrap();
