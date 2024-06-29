@@ -7,21 +7,41 @@ export class User {
 
   @Column({
     nullable: false,
-    unique: true,
+    unique: true
   })
   username: string;
 
   @Column({
-    nullable: false,
+    nullable: false
   })
   password: string;
 
-  @Column({ name: 'first_name' })
+  @Column({
+    nullable: false,
+    name: 'first_name'
+  })
   firstName: string;
 
-  @Column({ name: 'last_name' })
+  @Column({
+    nullable: false,
+    name: 'last_name'
+  })
   lastName: string;
 
-  @Column({ default: true, name: 'is_active' })
+  @Column({
+    nullable: false,
+    unique: true
+  })
+  email: string;
+
+  @Column({
+    default: 'user'
+  })
+  role: string;
+
+  @Column({
+    default: true,
+    name: 'is_active'
+  })
   isActive: boolean;
 }

@@ -9,6 +9,7 @@ import { DbModule } from './db/db.module';
 import { SeederModule } from './seeder/seeder.module';
 import { MessageModule } from './message/message.module';
 import { ConfigModule } from './config/config.module';
+import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/middleware/logger.middleware';
 
 @Module({
@@ -31,6 +32,7 @@ import { LoggerMiddleware } from 'src/middleware/logger.middleware';
     SeederModule,
     MessageModule,
     ConfigModule,
+    RoleModule
   ],
   controllers: [AppController],
   providers: [AppService],

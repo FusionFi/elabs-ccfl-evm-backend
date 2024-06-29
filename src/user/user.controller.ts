@@ -5,13 +5,16 @@ import {
   Post,
   HttpException,
   HttpStatus,
+  UseGuards
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UserDto } from './user.dto';
 import { UserResponse } from './user.response';
 import { User } from './user.entity';
-import { Public } from '../auth/auth.guard';
+import { AuthGuard, Public } from '../auth/auth.guard';
+import { Roles } from 'src/role/role.decorator';
+import { Role } from 'src/role/role.enum';
 
 // @ApiBearerAuth()
 @Controller({
@@ -29,6 +32,7 @@ export class UserController {
       userData.password = user.password;
       userData.firstName = user.firstName;
       userData.lastName = user.lastName;
+      userData.email = user.email;
 
       const newUser = await this.userService.create(userData);
 
@@ -37,11 +41,30 @@ export class UserController {
       userRes.username = newUser.username;
       userRes.firstName = newUser.firstName;
       userRes.lastName = newUser.lastName;
-      userRes.isActive = newUser.isActive;
+      userRes.email = newUser.email;
 
       return userRes;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @Get()
+  async findAll(): Promise<UserResponse[]> {
+    const users = await this.userService.findAll();
+    const userRes: UserResponse[] = [];
+    users.forEach((x) => {
+      const user = new UserResponse();
+      user.id = x.id;
+      user.username = x.username;
+      user.firstName = x.firstName;
+      user.lastName = x.lastName;
+      user.email = x.email;
+      userRes.push(user);
+    });
+    return userRes;
   }
 }

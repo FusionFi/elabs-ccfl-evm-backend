@@ -10,9 +10,15 @@ export class UserDto {
   @ApiProperty()
   password: string;
 
+  @IsNotEmpty()
   @ApiProperty()
   firstName: string;
 
+  @IsNotEmpty()
   @ApiProperty()
   lastName: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
 }
