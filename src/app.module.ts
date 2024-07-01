@@ -32,7 +32,7 @@ import { LoggerMiddleware } from 'src/middleware/logger.middleware';
     SeederModule,
     MessageModule,
     ConfigModule,
-    RoleModule
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

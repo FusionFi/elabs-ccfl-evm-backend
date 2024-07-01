@@ -33,4 +33,8 @@ export class ConfigService {
   static Cors = {
     origin: process.env.CORS_ORIGIN,
   };
+
+  static Admin = {
+    password: process.env.ADMIN_PASSWORD,
+  };
 }

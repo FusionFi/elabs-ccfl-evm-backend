@@ -3,15 +3,16 @@ import {
   Controller,
   Get,
   Post,
+  Request,
   HttpException,
-  HttpStatus,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { UserDto } from './user.dto';
-import { UserResponse } from './user.response';
-import { User } from './user.entity';
+import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { UserResponse } from './interface/user.interface';
+import { User } from './entity/user.entity';
 import { AuthGuard, Public } from '../auth/auth.guard';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
@@ -24,17 +25,17 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Public()
-  @Post('create')
-  async createUser(@Body() user: UserDto) {
+  @Post('signup')
+  async signUp(@Body() signupDto: SignUpDto) {
     try {
       const userData = new User();
-      userData.username = user.username;
-      userData.password = user.password;
-      userData.firstName = user.firstName;
-      userData.lastName = user.lastName;
-      userData.email = user.email;
+      userData.username = signupDto.username;
+      userData.password = signupDto.password;
+      userData.firstName = signupDto.firstName;
+      userData.lastName = signupDto.lastName;
+      userData.email = signupDto.email;
 
-      const newUser = await this.userService.create(userData);
+      const newUser = await this.userService.signUp(userData);
 
       const userRes = new UserResponse();
       userRes.id = newUser.id;
@@ -47,6 +48,19 @@ export class UserController {
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
+  }
+
+  @Public()
+  @Post('signin')
+  signIn(@Body() signinDto: SignInDto) {
+    return this.userService.signIn(signinDto.username, signinDto.password);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 
   @ApiBearerAuth()
