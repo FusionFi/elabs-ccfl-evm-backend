@@ -43,5 +43,5 @@ export class ConfigService {
     user: process.env.MAIL_USER,
     password: process.env.MAIL_PASSWORD,
     from: process.env.MAIL_FROM,
-  }
+  };
 }

@@ -29,9 +29,6 @@ import { join } from 'path';
           pass: ConfigService.Mail.password,
         },
       },
-      // defaults: {
-      //   from: '"nest-modules" <modules@nestjs.com>',
-      // },
       template: {
         dir: join(process.cwd(), 'templates'),
         adapter: new HandlebarsAdapter(),

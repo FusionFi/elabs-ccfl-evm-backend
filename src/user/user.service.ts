@@ -4,7 +4,8 @@ import {
   HttpStatus,
   Logger,
   UnauthorizedException,
-  BadRequestException
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -50,16 +51,12 @@ export class UserService {
         { email },
         {
           secret: ConfigService.JWTConfig.secret,
-          expiresIn: '86400s'
-        }
+          expiresIn: '86400s',
+        },
       );
 
-      console.log('token: ', token);
-
       const link = `http://127.0.0.1:3000/user/verify-email?token=${token}`;
-      console.log('link: ', link);
 
-      console.log('before send mail');
       await this.emailService.sendMail({
         to: user.email,
         subject: `Welcome to the CCFL application`,
@@ -67,9 +64,8 @@ export class UserService {
         context: {
           username: user.username,
           link,
-        } 
+        },
       });
-      console.log('after send mail');
 
       return await this.userRepository.save(user);
     } catch (e) {
@@ -99,20 +95,18 @@ export class UserService {
   async verifyEmail(token: string) {
     try {
       const { email } = this.jwtService.verify(token, {
-        secret: ConfigService.JWTConfig.secret
+        secret: ConfigService.JWTConfig.secret,
       });
 
       if (email == null || email == undefined) {
-        // throw new BadRequestException('Invalid token payload');
         return;
       }
 
       const user = await this.userRepository.findOneBy({
-        email
+        email,
       });
 
       if (!user) {
-        // throw new BadRequestException('User not found');
         return;
       }
 
@@ -120,7 +114,7 @@ export class UserService {
         { email },
         {
           emailVerified: true,
-        }
+        },
       );
 
       return {
@@ -130,11 +124,76 @@ export class UserService {
         lastName: user.lastName,
         email: user.email,
         emailVerified: true,
-        isActive: user.isActive
-      }
-    } catch {
-      this.logger.error('Cannot verify email');
+        isActive: user.isActive,
+      };
+    } catch (e) {
+      this.logger.error('Cannot verify email: ', e.message);
       return;
+    }
+  }
+
+  async sendForgotPasswordLink(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const token = this.jwtService.sign(
+      { email },
+      {
+        secret: ConfigService.JWTConfig.secret,
+        expiresIn: '86400s',
+      },
+    );
+
+    const link = `http://127.0.0.1:3000/user/restore-password?token=${token}`;
+
+    await this.emailService.sendMail({
+      to: email,
+      subject: 'Reset your password on CCFL application',
+      template: './restore-password',
+      context: {
+        username: user.username,
+        link,
+      },
+    });
+
+    return true;
+  }
+
+  async changePassword(token: string, password: string) {
+    try {
+      const { email } = this.jwtService.verify(token, {
+        secret: ConfigService.JWTConfig.secret,
+      });
+
+      if (email == null || email == undefined) {
+        return false;
+      }
+
+      const user = await this.userRepository.findOneBy({
+        email,
+      });
+
+      if (!user) {
+        return false;
+      }
+
+      const salt = await bcrypt.genSalt();
+      const newPassword = await bcrypt.hash(password, salt);
+
+      await this.userRepository.update(
+        { email },
+        {
+          password: newPassword,
+        },
+      );
+
+      return true;
+    } catch (e) {
+      this.logger.error('Cannot change password: ', e.message);
+      return false;
     }
   }
 

@@ -13,6 +13,8 @@ import { UserService } from './user.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { EmailDto } from './dto/email.dto';
+import { PasswordDto } from './dto/password.dto';
 import { UserResponse } from './interface/user.interface';
 import { User } from './entity/user.entity';
 import { AuthGuard, Public } from '../auth/auth.guard';
@@ -57,18 +59,30 @@ export class UserController {
     return this.userService.signIn(signinDto.username, signinDto.password);
   }
 
-  // @Public()
-  // @Get('confirm-email')
-  // @Render('confirm-email')
-  // renderConfirmEmail(@Query('token') token: string) {
-  //   return { token };
-  // }
-
   @Public()
   @Get('verify-email')
   @Render('confirm-email')
   verifyEmail(@Query('token') token: string) {
     return this.userService.verifyEmail(token);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  sendForgotPasswordLink(@Body() { email }: EmailDto) {
+    return this.userService.sendForgotPasswordLink(email);
+  }
+
+  @Public()
+  @Get('restore-password')
+  @Render('restore-password')
+  renderRestorePassword(@Query('token') token: string) {
+    return { token };
+  }
+
+  @Public()
+  @Post('change-password')
+  changePassword(@Body() { token, password }: PasswordDto) {
+    return this.userService.changePassword(token, password);
   }
 
   @ApiBearerAuth()
