@@ -97,37 +97,44 @@ export class UserService {
   }
 
   async verifyEmail(token: string) {
-    const { email } = this.jwtService.verify(token, {
-      secret: ConfigService.JWTConfig.secret
-    });
+    try {
+      const { email } = this.jwtService.verify(token, {
+        secret: ConfigService.JWTConfig.secret
+      });
 
-    if (email == null || email == undefined) {
-      throw new BadRequestException('Invalid token payload');
-    }
-
-    const user = await this.userRepository.findOneBy({
-      email
-    });
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    await this.userRepository.update(
-      { email },
-      {
-        emailVerified: true,
+      if (email == null || email == undefined) {
+        // throw new BadRequestException('Invalid token payload');
+        return;
       }
-    );
 
-    return {
-      id: user.id,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      emailVerified: true,
-      isActive: user.isActive
+      const user = await this.userRepository.findOneBy({
+        email
+      });
+
+      if (!user) {
+        // throw new BadRequestException('User not found');
+        return;
+      }
+
+      await this.userRepository.update(
+        { email },
+        {
+          emailVerified: true,
+        }
+      );
+
+      return {
+        id: user.id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        emailVerified: true,
+        isActive: user.isActive
+      }
+    } catch {
+      this.logger.error('Cannot verify email');
+      return;
     }
   }
 
