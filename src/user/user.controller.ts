@@ -3,8 +3,10 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   HttpException,
+  Render,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -17,7 +19,6 @@ import { AuthGuard, Public } from '../auth/auth.guard';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 
-// @ApiBearerAuth()
 @Controller({
   version: '1',
 })
@@ -54,6 +55,20 @@ export class UserController {
   @Post('signin')
   signIn(@Body() signinDto: SignInDto) {
     return this.userService.signIn(signinDto.username, signinDto.password);
+  }
+
+  // @Public()
+  // @Get('confirm-email')
+  // @Render('confirm-email')
+  // renderConfirmEmail(@Query('token') token: string) {
+  //   return { token };
+  // }
+
+  @Public()
+  @Get('verify-email')
+  @Render('confirm-email')
+  verifyEmail(@Query('token') token: string) {
+    return this.userService.verifyEmail(token);
   }
 
   @ApiBearerAuth()

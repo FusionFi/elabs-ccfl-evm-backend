@@ -4,12 +4,15 @@ import {
   HttpStatus,
   Logger,
   UnauthorizedException,
+  BadRequestException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { MessageService } from 'src/message/message.service';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -18,6 +21,7 @@ export class UserService {
 
   constructor(
     private jwtService: JwtService,
+    private readonly emailService: MailerService,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -39,6 +43,33 @@ export class UserService {
           HttpStatus.BAD_REQUEST,
         );
       }
+
+      const email = user.email;
+
+      const token = this.jwtService.sign(
+        { email },
+        {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: '86400s'
+        }
+      );
+
+      console.log('token: ', token);
+
+      const link = `http://127.0.0.1:3000/user/verify-email?token=${token}`;
+      console.log('link: ', link);
+
+      console.log('before send mail');
+      await this.emailService.sendMail({
+        to: user.email,
+        subject: `Welcome to the CCFL application`,
+        template: './confirmation',
+        context: {
+          username: user.username,
+          link,
+        } 
+      });
+      console.log('after send mail');
 
       return await this.userRepository.save(user);
     } catch (e) {
@@ -63,6 +94,41 @@ export class UserService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async verifyEmail(token: string) {
+    const { email } = this.jwtService.verify(token, {
+      secret: ConfigService.JWTConfig.secret
+    });
+
+    if (email == null || email == undefined) {
+      throw new BadRequestException('Invalid token payload');
+    }
+
+    const user = await this.userRepository.findOneBy({
+      email
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    await this.userRepository.update(
+      { email },
+      {
+        emailVerified: true,
+      }
+    );
+
+    return {
+      id: user.id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      emailVerified: true,
+      isActive: user.isActive
+    }
   }
 
   async findOne(username: string) {

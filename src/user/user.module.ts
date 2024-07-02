@@ -6,6 +6,9 @@ import { User } from './entity/user.entity';
 import { MessageModule } from 'src/message/message.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from 'src/config/config.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -16,6 +19,27 @@ import { ConfigService } from 'src/config/config.service';
       signOptions: { expiresIn: '600s' },
     }),
     MessageModule,
+    MailerModule.forRoot({
+      transport: {
+        host: ConfigService.Mail.host,
+        port: 587,
+        secure: false,
+        auth: {
+          user: ConfigService.Mail.user,
+          pass: ConfigService.Mail.password,
+        },
+      },
+      // defaults: {
+      //   from: '"nest-modules" <modules@nestjs.com>',
+      // },
+      template: {
+        dir: join(process.cwd(), 'templates'),
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
   ],
   controllers: [UserController],
   providers: [UserService],

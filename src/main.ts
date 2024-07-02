@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from 'src/config/config.service';
@@ -7,6 +8,7 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import * as winstonDailyRotateFile from 'winston-daily-rotate-file';
 import helmet from 'helmet';
+import { resolve } from 'path';
 
 async function bootstrap() {
   const logger = new Logger('HTTP');
@@ -67,7 +69,7 @@ async function bootstrap() {
     }),
   };
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     forceCloseConnections: true,
     // logger: ['error', 'warn', 'log'],
     logger: WinstonModule.createLogger({
@@ -86,6 +88,10 @@ async function bootstrap() {
       ],
     }),
   });
+
+  app.useStaticAssets(resolve('./public'));
+  app.setBaseViewsDir(resolve('./views'));
+  app.setViewEngine('hbs');
 
   app.enableCors({
     exposedHeaders: ['Content-Disposition'],

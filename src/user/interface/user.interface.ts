@@ -4,4 +4,5 @@ export class UserResponse {
   firstName: string;
   lastName: string;
   email: string;
+  emailVerified: string;
 }
