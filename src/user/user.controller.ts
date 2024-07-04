@@ -14,7 +14,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
-import { PasswordDto } from './dto/password.dto';
+import { RestorePasswordDto } from './dto/restore-password.dto';
 import { UserResponse } from './interface/user.interface';
 import { User } from './entity/user.entity';
 import { AuthGuard, Public } from '../auth/auth.guard';
