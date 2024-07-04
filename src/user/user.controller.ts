@@ -81,7 +81,7 @@ export class UserController {
 
   @Public()
   @Post('change-password')
-  changePassword(@Body() { token, password }: PasswordDto) {
+  changePassword(@Body() { token, password }: RestorePasswordDto) {
     return this.userService.changePassword(token, password);
   }
 
