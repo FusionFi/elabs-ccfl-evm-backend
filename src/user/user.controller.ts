@@ -55,20 +55,32 @@ export class UserController {
   @Public()
   @Post('signin')
   signIn(@Body() signinDto: SignInDto) {
-    return this.userService.signIn(signinDto.username, signinDto.password);
+    try {
+      return this.userService.signIn(signinDto.username, signinDto.password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   @Public()
   @Get('verify-email')
   @Render('confirm-email')
   verifyEmail(@Query('token') token: string) {
-    return this.userService.verifyEmail(token);
+    try {
+      return this.userService.verifyEmail(token);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   @Public()
   @Post('forgot-password')
   sendForgotPasswordLink(@Body() { email }: EmailDto) {
-    return this.userService.sendForgotPasswordLink(email);
+    try {
+      return this.userService.sendForgotPasswordLink(email);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   @Public()
@@ -81,7 +93,11 @@ export class UserController {
   @Public()
   @Post('change-password')
   changePassword(@Body() { token, password }: RestorePasswordDto) {
-    return this.userService.changePassword(token, password);
+    try {
+      return this.userService.changePassword(token, password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   @ApiBearerAuth()
@@ -96,17 +112,21 @@ export class UserController {
   @Roles(Role.Admin)
   @Get('all')
   async findAll(): Promise<UserResponse[]> {
-    const users = await this.userService.findAll();
-    const userRes: UserResponse[] = [];
-    users.forEach((x) => {
-      const user = new UserResponse();
-      user.id = x.id;
-      user.username = x.username;
-      user.firstName = x.firstName;
-      user.lastName = x.lastName;
-      user.email = x.email;
-      userRes.push(user);
-    });
-    return userRes;
+    try {
+      const users = await this.userService.findAll();
+      const userRes: UserResponse[] = [];
+      users.forEach((x) => {
+        const user = new UserResponse();
+        user.id = x.id;
+        user.username = x.username;
+        user.firstName = x.firstName;
+        user.lastName = x.lastName;
+        user.email = x.email;
+        userRes.push(user);
+      });
+      return userRes;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 }

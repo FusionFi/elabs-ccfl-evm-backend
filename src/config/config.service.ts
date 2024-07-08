@@ -6,16 +6,17 @@ export class ConfigService {
   constructor() {}
 
   static DBConfig = {
-    host: process.env.DATABASE_HOST,
-    port: parseInt(process.env.DATABASE_PORT || '3000'),
-    username: process.env.DATABASE_USERNAME,
+    host: process.env.DATABASE_HOST || '127.0.0.1',
+    port: parseInt(process.env.DATABASE_PORT || '5432'),
+    username: process.env.DATABASE_USERNAME || 'postgres',
     password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    database: process.env.DATABASE_NAME || 'postgres',
     synchronize: process.env.DATABASE_SYNC == '1',
   };
 
   static JWTConfig = {
     secret: process.env.JWT_SECRET,
+    expire: process.env.JWT_EXPIRE || '84600s',
   };
 
   static EncryptConfig = {
@@ -23,17 +24,18 @@ export class ConfigService {
   };
 
   static Logger = {
-    folder: process.env.LOG_FOLDER,
+    folder: process.env.LOG_FOLDER || 'logs',
   };
 
   static App = {
-    port: process.env.APP_PORT,
+    domain: process.env.APP_DOMAIN,
+    port: parseInt(process.env.APP_PORT || '3000'),
     ttl: parseInt(process.env.TTL || '10000'),
-    limit: parseInt(process.env.LIMIT || '10')
+    limit: parseInt(process.env.LIMIT || '10'),
   };
 
   static Cors = {
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN || '*',
   };
 
   static Admin = {
@@ -41,7 +43,8 @@ export class ConfigService {
   };
 
   static Mail = {
-    host: process.env.MAIL_HOST,
+    host: process.env.MAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.MAIL_PORT || '587'),
     user: process.env.MAIL_USER,
     password: process.env.MAIL_PASSWORD,
     from: process.env.MAIL_FROM,

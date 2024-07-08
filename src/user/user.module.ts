@@ -16,13 +16,13 @@ import { join } from 'path';
     JwtModule.register({
       global: true,
       secret: ConfigService.JWTConfig.secret,
-      signOptions: { expiresIn: '600s' },
+      signOptions: { expiresIn: ConfigService.JWTConfig.expire },
     }),
     MessageModule,
     MailerModule.forRoot({
       transport: {
         host: ConfigService.Mail.host,
-        port: 587,
+        port: ConfigService.Mail.port,
         secure: false,
         auth: {
           user: ConfigService.Mail.user,

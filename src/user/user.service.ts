@@ -51,11 +51,11 @@ export class UserService {
         { email },
         {
           secret: ConfigService.JWTConfig.secret,
-          expiresIn: '86400s',
+          expiresIn: ConfigService.JWTConfig.expire,
         },
       );
 
-      const link = `http://127.0.0.1:3000/user/verify-email?token=${token}`;
+      const link = `${ConfigService.App.domain}/user/verify-email?token=${token}`;
 
       await this.emailService.sendMail({
         to: user.email,
@@ -74,22 +74,26 @@ export class UserService {
   }
 
   async signIn(username: string, password: string): Promise<any> {
-    const user = await this.userRepository.findOneBy({ username });
-    if (user?.emailVerified == false) {
-      throw new UnauthorizedException(MessageService.EMAIL_NOT_VERIFIED);
+    try {
+      const user = await this.userRepository.findOneBy({ username });
+      if (user?.emailVerified == false) {
+        throw new UnauthorizedException(MessageService.EMAIL_NOT_VERIFIED);
+      }
+      if (user?.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) throw new UnauthorizedException();
+      }
+      const payload = {
+        sub: user.id,
+        username: user.username,
+        role: user.role,
+      };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
     }
-    if (user?.password) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) throw new UnauthorizedException();
-    }
-    const payload = {
-      sub: user.id,
-      username: user.username,
-      role: user.role,
-    };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 
   async verifyEmail(token: string) {
@@ -127,39 +131,43 @@ export class UserService {
         isActive: user.isActive,
       };
     } catch (e) {
-      this.logger.error('Cannot verify email: ', e.message);
+      this.logger.error(`${MessageService.CANNOT_VERIFY_EMAIL}: ${e.message}`);
       return;
     }
   }
 
   async sendForgotPasswordLink(email: string) {
-    const user = await this.userRepository.findOneBy({ email });
+    try {
+      const user = await this.userRepository.findOneBy({ email });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+      if (!user) {
+        throw new NotFoundException(MessageService.USER_NOT_FOUND);
+      }
+
+      const token = this.jwtService.sign(
+        { email },
+        {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: ConfigService.JWTConfig.expire,
+        },
+      );
+
+      const link = `${ConfigService.App.domain}/user/restore-password?token=${token}`;
+
+      await this.emailService.sendMail({
+        to: email,
+        subject: 'Reset your password on CCFL application',
+        template: './restore-password',
+        context: {
+          username: user.username,
+          link,
+        },
+      });
+
+      return true;
+    } catch (e) {
+      return false;
     }
-
-    const token = this.jwtService.sign(
-      { email },
-      {
-        secret: ConfigService.JWTConfig.secret,
-        expiresIn: '86400s',
-      },
-    );
-
-    const link = `http://127.0.0.1:3000/user/restore-password?token=${token}`;
-
-    await this.emailService.sendMail({
-      to: email,
-      subject: 'Reset your password on CCFL application',
-      template: './restore-password',
-      context: {
-        username: user.username,
-        link,
-      },
-    });
-
-    return true;
   }
 
   async changePassword(token: string, password: string) {
@@ -192,21 +200,35 @@ export class UserService {
 
       return true;
     } catch (e) {
-      this.logger.error('Cannot change password: ', e.message);
+      this.logger.error(
+        `${MessageService.CANNOT_CHANGE_PASSWORD}: ${e.message}`,
+      );
       return false;
     }
   }
 
   async findOne(username: string) {
-    const result: User = await this.userRepository.findOneBy({ username });
-    return result;
+    try {
+      const result: User = await this.userRepository.findOneBy({ username });
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   findAll() {
-    return this.userRepository.find();
+    try {
+      return this.userRepository.find();
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   async remove(id: string) {
-    await this.userRepository.delete(id);
+    try {
+      await this.userRepository.delete(id);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 }
