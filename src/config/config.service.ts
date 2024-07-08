@@ -28,6 +28,8 @@ export class ConfigService {
 
   static App = {
     port: process.env.APP_PORT,
+    ttl: parseInt(process.env.TTL || '10000'),
+    limit: parseInt(process.env.LIMIT || '10')
   };
 
   static Cors = {

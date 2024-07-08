@@ -9,6 +9,7 @@ import { DbModule } from './db/db.module';
 import { SeederModule } from './seeder/seeder.module';
 import { MessageModule } from './message/message.module';
 import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
 import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 
@@ -16,8 +17,8 @@ import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
   imports: [
     ThrottlerModule.forRoot([
       {
-        ttl: 6000,
-        limit: 10,
+        ttl: ConfigService.App.ttl,
+        limit: ConfigService.App.limit,
       },
     ]),
     UserModule,
