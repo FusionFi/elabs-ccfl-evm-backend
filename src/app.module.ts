@@ -10,7 +10,7 @@ import { SeederModule } from './seeder/seeder.module';
 import { MessageModule } from './message/message.module';
 import { ConfigModule } from './config/config.module';
 import { RoleModule } from './role/role.module';
-import { LoggerMiddleware } from 'src/middleware/logger.middleware';
+import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 
 @Module({
   imports: [
