@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from 'src/config/config.service';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
+import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
 import * as winston from 'winston';
 import * as winstonDailyRotateFile from 'winston-daily-rotate-file';
 import helmet from 'helmet';
@@ -99,6 +100,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.use(helmet());
 
   const config = new DocumentBuilder()
