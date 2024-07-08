@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Role } from 'src/common/constants/role.enum';
+import { Role } from 'src/role/role.enum';
 import { ConfigService } from 'src/config/config.service';
 import 'dotenv/config';
 

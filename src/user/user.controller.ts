@@ -17,11 +17,10 @@ import { EmailDto } from './dto/email.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
 import { UserResponse } from './interface/user.interface';
 import { User } from './entity/user.entity';
-import { AuthGuard } from 'src/common/guards/auth.guard';
-import { RoleGuard } from 'src/common/guards/role.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { Role } from 'src/common/constants/role.enum';
+import { Roles } from 'src/role/role.decorator';
+import { Role } from 'src/role/role.enum';
 
 @Controller('user')
 export class UserController {
@@ -93,10 +92,9 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @UseGuards([AuthGuard, RoleGuard])
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Roles(Role.Admin)
-  @Get()
+  @Get('all')
   async findAll(): Promise<UserResponse[]> {
     const users = await this.userService.findAll();
     const userRes: UserResponse[] = [];

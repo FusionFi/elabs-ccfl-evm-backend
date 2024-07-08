@@ -3,13 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { RouterModule } from '@nestjs/core';
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DbModule } from './db/db.module';
 import { SeederModule } from './seeder/seeder.module';
 import { MessageModule } from './message/message.module';
 import { ConfigModule } from './config/config.module';
-// import { RoleModule } from './role/role.module';
+import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/middleware/logger.middleware';
 
 @Module({
@@ -21,18 +21,12 @@ import { LoggerMiddleware } from 'src/middleware/logger.middleware';
       },
     ]),
     UserModule,
-    // RouterModule.register([
-    //   {
-    //     path: 'user',
-    //     module: UserModule,
-    //   },
-    // ]),
-    // AuthModule,
+    AuthModule,
     DbModule,
     SeederModule,
     MessageModule,
     ConfigModule,
-    // RoleModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

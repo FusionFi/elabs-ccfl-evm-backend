@@ -113,7 +113,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(ConfigService.App.port);
-  logger.log(`Starting server at port ${ConfigService.App.port}`);
+  console.log(`Starting server at port ${ConfigService.App.port}`);
 }
 
 bootstrap();
