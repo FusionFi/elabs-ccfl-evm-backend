@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
@@ -63,6 +63,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiExcludeEndpoint()
   @Get('verify-email')
   @Render('confirm-email')
   verifyEmail(@Query('token') token: string) {
@@ -84,6 +85,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiExcludeEndpoint()
   @Get('restore-password')
   @Render('restore-password')
   renderRestorePassword(@Query('token') token: string) {
@@ -91,6 +93,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiExcludeEndpoint()
   @Post('change-password')
   changePassword(@Body() { token, password }: RestorePasswordDto) {
     try {
