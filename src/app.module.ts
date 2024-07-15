@@ -12,6 +12,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
+import { SubgraphModule } from './subgraph/subgraph.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
     MessageModule,
     ConfigModule,
     RoleModule,
+    SubgraphModule
   ],
   controllers: [AppController],
   providers: [AppService],
