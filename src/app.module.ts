@@ -13,6 +13,8 @@ import { ConfigService } from './config/config.service';
 import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { SubgraphModule } from './subgraph/subgraph.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { SubgraphModule } from './subgraph/subgraph.module';
     ConfigModule,
     RoleModule,
     SubgraphModule,
+    ScheduleModule.forRoot(),
+    TaskModule
   ],
   controllers: [AppController],
   providers: [AppService],

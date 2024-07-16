@@ -46,7 +46,8 @@ export class SubgraphController {
     }
   }
 
-  @Public()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @ApiQuery({
     name: 'offset',
     type: Number,
