@@ -51,6 +51,6 @@ export class ConfigService {
   };
 
   static Subgraph = {
-    url: process.env.SUBGRAPH_URL
+    url: process.env.SUBGRAPH_URL,
   };
 }

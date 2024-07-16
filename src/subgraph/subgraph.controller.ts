@@ -1,10 +1,19 @@
-import { Controller, Get, HttpException, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  Post,
+  Body,
+  UseGuards,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { SubgraphService } from './subgraph.service';
 import { QueryDto } from './dto/query.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-
+import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
 @Controller('subgraph')
 export class SubgraphController {
@@ -15,8 +24,8 @@ export class SubgraphController {
   async getHealthcheck() {
     try {
       return {
-        version: "0.0.1"
-      }
+        version: '0.0.1',
+      };
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -27,8 +36,30 @@ export class SubgraphController {
   @Post('query')
   async querySubgraph(@Body() queryDto: QueryDto) {
     try {
-      let response = await this.subgraphService.querySubgraph(queryDto.query, queryDto.variables);
+      let response = await this.subgraphService.querySubgraph(
+        queryDto.query,
+        queryDto.variables,
+      );
       return response;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @Get('transfers/:address/history')
+  async getTransfersHistory(
+    @Param('address') address: string,
+    @Query('offset', new IntDefaultValuePipe(0)) offset: number,
+    @Query('limit', new IntDefaultValuePipe(10)) limit: number,
+  ) {
+    try {
+      let data = await this.subgraphService.getTransfersHistory(
+        address,
+        offset,
+        limit,
+      );
+      return data;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

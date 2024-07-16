@@ -29,7 +29,7 @@ import { SubgraphModule } from './subgraph/subgraph.module';
     MessageModule,
     ConfigModule,
     RoleModule,
-    SubgraphModule
+    SubgraphModule,
   ],
   controllers: [AppController],
   providers: [AppService],

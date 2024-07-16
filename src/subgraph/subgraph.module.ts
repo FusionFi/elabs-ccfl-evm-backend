@@ -5,6 +5,6 @@ import { SubgraphService } from './subgraph.service';
 @Module({
   controllers: [SubgraphController],
   providers: [SubgraphService],
-  exports: [SubgraphService]
+  exports: [SubgraphService],
 })
 export class SubgraphModule {}
