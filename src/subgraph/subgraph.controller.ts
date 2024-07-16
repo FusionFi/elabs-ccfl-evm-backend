@@ -8,7 +8,7 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { SubgraphService } from './subgraph.service';
 import { QueryDto } from './dto/query.dto';
@@ -47,6 +47,16 @@ export class SubgraphController {
   }
 
   @Public()
+  @ApiQuery({
+    name: 'offset',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+  })
   @Get('transfers/:address/history')
   async getTransfersHistory(
     @Param('address') address: string,
