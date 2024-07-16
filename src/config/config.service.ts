@@ -49,4 +49,8 @@ export class ConfigService {
     password: process.env.MAIL_PASSWORD,
     from: process.env.MAIL_FROM,
   };
+
+  static Subgraph = {
+    url: process.env.SUBGRAPH_URL
+  };
 }
