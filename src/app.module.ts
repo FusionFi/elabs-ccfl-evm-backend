@@ -15,6 +15,8 @@ import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { SubgraphModule } from './subgraph/subgraph.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task/task.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-ioredis-yet';
 
 @Module({
   imports: [
@@ -32,8 +34,24 @@ import { TaskModule } from './task/task.module';
     ConfigModule,
     RoleModule,
     SubgraphModule,
-    ScheduleModule.forRoot(),
-    TaskModule
+    // ScheduleModule.forRoot(),
+    // TaskModule,
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        isGlobal: true,
+        store: await redisStore({
+          connectionName: 'ccfl-evm-api',
+          host: ConfigService.Redis.host,
+          port: ConfigService.Redis.port,
+          username: ConfigService.Redis.username,
+          password: ConfigService.Redis.password,
+          db: ConfigService.Redis.dbNum,
+        }),
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

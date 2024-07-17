@@ -7,6 +7,7 @@ import {
   UseGuards,
   Param,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';

@@ -53,4 +53,16 @@ export class ConfigService {
   static Subgraph = {
     url: process.env.SUBGRAPH_URL,
   };
+
+  static Redis = {
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+    dbNum: parseInt(process.env.REDIS_DB_NUM || '1'),
+  };
+
+  static Cache = {
+    ttl: parseInt(process.env.CACHE_TTL || '60000'),
+  };
 }
