@@ -6,7 +6,7 @@ export class IntDefaultValuePipe implements PipeTransform {
 
   transform(value: string, metadata: ArgumentMetadata): any {
     const val = parseInt(value, 10);
-    let check = isNaN(val) ? this.defaultValue : val;
+    const check = isNaN(val) ? this.defaultValue : val;
     return isNaN(val) ? this.defaultValue : val;
   }
 }

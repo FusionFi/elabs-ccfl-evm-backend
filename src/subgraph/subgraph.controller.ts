@@ -37,7 +37,7 @@ export class SubgraphController {
   @Post('query')
   async querySubgraph(@Body() queryDto: QueryDto) {
     try {
-      let response = await this.subgraphService.querySubgraph(
+      const response = await this.subgraphService.querySubgraph(
         queryDto.query,
         queryDto.variables,
       );
@@ -66,7 +66,7 @@ export class SubgraphController {
     @Query('limit', new IntDefaultValuePipe(10)) limit: number,
   ) {
     try {
-      let data = await this.subgraphService.getTransfersHistory(
+      const data = await this.subgraphService.getTransfersHistory(
         address,
         offset,
         limit,
