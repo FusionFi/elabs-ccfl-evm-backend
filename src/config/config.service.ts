@@ -65,4 +65,9 @@ export class ConfigService {
   static Cache = {
     ttl: parseInt(process.env.CACHE_TTL || '60000'),
   };
+
+  static Rpc = {
+    url: process.env.RPC_URL,
+    key: process.env.RPC_KEY,
+  };
 }
