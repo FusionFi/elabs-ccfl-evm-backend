@@ -25,15 +25,21 @@ export class AdminService {
     return await this.collateralRepository.find();
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} admin`;
-  // }
+  async findCollateral(id: string) {
+    return await this.collateralRepository.findOneBy({ id });
+  }
 
-  // update(id: number, updateAdminDto: UpdateAdminDto) {
-  //   return `This action updates a #${id} admin`;
-  // }
+  async updateCollateral(id: string, collateralDto: CollateralDto) {
+    await this.collateralRepository.update(id, {
+      type: collateralDto.type,
+      name: collateralDto.name,
+      chain: collateralDto.chain
+    });
+    return await this.collateralRepository.findOneBy({ id });
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} admin`;
-  // }
+  async removeCollateral(id: string) {
+    await this.collateralRepository.delete(id);
+    return true;
+  }
 }

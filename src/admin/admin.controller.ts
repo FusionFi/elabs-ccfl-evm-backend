@@ -19,18 +19,18 @@ export class AdminController {
     return this.adminService.findAllCollateral();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.adminService.findOne(+id);
-  // }
+  @Get('collateral/:id')
+  findCollateral(@Param('id') id: string) {
+    return this.adminService.findCollateral(id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-  //   return this.adminService.update(+id, updateAdminDto);
-  // }
+  @Patch('collateral/:id')
+  updateCollateral(@Param('id') id: string, @Body() collateralDto: CollateralDto) {
+    return this.adminService.updateCollateral(id, collateralDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.adminService.remove(+id);
-  // }
+  @Delete('collateral/:id')
+  removeCollateral(@Param('id') id: string) {
+    return this.adminService.removeCollateral(id);
+  }
 }
