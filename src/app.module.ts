@@ -18,6 +18,7 @@ import { TaskModule } from './task/task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { EventModule } from './event/event.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { EventModule } from './event/event.module';
       inject: [ConfigService],
     }),
     EventModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
