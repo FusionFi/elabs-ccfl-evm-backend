@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
+import { SignUpDto } from './dto/sign-up.dto';
 import { MessageService } from 'src/message/message.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
@@ -28,10 +29,16 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async signUp(user: User) {
+  async signUp(signupDto: SignUpDto) {
     try {
       const salt = await bcrypt.genSalt();
-      user.password = await bcrypt.hash(user.password, salt);
+
+      const user = new User();
+      user.username = signupDto.username;
+      user.password = await bcrypt.hash(signupDto.password, salt);
+      user.firstName = signupDto.firstName;
+      user.lastName = signupDto.lastName;
+      user.email = signupDto.email;
       user.isActive = true;
 
       const existUser = await this.userRepository.findOneBy({
@@ -73,7 +80,7 @@ export class UserService {
     }
   }
 
-  async signIn(username: string, password: string): Promise<any> {
+  async signIn(username: string, password: string) {
     try {
       const user = await this.userRepository.findOneBy({ username });
       if (user?.emailVerified == false) {
@@ -216,9 +223,9 @@ export class UserService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      return this.userRepository.find();
+      return await this.userRepository.find();
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
