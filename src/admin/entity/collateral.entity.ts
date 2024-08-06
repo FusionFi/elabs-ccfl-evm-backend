@@ -1,29 +1,22 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-// export enum TokenType {
-//   TOKEN = 'token',
-//   NATIVE = 'native'
-// }
-
 @Entity()
 export class Collateral {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
-    // type: 'enum',
-    // enum: TokenType
-    nullable: false
+    nullable: false,
   })
   type: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   name: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   chain: string;
 

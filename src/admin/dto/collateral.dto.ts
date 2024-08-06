@@ -1,9 +1,10 @@
-import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsIn, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CollateralDto {
   @ApiProperty()
   @IsNotEmpty()
+  @IsIn(['token', 'native'])
   type: string;
 
   @ApiProperty()
@@ -16,5 +17,6 @@ export class CollateralDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsBoolean()
   isActive: boolean;
 }

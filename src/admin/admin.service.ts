@@ -1,4 +1,8 @@
-import { Injectable, HttpException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Collateral } from './entity/collateral.entity';
@@ -10,36 +14,59 @@ export class AdminService {
 
   constructor(
     @InjectRepository(Collateral)
-    private collateralRepository: Repository<Collateral>
+    private collateralRepository: Repository<Collateral>,
   ) {}
 
   async createCollateral(collateralDto: CollateralDto) {
-    return await this.collateralRepository.save({
-      type: collateralDto.type,
-      name: collateralDto.name,
-      chain: collateralDto.chain
-    });
+    try {
+      return await this.collateralRepository.save({
+        type: collateralDto.type,
+        name: collateralDto.name,
+        chain: collateralDto.chain,
+      });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   async findAllCollateral() {
-    return await this.collateralRepository.find();
+    try {
+      return await this.collateralRepository.find();
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   async findCollateral(id: string) {
-    return await this.collateralRepository.findOneBy({ id });
+    try {
+      return await this.collateralRepository.findOneBy({ id });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   async updateCollateral(id: string, collateralDto: CollateralDto) {
-    await this.collateralRepository.update(id, {
-      type: collateralDto.type,
-      name: collateralDto.name,
-      chain: collateralDto.chain
-    });
-    return await this.collateralRepository.findOneBy({ id });
+    try {
+      await this.collateralRepository.update(id, {
+        type: collateralDto.type,
+        name: collateralDto.name,
+        chain: collateralDto.chain,
+      });
+      return await this.collateralRepository.findOneBy({ id });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   async removeCollateral(id: string) {
-    await this.collateralRepository.delete(id);
-    return true;
+    try {
+      await this.collateralRepository.delete(id);
+      return true;
+    } catch (e) {
+      this.logger.error(
+        `[Admin]: Failed to remove collateral, id: ${id}, error: ${e.message}`,
+      );
+      return false;
+    }
   }
 }
