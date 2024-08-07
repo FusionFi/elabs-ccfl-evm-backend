@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsEmail, IsIn, IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsIn,
+  IsBoolean,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CollateralDto {

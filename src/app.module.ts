@@ -62,8 +62,8 @@ import { AdminModule } from './admin/admin.module';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {

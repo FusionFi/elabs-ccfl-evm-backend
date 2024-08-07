@@ -9,7 +9,12 @@ import {
   HttpException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { Collateral } from './entity/collateral.entity';
 import { CollateralDto } from './dto/collateral.dto';
@@ -115,10 +120,7 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Update a supply token' })
   @Patch('supply/:id')
-  updateSupply(
-    @Param('id') id: string,
-    @Body() supplyDto: SupplyDto,
-  ) {
+  updateSupply(@Param('id') id: string, @Body() supplyDto: SupplyDto) {
     try {
       return this.adminService.updateSupply(id, supplyDto);
     } catch (e) {
@@ -168,10 +170,7 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Update a setting' })
   @Patch('setting/:id')
-  updateSetting(
-    @Param('id') id: string,
-    @Body() settingDto: SettingDto,
-  ) {
+  updateSetting(@Param('id') id: string, @Body() settingDto: SettingDto) {
     try {
       return this.adminService.updateSetting(id, settingDto);
     } catch (e) {

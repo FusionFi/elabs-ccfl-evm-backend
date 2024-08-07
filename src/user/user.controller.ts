@@ -10,7 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
@@ -40,7 +45,7 @@ export class UserController {
   }
 
   @Public()
-  @ApiOperation({ summary: 'Sign in'})
+  @ApiOperation({ summary: 'Sign in' })
   @Post('signin')
   signIn(@Body() signinDto: SignInDto) {
     try {

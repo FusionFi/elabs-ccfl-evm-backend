@@ -9,7 +9,12 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiQuery,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { SubgraphService } from './subgraph.service';
 import { QueryDto } from './dto/query.dto';

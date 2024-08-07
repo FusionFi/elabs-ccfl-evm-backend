@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  HttpException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, HttpException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Collateral } from './entity/collateral.entity';

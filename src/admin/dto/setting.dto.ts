@@ -12,6 +12,7 @@ export class SettingDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsIn(['number', 'string', 'json'])
   type: string;
 
   @ApiProperty()

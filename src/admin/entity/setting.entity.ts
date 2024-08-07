@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Setting {
@@ -7,19 +13,19 @@ export class Setting {
 
   @Column({
     nullable: false,
-    type: 'varchar'
+    type: 'varchar',
   })
   key: string;
 
   @Column({
     nullable: false,
-    type: 'text'
+    type: 'text',
   })
   value: string;
 
   @Column({
     nullable: false,
-    type: 'varchar'
+    type: 'varchar',
   })
   type: string;
 
@@ -28,4 +34,14 @@ export class Setting {
     name: 'is_active',
   })
   isActive: boolean;
+
+  @CreateDateColumn({
+    name: 'created_at',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+  })
+  updatedAt: Date;
 }

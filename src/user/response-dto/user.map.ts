@@ -12,6 +12,6 @@ export function mapUser(obj: any) {
     delete obj['emailVerified'];
     delete obj['isActive'];
   }
-  
+
   return obj;
 }
