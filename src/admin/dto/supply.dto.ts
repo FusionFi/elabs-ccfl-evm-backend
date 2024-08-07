@@ -1,12 +1,7 @@
-import { IsNotEmpty, IsEmail, IsIn, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsIn, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CollateralDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsIn(['token', 'native'])
-  type: string;
-
+export class SupplyDto {
   @ApiProperty()
   @IsNotEmpty()
   chain: string;
@@ -20,11 +15,11 @@ export class CollateralDto {
   symbol: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   address: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   decimals: number;
 
   @ApiProperty()

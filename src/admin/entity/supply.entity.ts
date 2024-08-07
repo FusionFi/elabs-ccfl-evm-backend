@@ -1,14 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Collateral {
+export class Supply {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({
-    nullable: false,
-  })
-  type: string;
 
   @Column({
     nullable: false,
@@ -26,12 +21,12 @@ export class Collateral {
   symbol: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
   })
   address: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
   })
   decimals: number;
 

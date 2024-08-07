@@ -1,39 +1,27 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Collateral {
+export class Setting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     nullable: false,
+    type: 'varchar'
+  })
+  key: string;
+
+  @Column({
+    nullable: false,
+    type: 'text'
+  })
+  value: string;
+
+  @Column({
+    nullable: false,
+    type: 'varchar'
   })
   type: string;
-
-  @Column({
-    nullable: false,
-  })
-  chain: string;
-
-  @Column({
-    nullable: false,
-  })
-  name: string;
-
-  @Column({
-    nullable: false,
-  })
-  symbol: string;
-
-  @Column({
-    nullable: true,
-  })
-  address: string;
-
-  @Column({
-    nullable: true,
-  })
-  decimals: number;
 
   @Column({
     default: true,
