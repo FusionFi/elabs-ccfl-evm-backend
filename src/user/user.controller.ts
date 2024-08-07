@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
@@ -22,11 +22,13 @@ import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapUser } from './response-dto/user.map';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Public()
+  @ApiOperation({ summary: 'Sign up for new user' })
   @Post('signup')
   async signUp(@Body() signupDto: SignUpDto) {
     try {
@@ -38,6 +40,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Sign in'})
   @Post('signin')
   signIn(@Body() signinDto: SignInDto) {
     try {
@@ -60,6 +63,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Forgot password' })
   @Post('forgot-password')
   sendForgotPasswordLink(@Body() { email }: EmailDto) {
     try {
@@ -88,6 +92,7 @@ export class UserController {
     }
   }
 
+  @ApiOperation({ summary: 'Get user profile' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('profile')
@@ -95,6 +100,7 @@ export class UserController {
     return req.user;
   }
 
+  @ApiOperation({ summary: 'Get all users' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)

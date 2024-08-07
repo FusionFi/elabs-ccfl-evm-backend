@@ -9,18 +9,20 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { SubgraphService } from './subgraph.service';
 import { QueryDto } from './dto/query.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
+@ApiTags('subgraph')
 @Controller('subgraph')
 export class SubgraphController {
   constructor(private subgraphService: SubgraphService) {}
 
   @Public()
+  @ApiOperation({ summary: 'Healthcheck for subgraph' })
   @Get('healthcheck')
   async getHealthcheck() {
     try {
@@ -32,6 +34,7 @@ export class SubgraphController {
     }
   }
 
+  @ApiOperation({ summary: 'Query subgraph with statement and variables' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post('query')
@@ -47,6 +50,7 @@ export class SubgraphController {
     }
   }
 
+  @ApiOperation({ summary: 'Get all transfer history from an address' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @ApiQuery({

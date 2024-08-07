@@ -9,7 +9,7 @@ import {
   HttpException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { Collateral } from './entity/collateral.entity';
 import { CollateralDto } from './dto/collateral.dto';
@@ -18,6 +18,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 
+@ApiTags('admin')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
 @Controller('admin')
@@ -25,6 +26,7 @@ import { Role } from 'src/role/role.enum';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @ApiOperation({ summary: 'Add a new collateral token' })
   @Post('collateral')
   async createCollateral(@Body() collateralDto: CollateralDto) {
     try {
@@ -34,6 +36,7 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({ summary: 'Find all collateral tokens' })
   @Get('collateral')
   findAllCollateral() {
     try {
@@ -43,6 +46,7 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({ summary: 'Find a specific collateral token by id' })
   @Get('collateral/:id')
   findCollateral(@Param('id') id: string) {
     try {
@@ -52,6 +56,7 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({ summary: 'Update a collateral token' })
   @Patch('collateral/:id')
   updateCollateral(
     @Param('id') id: string,
@@ -64,6 +69,7 @@ export class AdminController {
     }
   }
 
+  @ApiOperation({ summary: 'Delete a collateral token' })
   @Delete('collateral/:id')
   removeCollateral(@Param('id') id: string) {
     try {
