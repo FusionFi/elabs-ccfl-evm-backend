@@ -2,9 +2,9 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { RouterModule } from '@nestjs/core';
+import { RouterModule, APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { DbModule } from './db/db.module';
 import { SeederModule } from './seeder/seeder.module';
 import { MessageModule } from './message/message.module';
@@ -36,8 +36,8 @@ import { AdminModule } from './admin/admin.module';
     ConfigModule,
     RoleModule,
     SubgraphModule,
-    // ScheduleModule.forRoot(),
-    // TaskModule,
+    ScheduleModule.forRoot(),
+    TaskModule,
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -58,7 +58,13 @@ import { AdminModule } from './admin/admin.module';
     AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
