@@ -26,6 +26,9 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
+import { mapCollateral } from './response-dto/collateral.map';
+import { mapSupply } from './response-dto/supply.map';
+import { mapSetting } from './response-dto/setting.map';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -39,7 +42,9 @@ export class AdminController {
   @Post('collateral')
   async createCollateral(@Body() collateralDto: CollateralDto) {
     try {
-      return this.adminService.createCollateral(collateralDto);
+      const newCollateral =
+        await this.adminService.createCollateral(collateralDto);
+      return mapCollateral(newCollateral);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -47,9 +52,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all collaterals' })
   @Get('collateral')
-  findAllCollateral() {
+  async findAllCollateral() {
     try {
-      return this.adminService.findAllCollateral();
+      const allCollaterals = await this.adminService.findAllCollateral();
+      return mapCollateral(allCollaterals);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -57,9 +63,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find a specific collateral by id' })
   @Get('collateral/:id')
-  findCollateral(@Param('id') id: string) {
+  async findCollateral(@Param('id') id: string) {
     try {
-      return this.adminService.findCollateral(id);
+      const collateral = await this.adminService.findCollateral(id);
+      return mapCollateral(collateral);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -67,12 +74,16 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Update a collateral' })
   @Patch('collateral/:id')
-  updateCollateral(
+  async updateCollateral(
     @Param('id') id: string,
     @Body() collateralDto: CollateralDto,
   ) {
     try {
-      return this.adminService.updateCollateral(id, collateralDto);
+      const collateral = await this.adminService.updateCollateral(
+        id,
+        collateralDto,
+      );
+      return mapCollateral(collateral);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -92,7 +103,8 @@ export class AdminController {
   @Post('supply')
   async createSupply(@Body() supplyDto: SupplyDto) {
     try {
-      return this.adminService.createSupply(supplyDto);
+      const newSupply = await this.adminService.createSupply(supplyDto);
+      return mapSupply(newSupply);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -100,9 +112,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all supply tokens' })
   @Get('supply')
-  findAllSupply() {
+  async findAllSupply() {
     try {
-      return this.adminService.findAllSupply();
+      const allSupply = await this.adminService.findAllSupply();
+      return mapSupply(allSupply);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -110,9 +123,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find a specific supply token by id' })
   @Get('supply/:id')
-  findSupply(@Param('id') id: string) {
+  async findSupply(@Param('id') id: string) {
     try {
-      return this.adminService.findSupply(id);
+      const supply = await this.adminService.findSupply(id);
+      return mapSupply(supply);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -120,9 +134,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Update a supply token' })
   @Patch('supply/:id')
-  updateSupply(@Param('id') id: string, @Body() supplyDto: SupplyDto) {
+  async updateSupply(@Param('id') id: string, @Body() supplyDto: SupplyDto) {
     try {
-      return this.adminService.updateSupply(id, supplyDto);
+      const supply = await this.adminService.updateSupply(id, supplyDto);
+      return mapSupply(supply);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -142,7 +157,8 @@ export class AdminController {
   @Post('setting')
   async createSetting(@Body() settingDto: SettingDto) {
     try {
-      return this.adminService.createSetting(settingDto);
+      const newSetting = await this.adminService.createSetting(settingDto);
+      return mapSetting(newSetting);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -150,9 +166,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all settings' })
   @Get('setting')
-  findAllSetting() {
+  async findAllSetting() {
     try {
-      return this.adminService.findAllSetting();
+      const allSetting = await this.adminService.findAllSetting();
+      return mapSetting(allSetting);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -160,9 +177,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find a specific setting by id' })
   @Get('setting/:id')
-  findSetting(@Param('id') id: string) {
+  async findSetting(@Param('id') id: string) {
     try {
-      return this.adminService.findSetting(id);
+      const setting = await this.adminService.findSetting(id);
+      return mapSetting(setting);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -170,9 +188,10 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Update a setting' })
   @Patch('setting/:id')
-  updateSetting(@Param('id') id: string, @Body() settingDto: SettingDto) {
+  async updateSetting(@Param('id') id: string, @Body() settingDto: SettingDto) {
     try {
-      return this.adminService.updateSetting(id, settingDto);
+      const setting = await this.adminService.updateSetting(id, settingDto);
+      return mapSetting(setting);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

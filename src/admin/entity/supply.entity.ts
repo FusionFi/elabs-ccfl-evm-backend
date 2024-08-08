@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 @Entity()
+@Unique(['chain', 'symbol', 'address'])
 export class Supply {
   @PrimaryGeneratedColumn('uuid')
   id: string;

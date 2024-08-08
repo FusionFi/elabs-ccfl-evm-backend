@@ -14,6 +14,7 @@ export class Setting {
   @Column({
     nullable: false,
     type: 'varchar',
+    unique: true,
   })
   key: string;
 
