@@ -12,10 +12,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { SignUpDto } from './dto/sign-up.dto';
-import { MessageService } from 'src/message/message.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 @Injectable()
 export class UserService {
@@ -27,6 +27,8 @@ export class UserService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private readonly i18n: I18nService,
   ) {}
 
   async signUp(signupDto: SignUpDto) {
@@ -45,9 +47,15 @@ export class UserService {
         username: user.username,
       });
       if (existUser) {
-        this.logger.error(MessageService.USERNAME_ALREADY_USED);
+        this.logger.error(
+          this.i18n.translate('message.USERNAME_ALREADY_USED', {
+            lang: I18nContext.current().lang,
+          }),
+        );
         throw new HttpException(
-          MessageService.USERNAME_ALREADY_USED,
+          this.i18n.translate('message.USERNAME_ALREADY_USED', {
+            lang: I18nContext.current().lang,
+          }),
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -84,7 +92,11 @@ export class UserService {
     try {
       const user = await this.userRepository.findOneBy({ username });
       if (user?.emailVerified == false) {
-        throw new UnauthorizedException(MessageService.EMAIL_NOT_VERIFIED);
+        throw new UnauthorizedException(
+          this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
+            lang: I18nContext.current().lang,
+          }),
+        );
       }
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
@@ -138,7 +150,9 @@ export class UserService {
         isActive: user.isActive,
       };
     } catch (e) {
-      this.logger.error(`${MessageService.CANNOT_VERIFY_EMAIL}: ${e.message}`);
+      this.logger.error(
+        `${this.i18n.translate('message.CANNOT_VERIFY_EMAIL', { lang: I18nContext.current().lang })}: ${e.message}`,
+      );
       return;
     }
   }
@@ -148,7 +162,11 @@ export class UserService {
       const user = await this.userRepository.findOneBy({ email });
 
       if (!user) {
-        throw new NotFoundException(MessageService.USER_NOT_FOUND);
+        throw new NotFoundException(
+          this.i18n.translate('message.USER_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+        );
       }
 
       const token = this.jwtService.sign(
@@ -208,7 +226,7 @@ export class UserService {
       return true;
     } catch (e) {
       this.logger.error(
-        `${MessageService.CANNOT_CHANGE_PASSWORD}: ${e.message}`,
+        `${this.i18n.translate('message.CANNOT_CHANGE_PASSWORD', { lang: I18nContext.current().lang })}: ${e.message}`,
       );
       return false;
     }

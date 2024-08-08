@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { DbModule } from './db/db.module';
 import { SeederModule } from './seeder/seeder.module';
-import { MessageModule } from './message/message.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { RoleModule } from './role/role.module';
@@ -19,6 +18,15 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { EventModule } from './event/event.module';
 import { AdminModule } from './admin/admin.module';
+import {
+  I18nModule,
+  AcceptLanguageResolver,
+  QueryResolver,
+  HeaderResolver,
+} from 'nestjs-i18n';
+import * as path from 'path';
+
+console.log('path: ', path.join(__dirname, '/message/'));
 
 @Module({
   imports: [
@@ -32,7 +40,6 @@ import { AdminModule } from './admin/admin.module';
     AuthModule,
     DbModule,
     SeederModule,
-    MessageModule,
     ConfigModule,
     RoleModule,
     SubgraphModule,
@@ -56,6 +63,18 @@ import { AdminModule } from './admin/admin.module';
     }),
     EventModule,
     AdminModule,
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/message/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [

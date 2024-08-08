@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './entity/user.entity';
-import { MessageModule } from 'src/message/message.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from 'src/config/config.service';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -18,7 +17,6 @@ import { join } from 'path';
       secret: ConfigService.JWTConfig.secret,
       signOptions: { expiresIn: ConfigService.JWTConfig.expire },
     }),
-    MessageModule,
     MailerModule.forRoot({
       transport: {
         host: ConfigService.Mail.host,
