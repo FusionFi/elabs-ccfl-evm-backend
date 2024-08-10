@@ -26,8 +26,6 @@ import {
 } from 'nestjs-i18n';
 import * as path from 'path';
 
-console.log('path: ', path.join(__dirname, '/message/'));
-
 @Module({
   imports: [
     ThrottlerModule.forRoot([

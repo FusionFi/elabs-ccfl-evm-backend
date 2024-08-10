@@ -22,6 +22,8 @@ import { Supply } from './entity/supply.entity';
 import { SupplyDto } from './dto/supply.dto';
 import { Setting } from './entity/setting.entity';
 import { SettingDto } from './dto/setting.dto';
+import { Network } from './entity/network.entity';
+import { NetworkDto } from './dto/network.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
@@ -29,6 +31,7 @@ import { Role } from 'src/role/role.enum';
 import { mapCollateral } from './response-dto/collateral.map';
 import { mapSupply } from './response-dto/supply.map';
 import { mapSetting } from './response-dto/setting.map';
+import { mapNetwork } from './response-dto/network.map';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -202,6 +205,60 @@ export class AdminController {
   removeSetting(@Param('id') id: string) {
     try {
       return this.adminService.removeSetting(id);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Add a new network' })
+  @Post('network')
+  async createNetwork(@Body() networkDto: NetworkDto) {
+    try {
+      const newNetwork = await this.adminService.createNetwork(networkDto);
+      return mapNetwork(newNetwork);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Find all networks' })
+  @Get('network')
+  async findAllNetwork() {
+    try {
+      const allNetwork = await this.adminService.findAllNetwork();
+      return mapNetwork(allNetwork);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Find a specific network by id' })
+  @Get('network/:id')
+  async findNetwork(@Param('id') id: string) {
+    try {
+      const network = await this.adminService.findNetwork(id);
+      return mapNetwork(network);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Update a network' })
+  @Patch('network/:id')
+  async updateNetwork(@Param('id') id: string, @Body() networkDto: NetworkDto) {
+    try {
+      const network = await this.adminService.updateNetwork(id, networkDto);
+      return mapNetwork(network);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Delete a network' })
+  @Delete('network/:id')
+  removeNetwork(@Param('id') id: string) {
+    try {
+      return this.adminService.removeNetwork(id);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

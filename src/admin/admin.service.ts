@@ -7,6 +7,8 @@ import { Supply } from './entity/supply.entity';
 import { SupplyDto } from './dto/supply.dto';
 import { Setting } from './entity/setting.entity';
 import { SettingDto } from './dto/setting.dto';
+import { Network } from './entity/network.entity';
+import { NetworkDto } from './dto/network.dto';
 
 @Injectable()
 export class AdminService {
@@ -21,6 +23,9 @@ export class AdminService {
 
     @InjectRepository(Setting)
     private settingRepository: Repository<Setting>,
+
+    @InjectRepository(Network)
+    private networkRepository: Repository<Network>,
   ) {}
 
   async createCollateral(collateralDto: CollateralDto) {
@@ -32,6 +37,7 @@ export class AdminService {
         symbol: collateralDto.symbol,
         address: collateralDto.address,
         decimals: collateralDto.decimals,
+        isActive: collateralDto.isActive,
       });
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -63,6 +69,7 @@ export class AdminService {
         symbol: collateralDto.symbol,
         address: collateralDto.address,
         decimals: collateralDto.decimals,
+        isActive: collateralDto.isActive,
       });
       return await this.collateralRepository.findOneBy({ id });
     } catch (e) {
@@ -90,6 +97,7 @@ export class AdminService {
         symbol: supplyDto.symbol,
         address: supplyDto.address,
         decimals: supplyDto.decimals,
+        isActive: supplyDto.isActive,
       });
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -120,6 +128,7 @@ export class AdminService {
         symbol: supplyDto.symbol,
         address: supplyDto.address,
         decimals: supplyDto.decimals,
+        isActive: supplyDto.isActive,
       });
       return await this.supplyRepository.findOneBy({ id });
     } catch (e) {
@@ -145,6 +154,7 @@ export class AdminService {
         key: settingDto.key,
         value: settingDto.value,
         type: settingDto.type,
+        isActive: settingDto.isActive,
       });
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -173,6 +183,7 @@ export class AdminService {
         key: settingDto.key,
         value: settingDto.value,
         type: settingDto.type,
+        isActive: settingDto.isActive,
       });
       return await this.settingRepository.findOneBy({ id });
     } catch (e) {
@@ -187,6 +198,65 @@ export class AdminService {
     } catch (e) {
       this.logger.error(
         `[Admin]: Failed to remove setting, id: ${id}, error: ${e.message}`,
+      );
+      return false;
+    }
+  }
+
+  async createNetwork(networkDto: NetworkDto) {
+    try {
+      return await this.networkRepository.save({
+        name: networkDto.name,
+        code: networkDto.code,
+        chainId: networkDto.chainId,
+        txUrl: networkDto.txUrl,
+        rpcUrl: networkDto.rpcUrl,
+        isActive: networkDto.isActive,
+      });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async findAllNetwork() {
+    try {
+      return await this.networkRepository.find();
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async findNetwork(id: string) {
+    try {
+      return await this.networkRepository.findOneBy({ id });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async updateNetwork(id: string, networkDto: NetworkDto) {
+    try {
+      await this.networkRepository.update(id, {
+        name: networkDto.name,
+        code: networkDto.code,
+        chainId: networkDto.chainId,
+        txUrl: networkDto.txUrl,
+        rpcUrl: networkDto.rpcUrl,
+        isActive: networkDto.isActive,
+      });
+      return await this.networkRepository.findOneBy({ id });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async removeNetwork(id: string) {
+    try {
+      await this.networkRepository.delete(id);
+      return true;
+    } catch (e) {
+      this.logger.error(
+        `[Admin]: Failed to remove network, id: ${id}, error: ${e.message}`,
       );
       return false;
     }
