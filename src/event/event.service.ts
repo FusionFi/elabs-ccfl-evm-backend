@@ -27,11 +27,11 @@ export class EventService implements OnModuleInit {
   }
 
   private subscribeToTransferEvents() {
-    this.contract.on('Transfer', (from, to, value) => {
-      // this.logger.log(
-      //   `Transfer detected: from ${from} to ${to} value ${ethers.formatUnits(value, 6)}`,
-      // );
-      // Add your handling logic here
-    });
+    // this.contract.on('Transfer', (from, to, value) => {
+    // this.logger.log(
+    //   `Transfer detected: from ${from} to ${to} value ${ethers.formatUnits(value, 6)}`,
+    // );
+    // Add your handling logic here
+    // });
   }
 }

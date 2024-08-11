@@ -12,22 +12,17 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
   ApiQuery,
 } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
-import { Collateral } from './entity/collateral.entity';
 import { CollateralDto } from './dto/collateral.dto';
-import { Supply } from './entity/supply.entity';
 import { SupplyDto } from './dto/supply.dto';
-import { Setting } from './entity/setting.entity';
 import { SettingDto } from './dto/setting.dto';
-import { Network } from './entity/network.entity';
 import { NetworkDto } from './dto/network.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Public } from 'src/common/decorators/public.decorator';
+// import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapCollateral } from './response-dto/collateral.map';
@@ -36,10 +31,9 @@ import { mapSetting } from './response-dto/setting.map';
 import { mapNetwork } from './response-dto/network.map';
 
 @ApiTags('admin')
-@Public()
-// @ApiBearerAuth()
-// @UseGuards(AuthGuard)
-// @Roles(Role.Admin)
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
+@Roles(Role.Admin)
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}

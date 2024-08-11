@@ -6,7 +6,6 @@ import { Network } from 'src/admin/entity/network.entity';
 import { Collateral } from 'src/admin/entity/collateral.entity';
 import { Supply } from 'src/admin/entity/supply.entity';
 import { Setting } from 'src/admin/entity/setting.entity';
-import { UserService } from 'src/user/user.service';
 import { Role } from 'src/role/role.enum';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
@@ -92,8 +91,8 @@ export class SeederService {
         },
       ];
 
-      for (let item of networks) {
-        let existNetwork = await this.networkRepository.findOneBy({
+      for (const item of networks) {
+        const existNetwork = await this.networkRepository.findOneBy({
           chainId: item.chainId,
         });
         if (!existNetwork) {
@@ -184,8 +183,8 @@ export class SeederService {
         },
       ];
 
-      for (let item of collaterals) {
-        let existCollateral = await this.collateralRepository.findOneBy({
+      for (const item of collaterals) {
+        const existCollateral = await this.collateralRepository.findOneBy({
           chain: item.chain,
           symbol: item.symbol,
           address: item.address,
@@ -270,8 +269,8 @@ export class SeederService {
         },
       ];
 
-      for (let item of supply) {
-        let existSupply = await this.supplyRepository.findOneBy({
+      for (const item of supply) {
+        const existSupply = await this.supplyRepository.findOneBy({
           chain: item.chain,
           symbol: item.symbol,
           address: item.address,
@@ -339,8 +338,8 @@ export class SeederService {
         },
       ];
 
-      for (let item of settings) {
-        let existSetting = await this.settingRepository.findOneBy({
+      for (const item of settings) {
+        const existSetting = await this.settingRepository.findOneBy({
           key: item.key,
         });
         if (!existSetting) {

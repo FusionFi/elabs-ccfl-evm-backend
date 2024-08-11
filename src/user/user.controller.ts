@@ -20,7 +20,6 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
-import { User } from './entity/user.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';

@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsEmail,
-  IsIn,
-  IsBoolean,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class NetworkDto {
