@@ -133,11 +133,32 @@ export class AdminService {
     }
   }
 
-  async findAllSupply() {
+  async findAllSupply(query: any) {
     try {
-      return await this.supplyRepository.findBy({
+      const searchObj: any = {
         isActive: true,
-      });
+      };
+
+      if (query.chain) {
+        searchObj.chain = ILike(`%${query.chain}%`);
+      }
+      if (query.name) {
+        searchObj.name = ILike(`%${query.name}`);
+      }
+      if (query.symbol) {
+        searchObj.symbol = ILike(`%${query.symbol}`);
+      }
+      if (query.address) {
+        searchObj.address = ILike(`%${query.address}`);
+      }
+      if (query.decimals) {
+        searchObj.decimals = query.decimals;
+      }
+      if (query.isMainnet) {
+        searchObj.isMainnet = query.isMainnet;
+      }
+
+      return await this.supplyRepository.findBy(searchObj);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -193,12 +214,17 @@ export class AdminService {
     }
   }
 
-  async findAllSetting(key: string) {
+  async findAllSetting(key?: string) {
     try {
-      return await this.settingRepository.findBy({
-        isActive: true,
-        key: ILike(`%${key}%`),
-      });
+      let searchObj: any = {
+        isActive: true
+      }
+
+      if (key) {
+        searchObj.key = ILike(`%${key}%`);
+      }
+
+      return await this.settingRepository.findBy(searchObj);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -254,11 +280,26 @@ export class AdminService {
     }
   }
 
-  async findAllNetwork() {
+  async findAllNetwork(query: any) {
     try {
-      return await this.networkRepository.findBy({
+      const searchObj: any = {
         isActive: true,
-      });
+      };
+
+      if (query.name) {
+        searchObj.name = ILike(`%${query.name}%`);
+      }
+      if (query.code) {
+        searchObj.code = ILike(`%${query.code}%`);
+      }
+      if (query.chainId) {
+        searchObj.chainId = ILike(`%${query.chainId}%`);
+      }
+      if (query.isMainnet) {
+        searchObj.isMainnet = query.isMainnet;
+      }
+
+      return await this.networkRepository.findBy(searchObj);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

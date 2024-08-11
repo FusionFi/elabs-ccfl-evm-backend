@@ -53,16 +53,6 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all collaterals' })
   @Get('collateral')
-  @ApiQuery({
-    name: 'key',
-    type: String,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'value',
-    type: String,
-    required: false,
-  })
   async findAllCollateral(@Query() query: any) {
     try {
       const allCollaterals = await this.adminService.findAllCollateral(query);
@@ -123,9 +113,9 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all supply tokens' })
   @Get('supply')
-  async findAllSupply() {
+  async findAllSupply(@Query() query: any) {
     try {
-      const allSupply = await this.adminService.findAllSupply();
+      const allSupply = await this.adminService.findAllSupply(query);
       return mapSupply(allSupply);
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -236,9 +226,9 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all networks' })
   @Get('network')
-  async findAllNetwork() {
+  async findAllNetwork(@Query() query: any) {
     try {
-      const allNetwork = await this.adminService.findAllNetwork();
+      const allNetwork = await this.adminService.findAllNetwork(query);
       return mapNetwork(allNetwork);
     } catch (e) {
       throw new HttpException(e.response, e.status);
