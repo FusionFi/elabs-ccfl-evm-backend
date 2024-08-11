@@ -36,5 +36,10 @@ export class CollateralDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsBoolean()
+  isMainnet: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsBoolean()
   isActive: boolean;
 }

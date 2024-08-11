@@ -45,6 +45,12 @@ export class Network {
 
   @Column({
     default: true,
+    name: 'is_mainnet',
+  })
+  isMainnet: boolean;
+
+  @Column({
+    default: true,
     name: 'is_active',
   })
   isActive: boolean;

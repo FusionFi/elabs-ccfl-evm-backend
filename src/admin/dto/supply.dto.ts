@@ -25,5 +25,10 @@ export class SupplyDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsBoolean()
+  isMainnet: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsBoolean()
   isActive: boolean;
 }

@@ -31,5 +31,10 @@ export class NetworkDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsBoolean()
+  isMainnet: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsBoolean()
   isActive: boolean;
 }

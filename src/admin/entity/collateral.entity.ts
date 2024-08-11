@@ -39,9 +39,15 @@ export class Collateral {
   address: string;
 
   @Column({
-    nullable: true,
+    nullable: false,
   })
   decimals: number;
+
+  @Column({
+    default: true,
+    name: 'is_mainnet',
+  })
+  isMainnet: boolean;
 
   @Column({
     default: true,

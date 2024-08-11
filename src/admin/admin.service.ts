@@ -37,6 +37,7 @@ export class AdminService {
         symbol: collateralDto.symbol,
         address: collateralDto.address,
         decimals: collateralDto.decimals,
+        isMainnet: collateralDto.isMainnet,
         isActive: collateralDto.isActive,
       });
     } catch (e) {
@@ -69,6 +70,7 @@ export class AdminService {
         symbol: collateralDto.symbol,
         address: collateralDto.address,
         decimals: collateralDto.decimals,
+        isMainnet: collateralDto.isMainnet,
         isActive: collateralDto.isActive,
       });
       return await this.collateralRepository.findOneBy({ id });
@@ -97,6 +99,7 @@ export class AdminService {
         symbol: supplyDto.symbol,
         address: supplyDto.address,
         decimals: supplyDto.decimals,
+        isMainnet: supplyDto.isMainnet,
         isActive: supplyDto.isActive,
       });
     } catch (e) {
@@ -128,6 +131,7 @@ export class AdminService {
         symbol: supplyDto.symbol,
         address: supplyDto.address,
         decimals: supplyDto.decimals,
+        isMainnet: supplyDto.isMainnet,
         isActive: supplyDto.isActive,
       });
       return await this.supplyRepository.findOneBy({ id });
@@ -211,6 +215,7 @@ export class AdminService {
         chainId: networkDto.chainId,
         txUrl: networkDto.txUrl,
         rpcUrl: networkDto.rpcUrl,
+        isMainnet: networkDto.isMainnet,
         isActive: networkDto.isActive,
       });
     } catch (e) {
@@ -242,6 +247,7 @@ export class AdminService {
         chainId: networkDto.chainId,
         txUrl: networkDto.txUrl,
         rpcUrl: networkDto.rpcUrl,
+        isMainnet: networkDto.isMainnet,
         isActive: networkDto.isActive,
       });
       return await this.networkRepository.findOneBy({ id });
