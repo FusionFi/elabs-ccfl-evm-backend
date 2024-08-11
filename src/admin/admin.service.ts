@@ -45,9 +45,35 @@ export class AdminService {
     }
   }
 
-  async findAllCollateral() {
+  async findAllCollateral(query: any) {
     try {
-      return await this.collateralRepository.find();
+      const searchObj: any = {
+        isActive: true,
+      };
+
+      if (query.type) {
+        searchObj.type = ILike(`%${query.type}%`);
+      }
+      if (query.chain) {
+        searchObj.chain = ILike(`%${query.chain}%`);
+      }
+      if (query.name) {
+        searchObj.name = ILike(`%${query.name}`);
+      }
+      if (query.symbol) {
+        searchObj.symbol = ILike(`%${query.symbol}`);
+      }
+      if (query.address) {
+        searchObj.address = ILike(`%${query.address}`);
+      }
+      if (query.decimals) {
+        searchObj.decimals = query.decimals;
+      }
+      if (query.isMainnet) {
+        searchObj.isMainnet = query.isMainnet;
+      }
+
+      return await this.collateralRepository.findBy(searchObj);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -109,7 +135,9 @@ export class AdminService {
 
   async findAllSupply() {
     try {
-      return await this.supplyRepository.find();
+      return await this.supplyRepository.findBy({
+        isActive: true,
+      });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -167,7 +195,10 @@ export class AdminService {
 
   async findAllSetting(key: string) {
     try {
-      return await this.settingRepository.findBy({ key: ILike(`%${key}%`) });
+      return await this.settingRepository.findBy({
+        isActive: true,
+        key: ILike(`%${key}%`),
+      });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -225,7 +256,9 @@ export class AdminService {
 
   async findAllNetwork() {
     try {
-      return await this.networkRepository.find();
+      return await this.networkRepository.findBy({
+        isActive: true,
+      });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

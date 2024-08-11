@@ -30,6 +30,7 @@ import { mapSupply } from './response-dto/supply.map';
 import { mapSetting } from './response-dto/setting.map';
 import { mapNetwork } from './response-dto/network.map';
 
+// @Public()
 @ApiTags('admin')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -52,9 +53,19 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all collaterals' })
   @Get('collateral')
-  async findAllCollateral() {
+  @ApiQuery({
+    name: 'key',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'value',
+    type: String,
+    required: false,
+  })
+  async findAllCollateral(@Query() query: any) {
     try {
-      const allCollaterals = await this.adminService.findAllCollateral();
+      const allCollaterals = await this.adminService.findAllCollateral(query);
       return mapCollateral(allCollaterals);
     } catch (e) {
       throw new HttpException(e.response, e.status);
