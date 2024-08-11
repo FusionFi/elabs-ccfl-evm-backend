@@ -1,6 +1,6 @@
 import { Injectable, HttpException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Collateral } from './entity/collateral.entity';
 import { CollateralDto } from './dto/collateral.dto';
 import { Supply } from './entity/supply.entity';
@@ -165,9 +165,9 @@ export class AdminService {
     }
   }
 
-  async findAllSetting() {
+  async findAllSetting(key: string) {
     try {
-      return await this.settingRepository.find();
+      return await this.settingRepository.findBy({ key: ILike(`%${key}%`) });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

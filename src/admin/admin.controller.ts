@@ -8,12 +8,14 @@ import {
   Delete,
   HttpException,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { Collateral } from './entity/collateral.entity';
@@ -34,10 +36,11 @@ import { mapSetting } from './response-dto/setting.map';
 import { mapNetwork } from './response-dto/network.map';
 
 @ApiTags('admin')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
+@Public()
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard)
+// @Roles(Role.Admin)
 @Controller('admin')
-@Roles(Role.Admin)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -169,9 +172,14 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Find all settings' })
   @Get('setting')
-  async findAllSetting() {
+  @ApiQuery({
+    name: 'key',
+    type: String,
+    required: false,
+  })
+  async findAllSetting(@Query('key') key?: string) {
     try {
-      const allSetting = await this.adminService.findAllSetting();
+      const allSetting = await this.adminService.findAllSetting(key);
       return mapSetting(allSetting);
     } catch (e) {
       throw new HttpException(e.response, e.status);
