@@ -240,7 +240,7 @@ export class UserService {
     }
   }
 
-  async findAll() {
+  async findAllUser() {
     try {
       return await this.userRepository.find();
     } catch (e) {

@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
@@ -11,16 +10,18 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { RoleModule } from './role/role.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
-import { SubgraphModule } from './subgraph/subgraph.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task/task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { EventModule } from './event/event.module';
-import { CollateralModule } from './collateral/collateral.module';
-import { SupplyModule } from './supply/supply.module';
-import { NetworkModule } from './network/network.module';
 import { SettingModule } from './setting/setting.module';
+import { NetworkModule } from './network/network.module';
+import { SupplyModule } from './supply/supply.module';
+import { CollateralModule } from './collateral/collateral.module';
+import { UserModule } from './user/user.module';
+import { PoolModule } from './pool/pool.module';
+import { SubgraphModule } from './subgraph/subgraph.module';
 import {
   I18nModule,
   AcceptLanguageResolver,
@@ -37,15 +38,11 @@ import * as path from 'path';
         limit: ConfigService.App.limit,
       },
     ]),
-    UserModule,
-    AuthModule,
+    ConfigModule,
     DbModule,
     SeederModule,
-    ConfigModule,
+    AuthModule,
     RoleModule,
-    SubgraphModule,
-    ScheduleModule.forRoot(),
-    TaskModule,
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
@@ -62,11 +59,9 @@ import * as path from 'path';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
+    TaskModule,
     EventModule,
-    CollateralModule,
-    SupplyModule,
-    NetworkModule,
-    SettingModule,
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {
@@ -79,6 +74,13 @@ import * as path from 'path';
         new HeaderResolver(['x-lang']),
       ],
     }),
+    SettingModule,
+    NetworkModule,
+    SupplyModule,
+    CollateralModule,
+    UserModule,
+    PoolModule,
+    SubgraphModule,
   ],
   controllers: [AppController],
   providers: [
