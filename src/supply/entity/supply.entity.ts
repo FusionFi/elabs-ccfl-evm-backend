@@ -39,6 +39,11 @@ export class Supply {
   decimals: number;
 
   @Column({
+    nullable: false,
+  })
+  price: number;
+
+  @Column({
     default: true,
     name: 'is_mainnet',
   })

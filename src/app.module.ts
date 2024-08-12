@@ -17,7 +17,10 @@ import { TaskModule } from './task/task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { EventModule } from './event/event.module';
-import { AdminModule } from './admin/admin.module';
+import { CollateralModule } from './collateral/collateral.module';
+import { SupplyModule } from './supply/supply.module';
+import { NetworkModule } from './network/network.module';
+import { SettingModule } from './setting/setting.module';
 import {
   I18nModule,
   AcceptLanguageResolver,
@@ -60,7 +63,10 @@ import * as path from 'path';
       inject: [ConfigService],
     }),
     EventModule,
-    AdminModule,
+    CollateralModule,
+    SupplyModule,
+    NetworkModule,
+    SettingModule,
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {

@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entity/user.entity';
-import { Network } from 'src/admin/entity/network.entity';
-import { Collateral } from 'src/admin/entity/collateral.entity';
-import { Supply } from 'src/admin/entity/supply.entity';
-import { Setting } from 'src/admin/entity/setting.entity';
+import { Network } from 'src/network/entity/network.entity';
+import { Collateral } from 'src/collateral/entity/collateral.entity';
+import { Supply } from 'src/supply/entity/supply.entity';
+import { Setting } from 'src/setting/entity/setting.entity';
 import { Role } from 'src/role/role.enum';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
@@ -108,6 +108,7 @@ export class SeederService {
           symbol: 'ETH',
           address: null,
           decimals: 18,
+          price: 4000,
           isMainnet: true,
           isActive: true,
         },
@@ -118,6 +119,7 @@ export class SeederService {
           symbol: 'WBTC',
           address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
           decimals: 8,
+          price: 60000,
           isMainnet: true,
           isActive: true,
         },
@@ -128,6 +130,7 @@ export class SeederService {
           symbol: 'ETH',
           address: null,
           decimals: 18,
+          price: 4000,
           isMainnet: false,
           isActive: true,
         },
@@ -138,6 +141,7 @@ export class SeederService {
           symbol: 'WBTC',
           address: '0x29f2d40b0605204364af54ec677bd022da425d03',
           decimals: 8,
+          price: 60000,
           isMainnet: false,
           isActive: true,
         },
@@ -148,6 +152,7 @@ export class SeederService {
           symbol: 'WETH',
           address: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
           decimals: 18,
+          price: 4000,
           isMainnet: true,
           isActive: true,
         },
@@ -158,6 +163,7 @@ export class SeederService {
           symbol: 'WBTC',
           address: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
           decimals: 8,
+          price: 60000,
           isMainnet: true,
           isActive: true,
         },
@@ -168,6 +174,7 @@ export class SeederService {
           symbol: 'WETH',
           address: '0x52ef3d68bab452a294342dc3e5f464d7f610f72e',
           decimals: 18,
+          price: 4000,
           isMainnet: false,
           isActive: true,
         },
@@ -178,6 +185,7 @@ export class SeederService {
           symbol: 'WBTC',
           address: '0xd0b33a7acb9303d9fe2de7ba849ec9b96a4c10c1',
           decimals: 8,
+          price: 60000,
           isMainnet: false,
           isActive: true,
         },
@@ -201,6 +209,7 @@ export class SeederService {
           symbol: 'USDC',
           address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
           decimals: 6,
+          price: 1,
           isMainnet: true,
           isActive: true,
         },
@@ -210,6 +219,7 @@ export class SeederService {
           symbol: 'USDT',
           address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
           decimals: 6,
+          price: 1,
           isMainnet: true,
           isActive: true,
         },
@@ -219,6 +229,7 @@ export class SeederService {
           symbol: 'USDC',
           address: '0x94a9d9ac8a22534e3faca9f4e7f2e2cf85d5e4c8',
           decimals: 6,
+          price: 1,
           isMainnet: false,
           isActive: true,
         },
@@ -228,6 +239,7 @@ export class SeederService {
           symbol: 'USDT',
           address: '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0',
           decimals: 6,
+          price: 1,
           isMainnet: false,
           isActive: true,
         },
@@ -237,6 +249,7 @@ export class SeederService {
           symbol: 'USDC',
           address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
           decimals: 6,
+          price: 1,
           isMainnet: true,
           isActive: true,
         },
@@ -246,6 +259,7 @@ export class SeederService {
           symbol: 'USDT',
           address: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
           decimals: 6,
+          price: 1,
           isMainnet: true,
           isActive: true,
         },
@@ -255,6 +269,7 @@ export class SeederService {
           symbol: 'USDC',
           address: '0xc091020dd0e357989f303fc99ac5899fa343ff6d',
           decimals: 6,
+          price: 1,
           isMainnet: false,
           isActive: true,
         },
@@ -264,6 +279,7 @@ export class SeederService {
           symbol: 'USDT',
           address: '0x1616d425cd540b256475cbfb604586c8598ec0fb',
           decimals: 6,
+          price: 1,
           isMainnet: false,
           isActive: true,
         },
