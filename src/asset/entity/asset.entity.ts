@@ -8,15 +8,32 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Unique(['chain', 'symbol', 'address'])
-export class Supply {
+@Unique(['chainId', 'symbol', 'address'])
+export class Asset {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     nullable: false,
   })
-  chain: string;
+  category: string;
+
+  @Column({
+    nullable: false,
+  })
+  type: string;
+
+  @Column({
+    nullable: false,
+    name: 'chain_name',
+  })
+  chainName: string;
+
+  @Column({
+    nullable: false,
+    name: 'chain_id',
+  })
+  chainId: number;
 
   @Column({
     nullable: false,
@@ -40,6 +57,12 @@ export class Supply {
 
   @Column({
     nullable: false,
+    name: 'coingecko_id',
+  })
+  coingeckoId: string;
+
+  @Column({
+    default: 0,
   })
   price: number;
 

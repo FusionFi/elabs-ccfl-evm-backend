@@ -17,8 +17,7 @@ import { redisStore } from 'cache-manager-ioredis-yet';
 import { EventModule } from './event/event.module';
 import { SettingModule } from './setting/setting.module';
 import { NetworkModule } from './network/network.module';
-import { SupplyModule } from './supply/supply.module';
-import { CollateralModule } from './collateral/collateral.module';
+import { AssetModule } from './asset/asset.module';
 import { UserModule } from './user/user.module';
 import { PoolModule } from './pool/pool.module';
 import { SubgraphModule } from './subgraph/subgraph.module';
@@ -76,8 +75,7 @@ import * as path from 'path';
     }),
     SettingModule,
     NetworkModule,
-    SupplyModule,
-    CollateralModule,
+    AssetModule,
     UserModule,
     PoolModule,
     SubgraphModule,

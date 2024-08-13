@@ -29,17 +29,17 @@ export class PoolController {
   @Get('all')
   async findAllPool(@Query() network?: string) {
     try {
-      let fakeData = [
+      const fakeData = [
         {
-          asset: "USDC",
-          loan_available: "10000",
-          apr: "0.07"
+          asset: 'USDC',
+          loan_available: '10000',
+          apr: '0.07',
         },
         {
-          asset: "USDT",
-          loan_available: "10000",
-          apr: "0.07"
-        }
+          asset: 'USDT',
+          loan_available: '10000',
+          apr: '0.07',
+        },
       ];
       return fakeData;
     } catch (e) {

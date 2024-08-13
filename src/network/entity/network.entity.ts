@@ -28,7 +28,7 @@ export class Network {
     unique: true,
     name: 'chain_id',
   })
-  chainId: string;
+  chainId: number;
 
   @Column({
     nullable: false,

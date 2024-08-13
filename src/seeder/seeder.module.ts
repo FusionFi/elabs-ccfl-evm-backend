@@ -5,14 +5,13 @@ import { UserModule } from 'src/user/user.module';
 import { DbModule } from 'src/db/db.module';
 import { User } from 'src/user/entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
-import { Collateral } from 'src/collateral/entity/collateral.entity';
-import { Supply } from 'src/supply/entity/supply.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
 import { Setting } from 'src/setting/entity/setting.entity';
 
 @Module({
   providers: [SeederService],
   imports: [
-    TypeOrmModule.forFeature([User, Network, Collateral, Supply, Setting]),
+    TypeOrmModule.forFeature([User, Network, Asset, Setting]),
     UserModule,
     DbModule,
   ],

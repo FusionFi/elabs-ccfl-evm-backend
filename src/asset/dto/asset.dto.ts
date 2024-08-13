@@ -1,10 +1,24 @@
-import { IsNotEmpty, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsIn, IsBoolean, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SupplyDto {
+export class AssetDto {
   @ApiProperty()
   @IsNotEmpty()
-  chain: string;
+  @IsIn(['supply', 'collateral'])
+  category: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsIn(['native', 'token'])
+  type: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  chainName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  chainId: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -21,6 +35,10 @@ export class SupplyDto {
   @ApiProperty()
   @IsNotEmpty()
   decimals: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  coingeckoId: string;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -1,4 +1,4 @@
-export function mapCollateral(obj: any) {
+export function mapAsset(obj: any) {
   if (Array.isArray(obj)) {
     for (let i = 0; i < obj.length; i++) {
       delete obj[i]['id'];

@@ -12,7 +12,7 @@ export class NetworkDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  chainId: string;
+  chainId: number;
 
   @ApiProperty()
   @IsNotEmpty()
