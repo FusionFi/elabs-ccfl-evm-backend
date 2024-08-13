@@ -33,7 +33,7 @@ export class SettingController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Add a new setting' })
-  @Post('setting')
+  @Post()
   async createSetting(@Body() settingDto: SettingDto) {
     try {
       const newSetting = await this.settingService.createSetting(settingDto);
@@ -45,7 +45,7 @@ export class SettingController {
 
   @Public()
   @ApiOperation({ summary: 'Find all settings' })
-  @Get('setting')
+  @Get()
   @ApiQuery({
     name: 'key',
     type: String,
@@ -62,7 +62,7 @@ export class SettingController {
 
   @Public()
   @ApiOperation({ summary: 'Find a specific setting by id' })
-  @Get('setting/:id')
+  @Get(':id')
   async findSetting(@Param('id') id: string) {
     try {
       const setting = await this.settingService.findSetting(id);
@@ -76,7 +76,7 @@ export class SettingController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a setting' })
-  @Patch('setting/:id')
+  @Patch(':id')
   async updateSetting(@Param('id') id: string, @Body() settingDto: SettingDto) {
     try {
       const setting = await this.settingService.updateSetting(id, settingDto);
@@ -90,7 +90,7 @@ export class SettingController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Delete a setting' })
-  @Delete('setting/:id')
+  @Delete(':id')
   removeSetting(@Param('id') id: string) {
     try {
       return this.settingService.removeSetting(id);

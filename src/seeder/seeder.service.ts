@@ -81,7 +81,7 @@ export class SeederService {
           isActive: true,
         },
         {
-          name: 'Mumbai',
+          name: 'Amoy',
           code: 'POLYGON_TESTNET_AMOY',
           chainId: '80002',
           txUrl: 'https://amoy.polygonscan.com/tx/__TX_HASH__',

@@ -28,7 +28,7 @@ export class NetworkController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Add a new network' })
-  @Post('network')
+  @Post()
   async createNetwork(@Body() networkDto: NetworkDto) {
     try {
       const newNetwork = await this.networkService.createNetwork(networkDto);
@@ -40,7 +40,7 @@ export class NetworkController {
 
   @Public()
   @ApiOperation({ summary: 'Find all networks' })
-  @Get('network')
+  @Get()
   async findAllNetwork(@Query() query: any) {
     try {
       const allNetwork = await this.networkService.findAllNetwork(query);
@@ -52,7 +52,7 @@ export class NetworkController {
 
   @Public()
   @ApiOperation({ summary: 'Find a specific network by id' })
-  @Get('network/:id')
+  @Get(':id')
   async findNetwork(@Param('id') id: string) {
     try {
       const network = await this.networkService.findNetwork(id);
@@ -66,7 +66,7 @@ export class NetworkController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a network' })
-  @Patch('network/:id')
+  @Patch(':id')
   async updateNetwork(@Param('id') id: string, @Body() networkDto: NetworkDto) {
     try {
       const network = await this.networkService.updateNetwork(id, networkDto);
@@ -80,7 +80,7 @@ export class NetworkController {
   @UseGuards(AuthGuard)
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Delete a network' })
-  @Delete('network/:id')
+  @Delete(':id')
   removeNetwork(@Param('id') id: string) {
     try {
       return this.networkService.removeNetwork(id);
