@@ -33,42 +33,43 @@ export class AssetService {
     }
   }
 
-  async findAllAsset(query: any) {
+  async findAllAsset(
+    category?: string,
+    type?: string,
+    chainName?: string,
+    chainId?: number,
+    name?: string,
+    symbol?: string,
+    address?: string,
+    isMainnet?: boolean
+  ) {
     try {
       const searchObj: any = {
         isActive: true,
       };
 
-      if (query.category) {
-        searchObj.category = ILike(`%${query.category}%`);
+      if (category) {
+        searchObj.category = ILike(`%${category}%`);
       }
-      if (query.type) {
-        searchObj.type = ILike(`%${query.type}%`);
+      if (type) {
+        searchObj.type = ILike(`%${type}%`);
       }
-      if (query.chainName) {
-        searchObj.chainName = ILike(`%${query.chainName}%`);
+      if (chainName) {
+        searchObj.chainName = ILike(`%${chainName}%`);
       }
-      if (query.chainId) {
-        searchObj.chainId = query.chainId;
+      if (chainId) {
+        searchObj.chainId = chainId;
       }
-      if (query.name) {
-        searchObj.name = ILike(`%${query.name}`);
+      if (name) {
+        searchObj.name = ILike(`%${name}`);
       }
-      if (query.symbol) {
-        searchObj.symbol = ILike(`%${query.symbol}`);
+      if (symbol) {
+        searchObj.symbol = ILike(`%${symbol}`);
       }
-      if (query.address) {
-        searchObj.address = ILike(`%${query.address}`);
+      if (address) {
+        searchObj.address = ILike(`%${address}`);
       }
-      if (query.decimals) {
-        searchObj.decimals = query.decimals;
-      }
-      if (query.coingeckoId) {
-        searchObj.coingeckoId = ILike(`%${query.coingeckoId}`);
-      }
-      if (query.isMainnet) {
-        searchObj.isMainnet = query.isMainnet;
-      }
+      searchObj.isMainnet = isMainnet;
 
       return await this.assetRepository.findBy(searchObj);
     } catch (e) {

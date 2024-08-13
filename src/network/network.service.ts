@@ -29,24 +29,22 @@ export class NetworkService {
     }
   }
 
-  async findAllNetwork(query: any) {
+  async findAllNetwork(name: string, code: string, chainId: number, isMainnet: boolean) {
     try {
       const searchObj: any = {
         isActive: true,
       };
 
-      if (query.name) {
-        searchObj.name = ILike(`%${query.name}%`);
+      if (name) {
+        searchObj.name = ILike(`%${name}%`);
       }
-      if (query.code) {
-        searchObj.code = ILike(`%${query.code}%`);
+      if (code) {
+        searchObj.code = ILike(`%${code}%`);
       }
-      if (query.chainId) {
-        searchObj.chainId = ILike(`%${query.chainId}%`);
+      if (chainId) {
+        searchObj.chainId = chainId;
       }
-      if (query.isMainnet) {
-        searchObj.isMainnet = query.isMainnet;
-      }
+      searchObj.isMainnet = isMainnet;
 
       return await this.networkRepository.findBy(searchObj);
     } catch (e) {
