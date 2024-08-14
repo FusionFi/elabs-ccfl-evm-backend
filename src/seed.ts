@@ -12,12 +12,13 @@ async function bootstrap() {
           console.log('Seeding complete!');
         })
         .catch((error) => {
-          console.log('Seeding failed!');
+          console.log('Seeding failed, error: ', error);
           throw error;
         })
         .finally(() => appContext.close());
     })
     .catch((error) => {
+      console.log('Seeding failed, error: ', error);
       throw error;
     });
 }
