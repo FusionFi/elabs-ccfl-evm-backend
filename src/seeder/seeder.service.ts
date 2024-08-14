@@ -244,7 +244,7 @@ export class SeederService {
           chainId: 11155111,
           name: 'Ethereum Testnet Sepolia',
           symbol: 'ETH',
-          address: '0xf531b8f309be94191af87605cfbf600d71c2cfe0',
+          address: '0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c',
           decimals: 18,
           coingeckoId: 'ethereum',
           price: 4000,
