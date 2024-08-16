@@ -5,6 +5,7 @@ import { User } from 'src/user/entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Setting } from 'src/setting/entity/setting.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
+import { Contract } from 'src/contract/entity/contract.entity';
 import { Role } from 'src/role/role.enum';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
@@ -26,6 +27,9 @@ export class SeederService {
 
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
+
+    @InjectRepository(Contract)
+    private contractRepository: Repository<Contract>,
   ) {}
 
   async seed() {
@@ -398,6 +402,32 @@ export class SeederService {
         });
         if (!existSetting) {
           await this.settingRepository.save(item);
+        }
+      }
+
+      const contracts = [
+        {
+          type: 'ccfl',
+          address: '0x7B7450f910644A4EDe3183B7fCC5313a043f335C',
+          chainId: 11155111,
+          asset: null,
+          isActive: true,
+        },
+        {
+          type: 'pool',
+          address: '0xe0c51054586414A7A89bea3E2D56E04f07Bc73c3',
+          chainId: 11155111,
+          asset: 'USDC',
+          isActive: true,
+        }
+      ];
+
+      for (const item of contracts) {
+        const existContract = await this.contractRepository.findOneBy({
+          address: item.address,
+        });
+        if (!existContract) {
+          await this.contractRepository.save(item);
         }
       }
     } catch (e) {
