@@ -19,6 +19,7 @@ import { SettingModule } from './setting/setting.module';
 import { NetworkModule } from './network/network.module';
 import { AssetModule } from './asset/asset.module';
 import { UserModule } from './user/user.module';
+import { ContractModule } from './contract/contract.module';
 import { PoolModule } from './pool/pool.module';
 import { SubgraphModule } from './subgraph/subgraph.module';
 import {
@@ -74,6 +75,7 @@ import * as path from 'path';
       ],
     }),
     SettingModule,
+    ContractModule,
     NetworkModule,
     AssetModule,
     UserModule,
