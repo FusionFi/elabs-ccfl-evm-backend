@@ -29,19 +29,6 @@ export class PoolController {
   @Get('all/:chainId')
   async findAllPool(@Param('chainId') chainId: number) {
     try {
-      // const fakeData = [
-      //   {
-      //     asset: 'USDC',
-      //     loan_available: '10000',
-      //     apr: '0.07',
-      //   },
-      //   {
-      //     asset: 'USDT',
-      //     loan_available: '10000',
-      //     apr: '0.07',
-      //   },
-      // ];
-      // return fakeData;
       const allPools = await this.poolService.findAllPool(chainId);
       return allPools;
     } catch (e) {

@@ -4,6 +4,7 @@ import { Repository, ILike } from 'typeorm';
 import { Contract } from 'src/contract/entity/contract.entity';
 import { Network } from 'src/network/entity/network.entity'
 import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js'
 import * as fs from 'fs';
 
 const abi = JSON.parse(fs.readFileSync('abi/CCFLPool.json', 'utf8'));
@@ -28,12 +29,9 @@ export class PoolService {
         chainId: chainId,
       });
 
-      console.log('allPools: ', allPools);
-
       const network = await this.networkRepository.findOneBy({
         chainId
       });
-      console.log('network: ', network);
 
       if (!network) {
         return [];
@@ -45,11 +43,12 @@ export class PoolService {
       for (let item of allPools) {
         let contract = new ethers.Contract(item.address, abi, provider);
         let loan_available = await contract.getRemainingPool();
-        console.log('loan_available: ', BigInt(loan_available).toString());
+        let apr = await contract.getCurrentRate();
+        
         finalData.push({
           asset: item.asset,
-          loan_available: BigInt(loan_available).toString(),
-          apr: '0.07'
+          loan_available: BigNumber(loan_available).toFixed(),
+          apr: BigNumber(apr[0]).div(1e27).toFixed()
         });
       }
       return finalData;
