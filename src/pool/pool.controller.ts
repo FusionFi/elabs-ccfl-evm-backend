@@ -10,7 +10,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { PoolService } from './pool.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -26,22 +26,24 @@ export class PoolController {
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Find all pools' })
-  @Get('all')
-  async findAllPool(@Query() network?: string) {
+  @Get('all/:chainId')
+  async findAllPool(@Param('chainId') chainId: number) {
     try {
-      const fakeData = [
-        {
-          asset: 'USDC',
-          loan_available: '10000',
-          apr: '0.07',
-        },
-        {
-          asset: 'USDT',
-          loan_available: '10000',
-          apr: '0.07',
-        },
-      ];
-      return fakeData;
+      // const fakeData = [
+      //   {
+      //     asset: 'USDC',
+      //     loan_available: '10000',
+      //     apr: '0.07',
+      //   },
+      //   {
+      //     asset: 'USDT',
+      //     loan_available: '10000',
+      //     apr: '0.07',
+      //   },
+      // ];
+      // return fakeData;
+      const allPools = await this.poolService.findAllPool(chainId);
+      return allPools;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
