@@ -196,31 +196,11 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's balance" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
-  @Get(':address/balance')
-  async findAllBalance(@Param('address') address: string) {
+  @Get(':address/:chainId/balance')
+  async getBalance(@Param('address') address: string, @Param('chainId') chainId: number) {
     try {
-      const fakeData = {
-        address: address,
-        balance: [
-          {
-            asset: 'USDC',
-            amount: '1000',
-          },
-          {
-            asset: 'USDT',
-            amount: '1000',
-          },
-          {
-            asset: 'ETH',
-            amount: '1',
-          },
-          {
-            asset: 'WBTC',
-            amount: '1',
-          },
-        ],
-      };
-      return fakeData;
+      const addressBalance = await this.userService.getBalance(address, chainId);
+      return addressBalance;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

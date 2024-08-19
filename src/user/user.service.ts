@@ -10,11 +10,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
+import { Network } from 'src/network/entity/network.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
 import { I18nService, I18nContext } from 'nestjs-i18n';
+import { ethers } from 'ethers';
+import BigNumber from 'bignumber.js';
 
 @Injectable()
 export class UserService {
@@ -26,6 +29,9 @@ export class UserService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Network)
+    private networkRepository: Repository<Network>,
 
     private readonly i18n: I18nService,
   ) {}
@@ -253,6 +259,32 @@ export class UserService {
       await this.userRepository.delete(id);
     } catch (e) {
       throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async getBalance(address: string, chainId: number) {
+    const network = await this.networkRepository.findOneBy({
+      chainId
+    });
+
+    if (!network) {
+      return {
+        address: address,
+        balance: null
+      };
+    }
+
+    const provider = new ethers.JsonRpcProvider(network.rpcUrl);
+
+    const ethBalance = await provider.getBalance(address);
+    console.log('ethBalance: ', ethBalance);
+
+    return {
+      address: address,
+      balance: {
+        eth: ethBalance.toString(),
+        
+      }
     }
   }
 }
