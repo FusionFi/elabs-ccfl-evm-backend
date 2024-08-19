@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from 'src/config/config.service';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -19,7 +20,7 @@ import * as path from 'path';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Network]),
+    TypeOrmModule.forFeature([User, Network, Asset]),
     JwtModule.register({
       global: true,
       secret: ConfigService.JWTConfig.secret,

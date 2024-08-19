@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
@@ -32,6 +33,9 @@ export class UserService {
 
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
+
+    @InjectRepository(Asset)
+    private assetRepository: Repository<Asset>,
 
     private readonly i18n: I18nService,
   ) {}
@@ -262,29 +266,50 @@ export class UserService {
     }
   }
 
-  async getBalance(address: string, chainId: number) {
+  async getBalance(address: string, chainId: number, asset: string) {
+    let balance = null;
+
     const network = await this.networkRepository.findOneBy({
-      chainId
+      isActive: true,
+      chainId,
     });
 
     if (!network) {
       return {
-        address: address,
-        balance: null
+        address,
+        balance,
       };
     }
 
     const provider = new ethers.JsonRpcProvider(network.rpcUrl);
 
-    const ethBalance = await provider.getBalance(address);
-    console.log('ethBalance: ', ethBalance);
+    if (asset.toUpperCase() == 'ETH') {
+      const ethBalance = await provider.getBalance(address);
+      balance = ethBalance.toString();
+    } else {
+      const abi = ['function balanceOf(address) view returns (uint256)'];
+
+      const token = await this.assetRepository.findOneBy({
+        isActive: true,
+        chainId,
+        symbol: asset.toUpperCase(),
+      });
+
+      if (!token) {
+        return {
+          address,
+          balance,
+        };
+      }
+
+      const contract = new ethers.Contract(token.address, abi, provider);
+      const tokenBalance = await contract.balanceOf(address);
+      balance = tokenBalance.toString();
+    }
 
     return {
-      address: address,
-      balance: {
-        eth: ethBalance.toString(),
-        
-      }
-    }
+      address,
+      balance,
+    };
   }
 }

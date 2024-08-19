@@ -16,6 +16,7 @@ import {
   ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -196,10 +197,18 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's balance" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
-  @Get(':address/:chainId/balance')
-  async getBalance(@Param('address') address: string, @Param('chainId') chainId: number) {
+  @Get(':address/:chainId/:asset/balance')
+  async getBalance(
+    @Param('address') address: string,
+    @Param('chainId') chainId: number,
+    @Param('asset') asset: string,
+  ) {
     try {
-      const addressBalance = await this.userService.getBalance(address, chainId);
+      const addressBalance = await this.userService.getBalance(
+        address,
+        chainId,
+        asset,
+      );
       return addressBalance;
     } catch (e) {
       throw new HttpException(e.response, e.status);
