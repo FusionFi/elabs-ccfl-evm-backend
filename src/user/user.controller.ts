@@ -124,36 +124,38 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's supplies" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
-  @Get(':address/supply')
-  async findAllSupply(@Param('address') address: string) {
+  @Get(':address/:chainId/supply')
+  async getAllSupply(@Param('address') address: string, @Param('chainId') chainId: number) {
     try {
-      const fakeData = {
-        address: address,
-        supplies: [
-          {
-            asset: 'USDC',
-            supply_balance: '3500',
-            earned_reward: '350',
-            apy: '0.01',
-            wallet_balance: '1000',
-            pool_utilization: '90',
-            withdraw_available: '3500',
-          },
-          {
-            asset: 'USDT',
-            supply_balance: '3500',
-            earned_reward: '350',
-            apy: '0.01',
-            wallet_balance: '1000',
-            pool_utilization: '90',
-            withdraw_available: '3500',
-          },
-        ],
-        total_supply: '4567.87',
-        net_apy: '0.07',
-        total_earned: '65.87',
-      };
-      return fakeData;
+      // const fakeData = {
+      //   address: address,
+      //   supplies: [
+      //     {
+      //       asset: 'USDC',
+      //       supply_balance: '3500',
+      //       earned_reward: '350',
+      //       apy: '0.01',
+      //       wallet_balance: '1000',
+      //       pool_utilization: '90',
+      //       withdraw_available: '3500',
+      //     },
+      //     {
+      //       asset: 'USDT',
+      //       supply_balance: '3500',
+      //       earned_reward: '350',
+      //       apy: '0.01',
+      //       wallet_balance: '1000',
+      //       pool_utilization: '90',
+      //       withdraw_available: '3500',
+      //     },
+      //   ],
+      //   total_supply: '4567.87',
+      //   net_apy: '0.07',
+      //   total_earned: '65.87',
+      // };
+      // return fakeData;
+      const allSupply = await this.userService.getAllSupply(address, chainId);
+      return allSupply;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -164,7 +166,7 @@ export class UserController {
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
   @Get(':address/loan')
-  async findAllLoan(@Param('address') address: string) {
+  async getAllLoan(@Param('address') address: string) {
     try {
       const fakeData = {
         address: address,

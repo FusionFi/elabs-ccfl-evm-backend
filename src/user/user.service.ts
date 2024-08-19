@@ -8,10 +8,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { User } from './entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
+import { Contract } from 'src/contract/entity/contract.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
@@ -19,6 +20,10 @@ import * as bcrypt from 'bcrypt';
 import { I18nService, I18nContext } from 'nestjs-i18n';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
+import * as fs from 'fs';
+
+const abiCCFL = JSON.parse(fs.readFileSync('abi/CCFL.json', 'utf8'));
+const abiCCFLPool = JSON.parse(fs.readFileSync('abi/CCFLPool.json', 'utf8'));
 
 @Injectable()
 export class UserService {
@@ -36,6 +41,9 @@ export class UserService {
 
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
+
+    @InjectRepository(Contract)
+    private contractRepository: Repository<Contract>,
 
     private readonly i18n: I18nService,
   ) {}
@@ -311,5 +319,66 @@ export class UserService {
       address,
       balance,
     };
+  }
+
+  async getAllSupply(address: string, chainId: number) {
+    const network = await this.networkRepository.findOneBy({
+      isActive: true,
+      chainId,
+    });
+
+    if (!network) {
+      return {
+        address,
+        supplies: [],
+        // total_supply: null,
+        net_apy: null,
+        // total_earned: null
+      };
+    }
+
+    const allPools = await this.contractRepository.findBy({
+      isActive: true,
+      type: ILike(`%pool%`),
+      chainId: chainId,
+    });
+
+    const provider = new ethers.JsonRpcProvider(network.rpcUrl);
+
+    let supplies = [];
+    let apr = BigNumber(0);
+    for (const item of allPools) {
+      const contract = new ethers.Contract(item.address, abiCCFLPool, provider);
+      const supplyBalance = await contract.balance(address);
+
+      const currentRate = await contract.getCurrentRate();
+      // console.log('currentRate: ', currentRate);
+      apr = BigNumber(currentRate[1]).div(1e27);
+      // console.log('apr: ', apr.toFixed());
+      // apy = (BigNumber(1).plus(apr.div(31536000))).pow(31536000).minus(1); 
+
+      const walletBalance = await this.getBalance(address, chainId, item.asset);
+
+      const remainingPool = await contract.getRemainingPool();
+      const totalSupply = await contract.getTotalSupply();
+
+      supplies.push({
+        asset: item.asset,
+        supply_balance: supplyBalance.toString(),
+        earned_reward: null,
+        apy: apr.toFixed(),
+        wallet_balance: walletBalance.balance,
+        pool_utilization: BigNumber(remainingPool).div(totalSupply).toFixed(),
+        withdraw_available: null,
+      });
+    }
+
+    return {
+      address,
+      supplies,
+      // total_supply: null,
+      net_apy: apr.toFixed(),
+      // total_earned: null
+    };    
   }
 }
