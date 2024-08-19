@@ -419,7 +419,7 @@ export class SeederService {
           chainId: 11155111,
           asset: 'USDC',
           isActive: true,
-        }
+        },
       ];
 
       for (const item of contracts) {
