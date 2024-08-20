@@ -24,6 +24,7 @@ import * as fs from 'fs';
 
 const abiCCFL = JSON.parse(fs.readFileSync('abi/CCFL.json', 'utf8'));
 const abiCCFLPool = JSON.parse(fs.readFileSync('abi/CCFLPool.json', 'utf8'));
+const abiCCFLLoan = JSON.parse(fs.readFileSync('abi/CCFLLoan.json', 'utf8'));
 
 @Injectable()
 export class UserService {
@@ -346,16 +347,16 @@ export class UserService {
     const provider = new ethers.JsonRpcProvider(network.rpcUrl);
 
     let supplies = [];
-    let apr = BigNumber(0);
+    let apy = BigNumber(0);
     for (const item of allPools) {
       const contract = new ethers.Contract(item.address, abiCCFLPool, provider);
       const supplyBalance = await contract.balance(address);
 
       const currentRate = await contract.getCurrentRate();
       // console.log('currentRate: ', currentRate);
-      apr = BigNumber(currentRate[1]).div(1e27);
+      const apr = BigNumber(currentRate[1]).div(1e27);
       // console.log('apr: ', apr.toFixed());
-      // apy = (BigNumber(1).plus(apr.div(31536000))).pow(31536000).minus(1); 
+      apy = BigNumber(1).plus(apr.div(12)).pow(12).minus(1);
 
       const walletBalance = await this.getBalance(address, chainId, item.asset);
 
@@ -366,9 +367,9 @@ export class UserService {
         asset: item.asset,
         supply_balance: supplyBalance.toString(),
         earned_reward: null,
-        apy: apr.toFixed(),
+        apy: apy.toFixed(8),
         wallet_balance: walletBalance.balance,
-        pool_utilization: BigNumber(remainingPool).div(totalSupply).toFixed(),
+        pool_utilization: BigNumber(remainingPool).div(totalSupply).toFixed(8),
         withdraw_available: null,
       });
     }
@@ -377,8 +378,117 @@ export class UserService {
       address,
       supplies,
       // total_supply: null,
-      net_apy: apr.toFixed(),
+      net_apy: apy.toFixed(8),
       // total_earned: null
-    };    
+    };
+  }
+
+  async getAllLoan(address: string, chainId: number) {
+    const network = await this.networkRepository.findOneBy({
+      isActive: true,
+      chainId,
+    });
+
+    if (!network) {
+      return {
+        address,
+        loans: [],
+        net_apr: null,
+        finance_health: null,
+      };
+    }
+
+    const provider = new ethers.JsonRpcProvider(network.rpcUrl);
+
+    const ccfl = await this.contractRepository.findOneBy({
+      isActive: true,
+      type: ILike('ccfl'),
+      chainId: chainId,
+    });
+
+    const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, provider);
+
+    const loanIds = await contractCCFL.getLoanIds(address);
+    const maploanIds = loanIds.map((loan: BigNumber) => loan.toString());
+
+    let allLoans = [];
+    let apr = BigNumber(0);
+    for (let loanId of maploanIds) {
+      const loanAddress = await contractCCFL.getLoanAddress(loanId);
+      console.log('loanAddress: ', loanAddress);
+
+      const healthFactor = await contractCCFL.getHealthFactor(loanId);
+      console.log('healthFactor: ', healthFactor);
+
+      const contractLoan = new ethers.Contract(
+        loanAddress,
+        abiCCFLLoan,
+        provider,
+      );
+
+      const loanInfo = await contractLoan.getLoanInfo();
+      console.log('loanInfo: ', loanInfo);
+
+      const isYieldGenerating = await contractLoan.isStakeAave();
+      console.log('isYieldGenerating: ', isYieldGenerating);
+
+      const collateralAmount = await contractLoan.collateralAmount();
+      console.log('collateralAmount: ', collateralAmount);
+
+      const collateralToken = await contractLoan.collateralToken();
+      console.log('collateralToken: ', collateralToken);
+
+      const asset = await this.assetRepository.findOneBy({
+        isActive: true,
+        chainId,
+        address: ILike(loanInfo.stableCoin),
+      });
+      console.log('asset: ', asset);
+
+      const pool = await this.contractRepository.findOneBy({
+        isActive: true,
+        type: ILike('pool'),
+        chainId: chainId,
+        asset: ILike(asset.symbol),
+      });
+
+      const contractPool = new ethers.Contract(
+        pool.address,
+        abiCCFLPool,
+        provider,
+      );
+      const currentRate = await contractPool.getCurrentRate();
+      apr = BigNumber(currentRate[0]).div(1e27);
+
+      const collateral = await this.assetRepository.findOneBy({
+        isActive: true,
+        chainId,
+        address: ILike(collateralToken),
+      });
+      console.log('collateral: ', collateral);
+
+      allLoans.push({
+        asset: asset.symbol,
+        loan_size: loanInfo.amount.toString(),
+        apr: apr.toFixed(8),
+        health: BigNumber(healthFactor).div(100).toFixed(),
+        is_closed: loanInfo.isClosed,
+        is_liquidated: loanInfo.isLiquidated,
+        debt_remain: null,
+        collateral_amount: collateralAmount.toString(),
+        collateral_asset: collateral.symbol,
+        yield_generating: isYieldGenerating,
+        yield_earned: null,
+      });
+    }
+
+    console.log('allLoans: ', allLoans);
+
+    return {
+      address,
+      loans: allLoans,
+      net_apr: apr.toFixed(8),
+      finance_health: null,
+    };
   }
 }

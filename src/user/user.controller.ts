@@ -125,7 +125,10 @@ export class UserController {
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
   @Get(':address/:chainId/supply')
-  async getAllSupply(@Param('address') address: string, @Param('chainId') chainId: number) {
+  async getAllSupply(
+    @Param('address') address: string,
+    @Param('chainId') chainId: number,
+  ) {
     try {
       // const fakeData = {
       //   address: address,
@@ -165,31 +168,36 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's loans" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
-  @Get(':address/loan')
-  async getAllLoan(@Param('address') address: string) {
+  @Get(':address/:chainId/loan')
+  async getAllLoan(
+    @Param('address') address: string,
+    @Param('chainId') chainId: number,
+  ) {
     try {
-      const fakeData = {
-        address: address,
-        loans: [
-          {
-            asset: 'USDC',
-            loan_size: '3000',
-            apr: '1.82',
-            health: '12.76',
-            status: 'active',
-            debt_remain: '2780',
-            collateral_amount: '2.5',
-            collateral_asset: 'WETH',
-            yield_generating: true,
-            yield_earned: '0.281',
-          },
-        ],
-        total_loan: '1875.00',
-        total_collateral: '1875.00',
-        net_apr: '0.07',
-        finance_health: '1.66',
-      };
-      return fakeData;
+      // const fakeData = {
+      //   address: address,
+      //   loans: [
+      //     {
+      //       asset: 'USDC',
+      //       loan_size: '3000',
+      //       apr: '1.82',
+      //       health: '12.76',
+      //       status: 'active',
+      //       debt_remain: '2780',
+      //       collateral_amount: '2.5',
+      //       collateral_asset: 'WETH',
+      //       yield_generating: true,
+      //       yield_earned: '0.281',
+      //     },
+      //   ],
+      //   total_loan: '1875.00',
+      //   total_collateral: '1875.00',
+      //   net_apr: '0.07',
+      //   finance_health: '1.66',
+      // };
+      // return fakeData;
+      const allLoan = await this.userService.getAllLoan(address, chainId);
+      return allLoan;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

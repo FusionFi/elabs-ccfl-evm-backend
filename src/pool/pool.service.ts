@@ -25,7 +25,7 @@ export class PoolService {
     try {
       const allPools = await this.contractRepository.findBy({
         isActive: true,
-        type: ILike(`%pool%`),
+        type: ILike('pool'),
         chainId: chainId,
       });
 
