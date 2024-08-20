@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Contract } from 'src/contract/entity/contract.entity';
 import { Network } from 'src/network/entity/network.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import * as fs from 'fs';
@@ -19,9 +20,12 @@ export class PoolService {
 
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
+
+    @InjectRepository(Asset)
+    private assetRepository: Repository<Asset>,
   ) {}
 
-  async findAllPool(chainId: number) {
+  async getAllPool(chainId: number) {
     try {
       const allPools = await this.contractRepository.findBy({
         isActive: true,
@@ -45,10 +49,17 @@ export class PoolService {
         const loan_available = await contract.getRemainingPool();
         const apr = await contract.getCurrentRate();
 
+        const asset = await this.assetRepository.findOneBy({
+          isActive: true,
+          chainId,
+          symbol: ILike(item.asset),
+        });
+
         finalData.push({
           asset: item.asset,
+          decimals: asset.decimals,
           loan_available: BigNumber(loan_available).toFixed(),
-          apr: BigNumber(apr[0]).div(1e27).toFixed(),
+          apr: BigNumber(apr[0]).div(1e27).toFixed(8),
         });
       }
       return finalData;

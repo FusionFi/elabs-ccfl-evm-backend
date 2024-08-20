@@ -32,9 +32,9 @@ export class PoolController {
   // @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Find all pools' })
   @Get('all/:chainId')
-  async findAllPool(@Param('chainId') chainId: number) {
+  async getAllPool(@Param('chainId') chainId: number) {
     try {
-      const allPools = await this.poolService.findAllPool(chainId);
+      const allPools = await this.poolService.getAllPool(chainId);
       return allPools;
     } catch (e) {
       throw new HttpException(e.response, e.status);

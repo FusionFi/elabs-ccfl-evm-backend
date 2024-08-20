@@ -277,6 +277,7 @@ export class UserService {
 
   async getBalance(address: string, chainId: number, asset: string) {
     let balance = null;
+    let decimals = null;
 
     const network = await this.networkRepository.findOneBy({
       isActive: true,
@@ -287,6 +288,7 @@ export class UserService {
       return {
         address,
         balance,
+        decimals,
       };
     }
 
@@ -295,6 +297,7 @@ export class UserService {
     if (asset.toUpperCase() == 'ETH') {
       const ethBalance = await provider.getBalance(address);
       balance = ethBalance.toString();
+      decimals = 18;
     } else {
       const abi = ['function balanceOf(address) view returns (uint256)'];
 
@@ -308,17 +311,20 @@ export class UserService {
         return {
           address,
           balance,
+          decimals,
         };
       }
 
       const contract = new ethers.Contract(token.address, abi, provider);
       const tokenBalance = await contract.balanceOf(address);
       balance = tokenBalance.toString();
+      decimals = token.decimals;
     }
 
     return {
       address,
       balance,
+      decimals,
     };
   }
 
@@ -340,34 +346,44 @@ export class UserService {
 
     const allPools = await this.contractRepository.findBy({
       isActive: true,
-      type: ILike(`%pool%`),
+      type: ILike('pool'),
       chainId: chainId,
     });
 
     const provider = new ethers.JsonRpcProvider(network.rpcUrl);
 
-    let supplies = [];
-    let apy = BigNumber(0);
+    const supplies = [];
+    let netApy = BigNumber(0);
     for (const item of allPools) {
       const contract = new ethers.Contract(item.address, abiCCFLPool, provider);
       const supplyBalance = await contract.balance(address);
 
       const currentRate = await contract.getCurrentRate();
-      // console.log('currentRate: ', currentRate);
-      const apr = BigNumber(currentRate[1]).div(1e27);
-      // console.log('apr: ', apr.toFixed());
-      apy = BigNumber(1).plus(apr.div(12)).pow(12).minus(1);
+      const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
+      const apy = BigNumber(1)
+        .plus(BigNumber(apr).div(12))
+        .pow(12)
+        .minus(1)
+        .toFixed(8);
+      netApy = netApy.plus(apy);
 
       const walletBalance = await this.getBalance(address, chainId, item.asset);
 
       const remainingPool = await contract.getRemainingPool();
       const totalSupply = await contract.getTotalSupply();
 
+      const asset = await this.assetRepository.findOneBy({
+        isActive: true,
+        chainId,
+        symbol: ILike(item.asset),
+      });
+
       supplies.push({
         asset: item.asset,
+        decimals: asset.decimals,
         supply_balance: supplyBalance.toString(),
         earned_reward: null,
-        apy: apy.toFixed(8),
+        apy,
         wallet_balance: walletBalance.balance,
         pool_utilization: BigNumber(remainingPool).div(totalSupply).toFixed(8),
         withdraw_available: null,
@@ -378,7 +394,8 @@ export class UserService {
       address,
       supplies,
       // total_supply: null,
-      net_apy: apy.toFixed(8),
+      net_apy:
+        supplies.length == 0 ? null : netApy.div(supplies.length).toFixed(8),
       // total_earned: null
     };
   }
@@ -411,14 +428,12 @@ export class UserService {
     const loanIds = await contractCCFL.getLoanIds(address);
     const maploanIds = loanIds.map((loan: BigNumber) => loan.toString());
 
-    let allLoans = [];
-    let apr = BigNumber(0);
-    for (let loanId of maploanIds) {
+    const allLoans = [];
+    let netApr = BigNumber(0);
+    for (const loanId of maploanIds) {
       const loanAddress = await contractCCFL.getLoanAddress(loanId);
-      console.log('loanAddress: ', loanAddress);
 
       const healthFactor = await contractCCFL.getHealthFactor(loanId);
-      console.log('healthFactor: ', healthFactor);
 
       const contractLoan = new ethers.Contract(
         loanAddress,
@@ -427,23 +442,18 @@ export class UserService {
       );
 
       const loanInfo = await contractLoan.getLoanInfo();
-      console.log('loanInfo: ', loanInfo);
 
       const isYieldGenerating = await contractLoan.isStakeAave();
-      console.log('isYieldGenerating: ', isYieldGenerating);
 
       const collateralAmount = await contractLoan.collateralAmount();
-      console.log('collateralAmount: ', collateralAmount);
 
       const collateralToken = await contractLoan.collateralToken();
-      console.log('collateralToken: ', collateralToken);
 
       const asset = await this.assetRepository.findOneBy({
         isActive: true,
         chainId,
         address: ILike(loanInfo.stableCoin),
       });
-      console.log('asset: ', asset);
 
       const pool = await this.contractRepository.findOneBy({
         isActive: true,
@@ -458,36 +468,39 @@ export class UserService {
         provider,
       );
       const currentRate = await contractPool.getCurrentRate();
-      apr = BigNumber(currentRate[0]).div(1e27);
+      const apr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
+      netApr = netApr.plus(apr);
+
+      const debtRemain = await contractPool.getCurrentLoan(loanId);
 
       const collateral = await this.assetRepository.findOneBy({
         isActive: true,
         chainId,
         address: ILike(collateralToken),
       });
-      console.log('collateral: ', collateral);
 
       allLoans.push({
         asset: asset.symbol,
+        decimals: asset.decimals,
         loan_size: loanInfo.amount.toString(),
-        apr: apr.toFixed(8),
+        apr,
         health: BigNumber(healthFactor).div(100).toFixed(),
         is_closed: loanInfo.isClosed,
         is_liquidated: loanInfo.isLiquidated,
-        debt_remain: null,
+        debt_remain: debtRemain.toString(),
         collateral_amount: collateralAmount.toString(),
         collateral_asset: collateral.symbol,
+        collateral_decimals: collateral.decimals,
         yield_generating: isYieldGenerating,
         yield_earned: null,
       });
     }
 
-    console.log('allLoans: ', allLoans);
-
     return {
       address,
       loans: allLoans,
-      net_apr: apr.toFixed(8),
+      net_apr:
+        allLoans.length == 0 ? null : netApr.div(allLoans.length).toFixed(8),
       finance_health: null,
     };
   }
