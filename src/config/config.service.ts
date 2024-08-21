@@ -74,4 +74,9 @@ export class ConfigService {
   static Coingecko = {
     url: process.env.COINGECKO_URL,
   };
+
+  static Telegram = {
+    groupId: process.env.TELEGRAM_GROUP_ID,
+    token: process.env.TELEGRAM_TOKEN,
+  };
 }

@@ -5,6 +5,8 @@ import { Asset } from 'src/asset/entity/asset.entity';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
+import { InjectBot } from 'nestjs-telegraf';
+import { Telegraf } from 'telegraf';
 
 @Injectable()
 export class TaskService {
@@ -13,10 +15,12 @@ export class TaskService {
   constructor(
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
+
+    @InjectBot() private bot: Telegraf<any>,
   ) {}
 
   @Cron('*/1 * * * *')
-  // @Interval(1000)
+  // @Interval(10000)
   async handleCron() {
     try {
       this.logger.log('Called every 1 minute to update all prices');
@@ -25,7 +29,6 @@ export class TaskService {
         .select('DISTINCT(asset.coingecko_id)')
         .getRawMany();
       const allCgcIds = data.map((item) => item.coingecko_id).join(',');
-      console.log('allCgcIds: ', allCgcIds);
 
       const coingeckoUrl = ConfigService.Coingecko.url;
 
@@ -36,18 +39,21 @@ export class TaskService {
         },
       });
 
-      console.log('price: ', price.data);
-
-      for (let item in price.data) {
+      for (const item in price.data) {
         await this.assetRepository.update(
           { coingeckoId: item },
           { price: price.data[item]['usd'] },
         );
       }
       this.logger.log('Done for updating all prices');
-    } catch (e) {
-      this.logger.error(`Error in updating all prices from coingecko: ${e}`);
-      throw e;
+    } catch (error) {
+      this.logger.error(
+        `Error in updating all prices from coingecko: ${error}`,
+      );
+      this.bot.telegram.sendMessage(
+        ConfigService.Telegram.groupId,
+        `[SOS] Error in updating all prices from coingecko: ${error}`,
+      );
     }
   }
 
