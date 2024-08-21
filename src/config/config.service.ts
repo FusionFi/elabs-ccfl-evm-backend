@@ -70,4 +70,8 @@ export class ConfigService {
     url: process.env.RPC_URL,
     key: process.env.RPC_KEY,
   };
+
+  static Coingecko = {
+    url: process.env.COINGECKO_URL,
+  };
 }

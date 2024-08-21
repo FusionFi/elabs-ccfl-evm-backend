@@ -1,7 +1,6 @@
 import { Injectable, HttpException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
-// import { Contract } from 'src/contract/entity/contract.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { ethers } from 'ethers';
@@ -13,9 +12,6 @@ export class PriceService {
   private readonly logger = new Logger(PriceService.name);
 
   constructor(
-    // @InjectRepository(Contract)
-    // private contractRepository: Repository<Contract>,
-
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
 

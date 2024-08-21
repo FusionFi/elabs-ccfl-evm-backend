@@ -65,7 +65,7 @@ export class Asset {
     default: 0,
     type: 'numeric',
     precision: 20,
-    scale: 10
+    scale: 10,
   })
   price: number;
 
