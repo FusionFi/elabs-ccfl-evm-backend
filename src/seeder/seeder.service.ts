@@ -41,7 +41,7 @@ export class SeederService {
       const salt = await bcrypt.genSalt();
       user.password = await bcrypt.hash(ConfigService.Admin.password, salt);
       user.role = Role.Admin;
-      user.email = 'admin@gmail.com';
+      user.email = 'congle@emurgo.africa';
       user.emailVerified = true;
       user.isActive = true;
 
@@ -408,14 +408,14 @@ export class SeederService {
       const contracts = [
         {
           type: 'ccfl',
-          address: '0xC4D4F122afb8501BdB795D3A8A4F49585D669f31',
+          address: '0xD11f9401b80472270FC4d8116e2a7E5eA68fd487',
           chainId: 11155111,
           asset: null,
           isActive: true,
         },
         {
           type: 'pool',
-          address: '0x90FdF269d63990710e17491cb5E34b39a7D77460',
+          address: '0xeA6c6a0EBf512Ccea5DBBF5c20718f911fa454df',
           chainId: 11155111,
           asset: 'USDC',
           isActive: true,

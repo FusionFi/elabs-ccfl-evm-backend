@@ -381,7 +381,7 @@ export class UserService {
           walletBalance,
           asset,
         ] = await Promise.all([
-          contract.balance(address),
+          contract.balanceOf(address),
           contract.getCurrentRate(),
           contract.getRemainingPool(),
           contract.getTotalSupply(),
@@ -483,13 +483,19 @@ export class UserService {
           provider,
         );
 
-        const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] =
-          await Promise.all([
-            contractLoan.getLoanInfo(),
-            contractLoan.collateralAmount(),
-            contractLoan.collateralToken(),
-            contractLoan.isStakeAave(),
-          ]);
+        const [
+          loanInfo,
+          collateralAmount,
+          collateralToken,
+          isYieldGenerating,
+          yieldEarned,
+        ] = await Promise.all([
+          contractLoan.getLoanInfo(),
+          contractLoan.collateralAmount(),
+          contractLoan.collateralToken(),
+          contractLoan.isStakeAave(),
+          contractLoan.getYieldEarned(),
+        ]);
 
         const [asset, collateral] = await Promise.all([
           this.assetRepository.findOneBy({
@@ -538,7 +544,7 @@ export class UserService {
           collateral_asset: collateral.symbol,
           collateral_decimals: collateral.decimals,
           yield_generating: isYieldGenerating,
-          yield_earned: null,
+          yield_earned: yieldEarned.toString(),
         });
       }
 

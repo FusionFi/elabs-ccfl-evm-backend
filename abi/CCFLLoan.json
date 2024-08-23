@@ -144,7 +144,13 @@
   {
     "inputs": [],
     "name": "closeLoan",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -176,7 +182,33 @@
   },
   {
     "inputs": [],
-    "name": "earnSharePercent",
+    "name": "earnBorrower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "earnLender",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "earnPlatform",
     "outputs": [
       {
         "internalType": "uint256",
@@ -232,6 +264,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getIsYeild",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -306,6 +351,11 @@
             "internalType": "bool",
             "name": "isFinalty",
             "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFiat",
+            "type": "bool"
           }
         ],
         "internalType": "struct DataTypes.Loan",
@@ -362,6 +412,19 @@
   },
   {
     "inputs": [],
+    "name": "getYieldEarned",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "initLoan",
     "outputs": [
       {
@@ -402,6 +465,11 @@
       {
         "internalType": "bool",
         "name": "isFinalty",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isFiat",
         "type": "bool"
       }
     ],
@@ -450,6 +518,11 @@
           {
             "internalType": "bool",
             "name": "isFinalty",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFiat",
             "type": "bool"
           }
         ],
@@ -535,7 +608,13 @@
       }
     ],
     "name": "liquidate",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -621,11 +700,21 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_earnSharePercent",
+        "name": "_borrower",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_platform",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_lender",
         "type": "uint256"
       }
     ],
-    "name": "setEarnSharePercent",
+    "name": "setEarnShare",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -722,7 +811,13 @@
   {
     "inputs": [],
     "name": "withdrawLiquidity",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
