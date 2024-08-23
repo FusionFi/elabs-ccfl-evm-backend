@@ -21,30 +21,14 @@ export class PriceService {
 
   async getPrice(chainId: number, asset: string) {
     try {
-      const network = await this.networkRepository.findOneBy({
-        chainId,
-      });
-
-      if (!network) {
-        return {
-          price: null,
-        };
-      }
-
       const token = await this.assetRepository.findOneBy({
         isActive: true,
         chainId,
         symbol: ILike(asset),
       });
 
-      if (!token) {
-        return {
-          price: null,
-        };
-      }
-
       return {
-        price: token.price,
+        price: token ? token.price : null,
       };
     } catch (e) {
       throw new HttpException(e.response, e.status);

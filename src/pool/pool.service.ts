@@ -27,15 +27,16 @@ export class PoolService {
 
   async getAllPool(chainId: number) {
     try {
-      const allPools = await this.contractRepository.findBy({
-        isActive: true,
-        type: ILike('pool'),
-        chainId: chainId,
-      });
-
-      const network = await this.networkRepository.findOneBy({
-        chainId,
-      });
+      const [network, allPools] = await Promise.all([
+        this.networkRepository.findOneBy({
+          chainId,
+        }),
+        this.contractRepository.findBy({
+          isActive: true,
+          type: ILike('pool'),
+          chainId,
+        }),
+      ]);
 
       if (!network) {
         return [];
@@ -46,14 +47,16 @@ export class PoolService {
       const finalData = [];
       for (const item of allPools) {
         const contract = new ethers.Contract(item.address, abi, provider);
-        const loan_available = await contract.getRemainingPool();
-        const apr = await contract.getCurrentRate();
 
-        const asset = await this.assetRepository.findOneBy({
-          isActive: true,
-          chainId,
-          symbol: ILike(item.asset),
-        });
+        const [loan_available, apr, asset] = await Promise.all([
+          contract.getRemainingPool(),
+          contract.getCurrentRate(),
+          this.assetRepository.findOneBy({
+            isActive: true,
+            chainId,
+            symbol: ILike(item.asset),
+          }),
+        ]);
 
         finalData.push({
           asset: item.asset,

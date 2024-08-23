@@ -250,26 +250,9 @@ export class UserService {
     }
   }
 
-  async findOne(username: string) {
-    try {
-      const result: User = await this.userRepository.findOneBy({ username });
-      return result;
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
   async findAllUser() {
     try {
       return await this.userRepository.find();
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async remove(id: string) {
-    try {
-      await this.userRepository.delete(id);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -329,10 +312,17 @@ export class UserService {
   }
 
   async getAllSupply(address: string, chainId: number) {
-    const network = await this.networkRepository.findOneBy({
-      isActive: true,
-      chainId,
-    });
+    const [network, allPools] = await Promise.all([
+      this.networkRepository.findOneBy({
+        isActive: true,
+        chainId,
+      }),
+      this.contractRepository.findBy({
+        isActive: true,
+        type: ILike('pool'),
+        chainId: chainId,
+      }),
+    ]);
 
     if (!network) {
       return {
@@ -344,21 +334,33 @@ export class UserService {
       };
     }
 
-    const allPools = await this.contractRepository.findBy({
-      isActive: true,
-      type: ILike('pool'),
-      chainId: chainId,
-    });
-
     const provider = new ethers.JsonRpcProvider(network.rpcUrl);
 
     const supplies = [];
     let netApy = BigNumber(0);
     for (const item of allPools) {
       const contract = new ethers.Contract(item.address, abiCCFLPool, provider);
-      const supplyBalance = await contract.balance(address);
 
-      const currentRate = await contract.getCurrentRate();
+      const [
+        supplyBalance,
+        currentRate,
+        remainingPool,
+        totalSupply,
+        walletBalance,
+        asset,
+      ] = await Promise.all([
+        contract.balance(address),
+        contract.getCurrentRate(),
+        contract.getRemainingPool(),
+        contract.getTotalSupply(),
+        this.getBalance(address, chainId, item.asset),
+        this.assetRepository.findOneBy({
+          isActive: true,
+          chainId,
+          symbol: ILike(item.asset),
+        }),
+      ]);
+
       const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
       const apy = BigNumber(1)
         .plus(BigNumber(apr).div(12))
@@ -366,17 +368,6 @@ export class UserService {
         .minus(1)
         .toFixed(8);
       netApy = netApy.plus(apy);
-
-      const walletBalance = await this.getBalance(address, chainId, item.asset);
-
-      const remainingPool = await contract.getRemainingPool();
-      const totalSupply = await contract.getTotalSupply();
-
-      const asset = await this.assetRepository.findOneBy({
-        isActive: true,
-        chainId,
-        symbol: ILike(item.asset),
-      });
 
       supplies.push({
         asset: item.asset,
@@ -401,10 +392,17 @@ export class UserService {
   }
 
   async getAllLoan(address: string, chainId: number) {
-    const network = await this.networkRepository.findOneBy({
-      isActive: true,
-      chainId,
-    });
+    const [network, ccfl] = await Promise.all([
+      this.networkRepository.findOneBy({
+        isActive: true,
+        chainId,
+      }),
+      this.contractRepository.findOneBy({
+        isActive: true,
+        type: ILike('ccfl'),
+        chainId,
+      }),
+    ]);
 
     if (!network) {
       return {
@@ -416,12 +414,6 @@ export class UserService {
     }
 
     const provider = new ethers.JsonRpcProvider(network.rpcUrl);
-
-    const ccfl = await this.contractRepository.findOneBy({
-      isActive: true,
-      type: ILike('ccfl'),
-      chainId: chainId,
-    });
 
     const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, provider);
 
@@ -442,23 +434,31 @@ export class UserService {
         provider,
       );
 
-      const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] = await Promise.all([
-        contractLoan.getLoanInfo(),
-        contractLoan.collateralAmount(),
-        contractLoan.collateralToken(),
-        contractLoan.isStakeAave()
-      ]);
+      const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] =
+        await Promise.all([
+          contractLoan.getLoanInfo(),
+          contractLoan.collateralAmount(),
+          contractLoan.collateralToken(),
+          contractLoan.isStakeAave(),
+        ]);
 
-      const asset = await this.assetRepository.findOneBy({
-        isActive: true,
-        chainId,
-        address: ILike(loanInfo.stableCoin),
-      });
+      const [asset, collateral] = await Promise.all([
+        this.assetRepository.findOneBy({
+          isActive: true,
+          chainId,
+          address: ILike(loanInfo.stableCoin),
+        }),
+        this.assetRepository.findOneBy({
+          isActive: true,
+          chainId,
+          address: ILike(collateralToken),
+        }),
+      ]);
 
       const pool = await this.contractRepository.findOneBy({
         isActive: true,
         type: ILike('pool'),
-        chainId: chainId,
+        chainId,
         asset: ILike(asset.symbol),
       });
 
@@ -470,17 +470,11 @@ export class UserService {
 
       const [currentRate, debtRemain] = await Promise.all([
         contractPool.getCurrentRate(),
-        contractPool.getCurrentLoan(loanId)
+        contractPool.getCurrentLoan(loanId),
       ]);
 
       const apr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
       netApr = netApr.plus(apr);
-
-      const collateral = await this.assetRepository.findOneBy({
-        isActive: true,
-        chainId,
-        address: ILike(collateralToken),
-      });
 
       allLoans.push({
         asset: asset.symbol,
