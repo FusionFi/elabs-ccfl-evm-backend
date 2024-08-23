@@ -431,9 +431,10 @@ export class UserService {
     const allLoans = [];
     let netApr = BigNumber(0);
     for (const loanId of maploanIds) {
-      const loanAddress = await contractCCFL.getLoanAddress(loanId);
-
-      const healthFactor = await contractCCFL.getHealthFactor(loanId);
+      const [loanAddress, healthFactor] = await Promise.all([
+        contractCCFL.getLoanAddress(loanId),
+        contractCCFL.getHealthFactor(loanId),
+      ]);
 
       const contractLoan = new ethers.Contract(
         loanAddress,
@@ -441,13 +442,12 @@ export class UserService {
         provider,
       );
 
-      const loanInfo = await contractLoan.getLoanInfo();
-
-      const isYieldGenerating = await contractLoan.isStakeAave();
-
-      const collateralAmount = await contractLoan.collateralAmount();
-
-      const collateralToken = await contractLoan.collateralToken();
+      const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] = await Promise.all([
+        contractLoan.getLoanInfo(),
+        contractLoan.collateralAmount(),
+        contractLoan.collateralToken(),
+        contractLoan.isStakeAave()
+      ]);
 
       const asset = await this.assetRepository.findOneBy({
         isActive: true,
@@ -467,11 +467,14 @@ export class UserService {
         abiCCFLPool,
         provider,
       );
-      const currentRate = await contractPool.getCurrentRate();
+
+      const [currentRate, debtRemain] = await Promise.all([
+        contractPool.getCurrentRate(),
+        contractPool.getCurrentLoan(loanId)
+      ]);
+
       const apr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
       netApr = netApr.plus(apr);
-
-      const debtRemain = await contractPool.getCurrentLoan(loanId);
 
       const collateral = await this.assetRepository.findOneBy({
         isActive: true,
