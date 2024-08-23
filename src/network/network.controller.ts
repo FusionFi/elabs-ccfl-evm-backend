@@ -10,7 +10,12 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { NetworkService } from './network.service';
 import { NetworkDto } from './dto/network.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -43,22 +48,22 @@ export class NetworkController {
   @ApiQuery({
     name: 'name',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'code',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'chainId',
     type: Number,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'isMainnet',
     type: Boolean,
-    required: false
+    required: false,
   })
   @Get()
   async findAllNetwork(
@@ -68,7 +73,12 @@ export class NetworkController {
     @Query('isMainnet') isMainnet?: boolean,
   ) {
     try {
-      const allNetwork = await this.networkService.findAllNetwork(name, code, chainId, isMainnet);
+      const allNetwork = await this.networkService.findAllNetwork(
+        name,
+        code,
+        chainId,
+        isMainnet,
+      );
       return mapNetwork(allNetwork);
     } catch (e) {
       throw new HttpException(e.response, e.status);

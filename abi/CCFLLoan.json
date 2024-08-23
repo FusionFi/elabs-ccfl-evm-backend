@@ -1,0 +1,828 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidInitialization",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotInitializing",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "version",
+        "type": "uint64"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "onBehalfOf",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquiditySupplied",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityWithdrawn",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "LTV",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "aToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "aaveAddressProvider",
+    "outputs": [
+      {
+        "internalType": "contract IPoolAddressesProvider",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ccfl",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closeLoan",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collateralAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collateralToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "earnBorrower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "earnLender",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "earnPlatform",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "factory",
+    "outputs": [
+      {
+        "internalType": "contract IUniswapV3Factory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeTier",
+    "outputs": [
+      {
+        "internalType": "uint24",
+        "name": "",
+        "type": "uint24"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "addCollateral",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHealthFactor",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getIsYeild",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "_coin",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isPool",
+        "type": "bool"
+      }
+    ],
+    "name": "getLatestPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLoanInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "loanId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPaid",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "borrower",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isLiquidated",
+            "type": "bool"
+          },
+          {
+            "internalType": "contract IERC20Standard",
+            "name": "stableCoin",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalty",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFiat",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct DataTypes.Loan",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getUserAccountData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalCollateralBase",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalDebtBase",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availableBorrowsBase",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentLiquidationThreshold",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "ltv",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "healthFactor",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getYieldEarned",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initLoan",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "loanId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isPaid",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isClosed",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isLiquidated",
+        "type": "bool"
+      },
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "stableCoin",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isFinalty",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isFiat",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "loanId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isPaid",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "borrower",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isLiquidated",
+            "type": "bool"
+          },
+          {
+            "internalType": "contract IERC20Standard",
+            "name": "stableCoin",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalty",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFiat",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct DataTypes.Loan",
+        "name": "_loan",
+        "type": "tuple"
+      },
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "_collateralToken",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IPoolAddressesProvider",
+        "name": "_aaveAddressProvider",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "_aToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_ltv",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_threshold",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract AggregatorV3Interface",
+        "name": "_priceFeed",
+        "type": "address"
+      },
+      {
+        "internalType": "contract AggregatorV3Interface",
+        "name": "_pricePoolFeed",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_platform",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IWETH",
+        "name": "_iWETH",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isStakeAave",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_currentDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_percent",
+        "type": "uint256"
+      }
+    ],
+    "name": "liquidate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "liquidationThreshold",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "platform",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "priceFeed",
+    "outputs": [
+      {
+        "internalType": "contract AggregatorV3Interface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pricePoolFeed",
+    "outputs": [
+      {
+        "internalType": "contract AggregatorV3Interface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_ccfl",
+        "type": "address"
+      }
+    ],
+    "name": "setCCFL",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_borrower",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_platform",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_lender",
+        "type": "uint256"
+      }
+    ],
+    "name": "setEarnShare",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "setPaid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ISwapRouter",
+        "name": "_swapRouter",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IUniswapV3Factory",
+        "name": "_factory",
+        "type": "address"
+      }
+    ],
+    "name": "setSwapRouter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "supplyLiquidity",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "swapRouter",
+    "outputs": [
+      {
+        "internalType": "contract ISwapRouter",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateCollateral",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wETH",
+    "outputs": [
+      {
+        "internalType": "contract IWETH",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isETH",
+        "type": "bool"
+      }
+    ],
+    "name": "withdrawAllCollateral",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawLiquidity",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
+]

@@ -29,7 +29,12 @@ export class NetworkService {
     }
   }
 
-  async findAllNetwork(name: string, code: string, chainId: number, isMainnet: boolean) {
+  async findAllNetwork(
+    name: string,
+    code: string,
+    chainId: number,
+    isMainnet: boolean,
+  ) {
     try {
       const searchObj: any = {
         isActive: true,

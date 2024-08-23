@@ -1,11 +1,15 @@
-import { Injectable, HttpException, Logger } from '@nestjs/common';
+import { Injectable, HttpException, Logger, Inject } from '@nestjs/common';
+import { ConfigService } from 'src/config/config.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Contract } from 'src/contract/entity/contract.entity';
-import { Network } from 'src/network/entity/network.entity'
+import { Network } from 'src/network/entity/network.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js'
+import BigNumber from 'bignumber.js';
 import * as fs from 'fs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 const abi = JSON.parse(fs.readFileSync('abi/CCFLPool.json', 'utf8'));
 
@@ -19,19 +23,32 @@ export class PoolService {
 
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
+
+    @InjectRepository(Asset)
+    private assetRepository: Repository<Asset>,
+
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  async findAllPool(chainId: number) {
+  async getAllPool(chainId: number) {
     try {
-      const allPools = await this.contractRepository.findBy({
-        isActive: true,
-        type: ILike(`%pool%`),
-        chainId: chainId,
-      });
+      const key = `getAllPool_${chainId}`;
+      const cacheData = await this.cacheManager.get(key);
+      if (cacheData) {
+        this.logger.log(`\n:return:cache:${key}`);
+        return cacheData;
+      }
 
-      const network = await this.networkRepository.findOneBy({
-        chainId
-      });
+      const [network, allPools] = await Promise.all([
+        this.networkRepository.findOneBy({
+          chainId,
+        }),
+        this.contractRepository.findBy({
+          isActive: true,
+          type: ILike('pool'),
+          chainId,
+        }),
+      ]);
 
       if (!network) {
         return [];
@@ -39,18 +56,30 @@ export class PoolService {
 
       const provider = new ethers.JsonRpcProvider(network.rpcUrl);
 
-      let finalData = [];
-      for (let item of allPools) {
-        let contract = new ethers.Contract(item.address, abi, provider);
-        let loan_available = await contract.getRemainingPool();
-        let apr = await contract.getCurrentRate();
-        
+      const finalData = [];
+      for (const item of allPools) {
+        const contract = new ethers.Contract(item.address, abi, provider);
+
+        const [loan_available, apr, asset] = await Promise.all([
+          contract.getRemainingPool(),
+          contract.getCurrentRate(),
+          this.assetRepository.findOneBy({
+            isActive: true,
+            chainId,
+            symbol: ILike(item.asset),
+          }),
+        ]);
+
         finalData.push({
           asset: item.asset,
+          decimals: asset.decimals,
           loan_available: BigNumber(loan_available).toFixed(),
-          apr: BigNumber(apr[0]).div(1e27).toFixed()
+          apr: BigNumber(apr[0]).div(1e27).toFixed(8),
         });
       }
+
+      this.cacheManager.store.set(key, finalData, ConfigService.Cache.ttl);
+
       return finalData;
     } catch (e) {
       throw new HttpException(e.response, e.status);

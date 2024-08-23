@@ -10,7 +10,12 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ContractService } from './contract.service';
 import { ContractDto } from './dto/contract.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -31,7 +36,8 @@ export class ContractController {
   @Post()
   async createContract(@Body() contractDto: ContractDto) {
     try {
-      const newContract = await this.contractService.createContract(contractDto);
+      const newContract =
+        await this.contractService.createContract(contractDto);
       return mapContract(newContract);
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -43,22 +49,22 @@ export class ContractController {
   @ApiQuery({
     name: 'type',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'address',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'chainId',
     type: Number,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'asset',
     type: String,
-    required: false
+    required: false,
   })
   @Get()
   async findAllContract(
@@ -68,7 +74,12 @@ export class ContractController {
     @Query('asset') asset?: string,
   ) {
     try {
-      const allContracts = await this.contractService.findAllContract(type, address, chainId, asset);
+      const allContracts = await this.contractService.findAllContract(
+        type,
+        address,
+        chainId,
+        asset,
+      );
       return mapContract(allContracts);
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -92,9 +103,15 @@ export class ContractController {
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Update a contract' })
   @Patch(':id')
-  async updateContract(@Param('id') id: string, @Body() contractDto: ContractDto) {
+  async updateContract(
+    @Param('id') id: string,
+    @Body() contractDto: ContractDto,
+  ) {
     try {
-      const contract = await this.contractService.updateContract(id, contractDto);
+      const contract = await this.contractService.updateContract(
+        id,
+        contractDto,
+      );
       return mapContract(contract);
     } catch (e) {
       throw new HttpException(e.response, e.status);

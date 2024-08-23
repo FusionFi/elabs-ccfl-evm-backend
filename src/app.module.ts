@@ -22,6 +22,8 @@ import { UserModule } from './user/user.module';
 import { ContractModule } from './contract/contract.module';
 import { PoolModule } from './pool/pool.module';
 import { SubgraphModule } from './subgraph/subgraph.module';
+import { PriceModule } from './price/price.module';
+import { TelegrafModule } from 'nestjs-telegraf';
 import {
   I18nModule,
   AcceptLanguageResolver,
@@ -59,6 +61,9 @@ import * as path from 'path';
       }),
       inject: [ConfigService],
     }),
+    TelegrafModule.forRoot({
+      token: ConfigService.Telegram.token,
+    }),
     ScheduleModule.forRoot(),
     TaskModule,
     EventModule,
@@ -77,6 +82,7 @@ import * as path from 'path';
     SettingModule,
     ContractModule,
     NetworkModule,
+    PriceModule,
     AssetModule,
     UserModule,
     PoolModule,

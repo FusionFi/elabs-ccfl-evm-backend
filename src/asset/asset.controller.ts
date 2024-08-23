@@ -10,7 +10,12 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AssetService } from './asset.service';
 import { AssetDto } from './dto/asset.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -43,42 +48,42 @@ export class AssetController {
   @ApiQuery({
     name: 'category',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'type',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'chainName',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'chainId',
     type: Number,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'name',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'symbol',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'address',
     type: String,
-    required: false
+    required: false,
   })
   @ApiQuery({
     name: 'isMainnet',
     type: Boolean,
-    required: false
+    required: false,
   })
   @Get()
   async findAllAsset(
@@ -92,7 +97,16 @@ export class AssetController {
     @Query('isMainnet') isMainnet?: boolean,
   ) {
     try {
-      const allAssets = await this.assetService.findAllAsset(category, type, chainName, chainId, name, symbol, address, isMainnet);
+      const allAssets = await this.assetService.findAllAsset(
+        category,
+        type,
+        chainName,
+        chainId,
+        name,
+        symbol,
+        address,
+        isMainnet,
+      );
       return mapAsset(allAssets);
     } catch (e) {
       throw new HttpException(e.response, e.status);

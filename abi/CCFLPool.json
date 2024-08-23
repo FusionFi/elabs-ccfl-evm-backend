@@ -29,40 +29,15 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "loanId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "borrower",
+        "name": "lender",
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "when",
-        "type": "uint256"
-      }
-    ],
-    "name": "CloseLoan",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
+        "indexed": true,
+        "internalType": "contract IERC20Standard",
+        "name": "supply",
         "type": "address"
       },
       {
@@ -74,11 +49,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "when",
+        "name": "timestamp",
         "type": "uint256"
       }
     ],
-    "name": "Deposit",
+    "name": "AddSupply",
     "type": "event"
   },
   {
@@ -98,9 +73,15 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
-        "name": "user",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20Standard",
+        "name": "supply",
         "type": "address"
       },
       {
@@ -112,36 +93,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "when",
+        "name": "timestamp",
         "type": "uint256"
       }
     ],
-    "name": "Withdraw",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "when",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawLoan",
+    "name": "WithdrawSupply",
     "type": "event"
   },
   {
@@ -152,6 +108,25 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -173,6 +148,11 @@
         "internalType": "address",
         "name": "_borrower",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isFiat",
+        "type": "bool"
       }
     ],
     "name": "borrow",
@@ -197,6 +177,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "earnStaking",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -326,6 +319,11 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_loanId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
       }
@@ -366,14 +364,29 @@
         "type": "bool"
       },
       {
-        "internalType": "bool",
-        "name": "isLocked",
-        "type": "bool"
-      },
-      {
         "internalType": "address",
         "name": "borrower",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isLiquidated",
+        "type": "bool"
+      },
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "stableCoin",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "isFinalty",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isFiat",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

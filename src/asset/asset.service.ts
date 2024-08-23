@@ -41,7 +41,7 @@ export class AssetService {
     name?: string,
     symbol?: string,
     address?: string,
-    isMainnet?: boolean
+    isMainnet?: boolean,
   ) {
     try {
       const searchObj: any = {

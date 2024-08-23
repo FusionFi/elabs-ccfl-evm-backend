@@ -3,10 +3,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './entity/user.entity';
+import { Network } from 'src/network/entity/network.entity';
+import { Asset } from 'src/asset/entity/asset.entity';
+import { Contract } from 'src/contract/entity/contract.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from 'src/config/config.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-ioredis-yet';
+import { ConfigModule } from 'src/config/config.module';
 import { join } from 'path';
 import {
   I18nModule,
@@ -18,7 +24,8 @@ import * as path from 'path';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    ConfigModule,
+    TypeOrmModule.forFeature([User, Network, Asset, Contract]),
     JwtModule.register({
       global: true,
       secret: ConfigService.JWTConfig.secret,
@@ -53,6 +60,22 @@ import * as path from 'path';
         AcceptLanguageResolver,
         new HeaderResolver(['x-lang']),
       ],
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        isGlobal: true,
+        store: await redisStore({
+          connectionName: 'ccfl-evm-api',
+          host: ConfigService.Redis.host,
+          port: ConfigService.Redis.port,
+          username: ConfigService.Redis.username,
+          password: ConfigService.Redis.password,
+          db: ConfigService.Redis.dbNum,
+        }),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [UserController],
