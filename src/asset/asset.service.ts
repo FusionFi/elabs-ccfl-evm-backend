@@ -112,7 +112,7 @@ export class AssetService {
       return true;
     } catch (e) {
       this.logger.error(
-        `[Admin]: Failed to remove asset, id: ${id}, error: ${e.message}`,
+        `[Asset]: Failed to remove asset, id: ${id}, error: ${e.message}`,
       );
       return false;
     }

@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
-import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
-import * as fs from 'fs';
 
 @Injectable()
 export class PriceService {

@@ -16,7 +16,6 @@ import {
   ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -130,33 +129,6 @@ export class UserController {
     @Param('chainId') chainId: number,
   ) {
     try {
-      // const fakeData = {
-      //   address: address,
-      //   supplies: [
-      //     {
-      //       asset: 'USDC',
-      //       supply_balance: '3500',
-      //       earned_reward: '350',
-      //       apy: '0.01',
-      //       wallet_balance: '1000',
-      //       pool_utilization: '90',
-      //       withdraw_available: '3500',
-      //     },
-      //     {
-      //       asset: 'USDT',
-      //       supply_balance: '3500',
-      //       earned_reward: '350',
-      //       apy: '0.01',
-      //       wallet_balance: '1000',
-      //       pool_utilization: '90',
-      //       withdraw_available: '3500',
-      //     },
-      //   ],
-      //   total_supply: '4567.87',
-      //   net_apy: '0.07',
-      //   total_earned: '65.87',
-      // };
-      // return fakeData;
       const allSupply = await this.userService.getAllSupply(address, chainId);
       return allSupply;
     } catch (e) {
@@ -174,28 +146,6 @@ export class UserController {
     @Param('chainId') chainId: number,
   ) {
     try {
-      // const fakeData = {
-      //   address: address,
-      //   loans: [
-      //     {
-      //       asset: 'USDC',
-      //       loan_size: '3000',
-      //       apr: '1.82',
-      //       health: '12.76',
-      //       status: 'active',
-      //       debt_remain: '2780',
-      //       collateral_amount: '2.5',
-      //       collateral_asset: 'WETH',
-      //       yield_generating: true,
-      //       yield_earned: '0.281',
-      //     },
-      //   ],
-      //   total_loan: '1875.00',
-      //   total_collateral: '1875.00',
-      //   net_apr: '0.07',
-      //   finance_health: '1.66',
-      // };
-      // return fakeData;
       const allLoan = await this.userService.getAllLoan(address, chainId);
       return allLoan;
     } catch (e) {

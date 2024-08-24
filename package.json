@@ -20,8 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:create": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:create ./src/db/migrations/$npm_config_name",
     "migrate": "ts-node node_modules/typeorm/cli.js migration:run -d src/db/datasource.ts",
-    "migration:down": "ts-node node_modules/typeorm/cli.js migration:revert -d src/db/datasource.ts",
-    "seed": "ts-node -r tsconfig-paths/register ./src/seed.ts"
+    "migration:down": "ts-node node_modules/typeorm/cli.js migration:revert -d src/db/datasource.ts"
   },
   "dependencies": {
     "@blockfrost/blockfrost-js": "^5.5.0",

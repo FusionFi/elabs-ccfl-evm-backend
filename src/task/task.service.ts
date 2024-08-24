@@ -1,8 +1,8 @@
-import { Injectable, HttpException, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Asset } from 'src/asset/entity/asset.entity';
-import { Cron, Interval, Timeout } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { InjectBot } from 'nestjs-telegraf';
@@ -19,8 +19,8 @@ export class TaskService {
     @InjectBot() private bot: Telegraf<any>,
   ) {}
 
-  @Cron('*/1 * * * *')
-  // @Interval(10000)
+  @Cron(ConfigService.Cronjob.updatePrice)
+  // @Cron('*/1 * * * *')
   async handleCron() {
     try {
       this.logger.log('Called every 1 minute to update all prices');
