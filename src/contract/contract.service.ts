@@ -86,7 +86,7 @@ export class ContractService {
       return true;
     } catch (e) {
       this.logger.error(
-        `[Admin]: Failed to remove contract, id: ${id}, error: ${e.message}`,
+        `[Contract]: Failed to remove contract, id: ${id}, error: ${e.message}`,
       );
       return false;
     }

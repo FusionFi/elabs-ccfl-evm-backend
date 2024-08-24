@@ -1,26 +1,18 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
   HttpException,
-  UseGuards,
-  Query,
+  // UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  // ApiBearerAuth,
   ApiTags,
   ApiOperation,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { PoolService } from './pool.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+// import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
 
 @ApiTags('pool')
 @Controller('pool')

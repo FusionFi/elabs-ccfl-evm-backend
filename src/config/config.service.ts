@@ -79,4 +79,8 @@ export class ConfigService {
     groupId: process.env.TELEGRAM_GROUP_ID,
     token: process.env.TELEGRAM_TOKEN,
   };
+
+  static Cronjob = {
+    updatePrice: process.env.CRONJOB_UPDATE_PRICE,
+  };
 }

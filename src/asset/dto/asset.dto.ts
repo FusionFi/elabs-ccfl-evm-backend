@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsIn, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsIn, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AssetDto {
