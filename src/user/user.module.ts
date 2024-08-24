@@ -61,22 +61,22 @@ import * as path from 'path';
         new HeaderResolver(['x-lang']),
       ],
     }),
-    CacheModule.registerAsync({
-      isGlobal: true,
-      imports: [ConfigModule],
-      useFactory: async () => ({
-        isGlobal: true,
-        store: await redisStore({
-          connectionName: 'ccfl-evm-api',
-          host: ConfigService.Redis.host,
-          port: ConfigService.Redis.port,
-          username: ConfigService.Redis.username,
-          password: ConfigService.Redis.password,
-          db: ConfigService.Redis.dbNum,
-        }),
-      }),
-      inject: [ConfigService],
-    }),
+    // CacheModule.registerAsync({
+    //   isGlobal: true,
+    //   imports: [ConfigModule],
+    //   useFactory: async () => ({
+    //     isGlobal: true,
+    //     store: await redisStore({
+    //       connectionName: 'ccfl-evm-api',
+    //       host: ConfigService.Redis.host,
+    //       port: ConfigService.Redis.port,
+    //       username: ConfigService.Redis.username,
+    //       password: ConfigService.Redis.password,
+    //       db: ConfigService.Redis.dbNum,
+    //     }),
+    //   }),
+    //   inject: [ConfigService],
+    // }),
   ],
   controllers: [UserController],
   providers: [UserService],
