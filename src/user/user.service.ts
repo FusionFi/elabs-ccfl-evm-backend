@@ -471,6 +471,8 @@ export class UserService {
 
       const allLoans = [];
       let netApr = BigNumber(0);
+      let totalLoan = BigNumber(0);
+      let totalCollateral = BigNumber(0);
       for (const loanId of maploanIds) {
         const [loanAddress, healthFactor] = await Promise.all([
           contractCCFL.getLoanAddress(loanId),
@@ -531,10 +533,22 @@ export class UserService {
         const apr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
         netApr = netApr.plus(apr);
 
+        totalLoan = totalLoan.plus(
+          BigNumber(loanInfo.amount.toString())
+            .div(BigNumber(10).pow(asset.decimals))
+            .times(asset.price),
+        );
+        totalCollateral = totalCollateral.plus(
+          BigNumber(collateralAmount.toString())
+            .div(BigNumber(10).pow(collateral.decimals))
+            .times(collateral.price),
+        );
+
         allLoans.push({
           asset: asset.symbol,
           decimals: asset.decimals,
           loan_size: loanInfo.amount.toString(),
+          asset_price: asset.price,
           apr,
           health: BigNumber(healthFactor).div(100).toFixed(),
           is_closed: loanInfo.isClosed,
@@ -543,6 +557,7 @@ export class UserService {
           collateral_amount: collateralAmount.toString(),
           collateral_asset: collateral.symbol,
           collateral_decimals: collateral.decimals,
+          collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
           yield_earned: yieldEarned.toString(),
         });
@@ -553,6 +568,8 @@ export class UserService {
         loans: allLoans,
         net_apr:
           allLoans.length == 0 ? null : netApr.div(allLoans.length).toFixed(8),
+        total_loan: totalLoan.toFixed(),
+        total_collateral: totalCollateral.toFixed(),
         finance_health: null,
       };
 
