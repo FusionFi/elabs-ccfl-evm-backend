@@ -356,9 +356,9 @@ export class UserService {
         return {
           address,
           supplies: [],
-          // total_supply: null,
+          total_supply: null,
           net_apy: null,
-          // total_earned: null
+          total_earned: null,
         };
       }
 
@@ -366,6 +366,7 @@ export class UserService {
 
       const supplies = [];
       let netApy = BigNumber(0);
+      let totalSupplyInUsd = BigNumber(0);
       for (const item of allPools) {
         const contract = new ethers.Contract(
           item.address,
@@ -374,14 +375,14 @@ export class UserService {
         );
 
         const [
-          supplyBalance,
+          share,
           currentRate,
           remainingPool,
           totalSupply,
           walletBalance,
           asset,
         ] = await Promise.all([
-          contract.balanceOf(address),
+          contract.share(address),
           contract.getCurrentRate(),
           contract.getRemainingPool(),
           contract.getTotalSupply(),
@@ -393,6 +394,10 @@ export class UserService {
           }),
         ]);
 
+        const supplyBalance = BigNumber(share.toString()).div(
+          BigNumber(10).pow(27 - asset.decimals),
+        );
+
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
         const apy = BigNumber(1)
           .plus(BigNumber(apr).div(12))
@@ -401,10 +406,17 @@ export class UserService {
           .toFixed(8);
         netApy = netApy.plus(apy);
 
+        totalSupplyInUsd = totalSupplyInUsd.plus(
+          supplyBalance
+            .div(BigNumber(10).pow(asset.decimals))
+            .times(asset.price),
+        );
+
         supplies.push({
           asset: item.asset,
           decimals: asset.decimals,
-          supply_balance: supplyBalance.toString(),
+          asset_price: asset.price,
+          supply_balance: supplyBalance.toFixed(),
           earned_reward: null,
           apy,
           wallet_balance: (walletBalance as { balance: number }).balance,
@@ -418,10 +430,10 @@ export class UserService {
       const data = {
         address: address,
         supplies: supplies,
-        // total_supply: null,
+        total_supply: totalSupplyInUsd.toFixed(),
         net_apy:
           supplies.length == 0 ? null : netApy.div(supplies.length).toFixed(8),
-        // total_earned: null
+        total_earned: null,
       };
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
