@@ -42,67 +42,111 @@ export class SubgraphService {
     }
   }
 
-  async getTransfersHistory(address: string, offset: number, limit: number) {
+  async getHistory(address: string, offset: number, limit: number) {
     try {
-      const key = `getTransfersHistory_${address}_${offset}_${limit}`;
+      let history = [];
+      let allData = [];
+
+      const key = `getHistory_${address}`;
       const cacheData = await this.cacheManager.get(key);
       if (cacheData) {
         this.logger.log(`\n:return:cache:${key}`);
-        return cacheData;
+        history = (cacheData as Array<any>).slice(offset, offset + limit);
+        return {
+          offset,
+          limit,
+          total: (cacheData as Array<any>).length,
+          history
+        };
       }
 
-      const config = {
+      const configAddSupply = {
         method: 'POST',
         url: ConfigService.Subgraph.url,
         headers: {
           'Content-Type': 'application/json',
         },
         data: JSON.stringify({
-          query: `query history (
-            $offset: Int!
-            $limit: Int!
-            $address: Bytes!
+          query: `query addSupplies (
+              $address: Bytes!
           ) {
-              transfers (
-                  skip: $offset
-                  first: $limit
-                  orderBy: blockNumber
+              addSupplies (
+                  orderBy: blockTimestamp
                   orderDirection: desc
                   where: {
-                      and: [
-                          {
-                              or: [
-                                  { from: $address }
-                                  { to: $address }
-                              ]
-                          }
-                          { value_gt: 0 }
-                      ]             
+                      lender: $address
                   }
               ) {
-                  id
-                  from
-                  to
-                  value
+                  lender
+                  supply
+                  amount
                   blockNumber
                   blockTimestamp
                   transactionHash
               }
           }`,
-          variables: { offset: offset, limit: limit, address: address },
+          variables: { address: address },
         }),
       };
 
-      const response = await axios(config);
-      const data = {
-        offset,
-        limit,
-        history: response.data.data.transfers,
+      let dataAddSupply = await axios(configAddSupply);
+      for (let item of dataAddSupply.data.data.addSupplies) {
+        allData.push({
+          type: 'add_supply',
+          ...item
+        })
+      }
+
+      const configWithdrawSupply = {
+        method: 'POST',
+        url: ConfigService.Subgraph.url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+          query: `query withdrawSupplies (
+              $address: Bytes!
+          ) {
+              withdrawSupplies (
+                  orderBy: blockTimestamp
+                  orderDirection: desc
+                  where: {
+                      lender: $address
+                  }
+              ) {
+                  lender
+                  supply
+                  amount
+                  blockNumber
+                  blockTimestamp
+                  transactionHash
+              }
+          }`,
+          variables: { address: address },
+        }),
       };
 
-      this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
+      let dataWithdrawSupply = await axios(configWithdrawSupply);
+      for (let item of dataWithdrawSupply.data.data.withdrawSupplies) {
+        allData.push({
+          type: 'withdraw_supply',
+          ...item
+        })
+      }
 
-      return data;
+      allData.sort((a, b) => b.blockTimestamp - a.blockTimestamp);
+
+      this.cacheManager.store.set(key, allData, ConfigService.Cache.ttl);
+      console.log('allData: ', allData);
+
+      history = allData.slice(offset, offset + limit);
+
+      return {
+        offset,
+        limit,
+        total: allData.length,
+        history
+      };
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
