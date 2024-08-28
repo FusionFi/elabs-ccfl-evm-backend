@@ -1,12 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Asset } from 'src/asset/entity/asset.entity';
-import { Cron } from '@nestjs/schedule';
+import { Network } from 'src/network/entity/network.entity';
+import { Contract } from 'src/contract/entity/contract.entity';
+import { Cron, Interval } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
+import { ethers } from 'ethers';
+import * as fs from 'fs';
+
+const abiCCFL = JSON.parse(fs.readFileSync('abi/CCFL.json', 'utf8'));
+const abiCCFLLoan = JSON.parse(fs.readFileSync('abi/CCFLLoan.json', 'utf8'));
 
 @Injectable()
 export class TaskService {
@@ -16,12 +23,17 @@ export class TaskService {
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
 
+    @InjectRepository(Network)
+    private networkRepository: Repository<Network>,
+
+    @InjectRepository(Contract)
+    private contractRepository: Repository<Contract>,
+
     @InjectBot() private bot: Telegraf<any>,
   ) {}
 
   @Cron(ConfigService.Cronjob.updatePrice)
-  // @Cron('*/1 * * * *')
-  async handleCron() {
+  async handleUpdatePrice() {
     try {
       this.logger.log('Called every 1 minute to update all prices');
       const data = await this.assetRepository
@@ -57,13 +69,73 @@ export class TaskService {
     }
   }
 
-  // @Interval(10000)
-  // handleInterval() {
-  //   this.logger.debug('Called every 10 seconds');
-  // }
+  @Cron(ConfigService.Cronjob.checkLiquidation)
+  async handleCheckLiquidation() {
+    try {
+      const ccfl = await this.contractRepository.findOneBy({
+        isActive: true,
+        type: ILike('ccfl'),
+      });
 
-  // @Timeout(5000)
-  // handleTimeout() {
-  //   this.logger.debug('Called once after 5 seconds');
-  // }
+      const network = await this.networkRepository.findOneBy({
+        isActive: true,
+        chainId: ccfl.chainId,
+      });
+
+      const provider = new ethers.JsonRpcProvider(network.rpcUrl);
+      const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, provider);
+
+      const loandIds = await contractCCFL.loandIds();
+
+      for (let i = 1; i < Number(loandIds); i++) {
+        const [loanAddress, healthFactor] = await Promise.all([
+          contractCCFL.getLoanAddress(i),
+          ontractCCFL.getHealthFactor(i),
+        ]);
+
+        const contractLoan = new ethers.Contract(
+          loanAddress,
+          abiCCFLLoan,
+          provider,
+        );
+
+        const loanInfo = await contractLoan.getLoanInfo();
+
+        if (
+          !loanInfo.isClosed &&
+          !loanInfo.isLiquidated &&
+          Number(healthFactor) < 100
+        ) {
+          await contractCCFL.liquidate(i);
+          this.logger.log(
+            `Liquidated successfully:
+            + loanId: ${i},
+            + loanAddress: ${loanAddress},
+            + healthFactor: ${healthFactor},
+            + borrower: ${loanInfo.borrower},
+            + amount: ${loanInfo.amount},
+            + stableCoin: ${loanInfo.stableCoin},
+            + isFiat: ${loanInfo.isFiat}`,
+          );
+          this.bot.telegram.sendMessage(
+            ConfigService.Telegram.groupId,
+            `Liquidated successfully:
+            + loanId: ${i},
+            + loanAddress: ${loanAddress},
+            + healthFactor: ${healthFactor},
+            + borrower: ${loanInfo.borrower},
+            + amount: ${loanInfo.amount},
+            + stableCoin: ${loanInfo.stableCoin},
+            + isFiat: ${loanInfo.isFiat}`,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Error in checking liquidation: ${error}`);
+      this.bot.telegram.sendMessage(
+        ConfigService.Telegram.groupId,
+        `[SOS] Error in checking liquidation: ${error}`,
+      );
+    }
+  }
 }

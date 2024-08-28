@@ -82,5 +82,6 @@ export class ConfigService {
 
   static Cronjob = {
     updatePrice: process.env.CRONJOB_UPDATE_PRICE,
+    checkLiquidation: process.env.CRONJOB_CHECK_LIQUIDATION,
   };
 }
