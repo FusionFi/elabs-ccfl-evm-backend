@@ -90,7 +90,7 @@ export class TaskService {
       for (let i = 1; i < Number(loandIds); i++) {
         const [loanAddress, healthFactor] = await Promise.all([
           contractCCFL.getLoanAddress(i),
-          ontractCCFL.getHealthFactor(i),
+          contractCCFL.getHealthFactor(i),
         ]);
 
         const contractLoan = new ethers.Contract(
