@@ -1,28 +1,17 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Confirm email</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Confirmation</title>
+  <link rel="stylesheet" href="/css/message-confirm-email.css">
 </head>
 <body>
-<main>
-  <section id="success-message">
-    <div>
-      <p>
-        Your email was successfully verified
-      </p>
-    </div>
-  </section>
-
-
-  <section id="error-message">
-    <div>
-      Error on verify account
-    </div>
-  </section>
-
-  <div id="email-verified" value={{emailVerified}}>
+  <div class="container">
+    <div id="message-box" class="hidden"></div>
+    <div id="email-verified" value={{emailVerified}} class="hidden"></div>
   </div>
-
-</main>
-<script src="/js/confirm-email.js"></script>
+  <script src="/js/confirm-email.js"></script>
 </body>
 </html>
+

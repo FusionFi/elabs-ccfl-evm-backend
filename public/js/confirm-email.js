@@ -1,7 +1,12 @@
 const emailVerified = document.getElementById('email-verified').getAttribute("value");
 
-const successSection = document.getElementById('success-message');
-const errorSection = document.getElementById('error-message');
+const messageBox = document.getElementById('message-box');
+messageBox.classList.remove('hidden', 'error', 'success');
 
-successSection.style.display = emailVerified == "true" ? 'block' : 'none';
-errorSection.style.display = emailVerified == "true" ? 'none' : 'block';
+if (emailVerified) {
+  messageBox.classList.add('success');
+  messageBox.textContent = "Your email has been confirmed successfully!";
+} else {
+  messageBox.classList.add('error');
+  messageBox.textContent = "There was an error confirming your email. Please try again.";
+}

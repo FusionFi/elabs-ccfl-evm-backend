@@ -100,7 +100,7 @@ export class UserService {
         subject: `Welcome to the CCFL application`,
         template: './confirmation',
         context: {
-          username: user.username,
+          firstName: user.firstName,
           link,
         },
       });
