@@ -81,7 +81,6 @@ export class SubgraphService {
                   poolAddress
                   stableCoin
                   amount
-                  remainingPool
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -112,7 +111,6 @@ export class SubgraphService {
                   poolAddress
                   stableCoin
                   amount
-                  remainingPool
                   blockNumber
                   blockTimestamp
                   transactionHash

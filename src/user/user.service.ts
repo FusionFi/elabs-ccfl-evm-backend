@@ -486,10 +486,7 @@ export class UserService {
       let totalLoan = BigNumber(0);
       let totalCollateral = BigNumber(0);
       for (const loanId of maploanIds) {
-        const [loanAddress, healthFactor] = await Promise.all([
-          contractCCFL.getLoanAddress(loanId),
-          contractCCFL.getHealthFactor(loanId),
-        ]);
+        const loanAddress = await contractCCFL.getLoanAddress(loanId);
 
         const contractLoan = new ethers.Contract(
           loanAddress,
@@ -501,15 +498,22 @@ export class UserService {
           loanInfo,
           collateralAmount,
           collateralToken,
-          isYieldGenerating,
-          yieldEarned,
+          isYieldGenerating
         ] = await Promise.all([
           contractLoan.getLoanInfo(),
           contractLoan.collateralAmount(),
           contractLoan.collateralToken(),
-          contractLoan.isStakeAave(),
-          contractLoan.getYieldEarned(),
+          contractLoan.isStakeAave()
         ]);
+
+        let yieldEarned = null;
+        let healthFactor = null;
+        if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
+          [yieldEarned, healthFactor] = await Promise.all([
+            contractLoan.getYieldEarned(),
+            contractCCFL.getHealthFactor(loanId)
+          ]);
+        }
 
         const [asset, collateral] = await Promise.all([
           this.assetRepository.findOneBy({
@@ -562,7 +566,7 @@ export class UserService {
           loan_size: loanInfo.amount.toString(),
           asset_price: asset.price,
           apr,
-          health: BigNumber(healthFactor).div(100).toFixed(),
+          health: healthFactor ? BigNumber(healthFactor).div(100).toFixed() : null,
           is_closed: loanInfo.isClosed,
           is_liquidated: loanInfo.isLiquidated,
           debt_remain: debtRemain.toString(),
@@ -571,7 +575,7 @@ export class UserService {
           collateral_decimals: collateral.decimals,
           collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
-          yield_earned: yieldEarned.toString(),
+          yield_earned: yieldEarned ? yieldEarned.toString() : null,
         });
       }
 
