@@ -69,7 +69,7 @@ export class TaskService {
     }
   }
 
-  @Cron(ConfigService.Cronjob.checkLiquidation)
+  // @Cron(ConfigService.Cronjob.checkLiquidation)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
