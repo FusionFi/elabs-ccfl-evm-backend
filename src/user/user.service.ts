@@ -494,24 +494,20 @@ export class UserService {
           provider,
         );
 
-        const [
-          loanInfo,
-          collateralAmount,
-          collateralToken,
-          isYieldGenerating
-        ] = await Promise.all([
-          contractLoan.getLoanInfo(),
-          contractLoan.collateralAmount(),
-          contractLoan.collateralToken(),
-          contractLoan.isStakeAave()
-        ]);
+        const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] =
+          await Promise.all([
+            contractLoan.getLoanInfo(),
+            contractLoan.collateralAmount(),
+            contractLoan.collateralToken(),
+            contractLoan.isStakeAave(),
+          ]);
 
         let yieldEarned = null;
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
           [yieldEarned, healthFactor] = await Promise.all([
             contractLoan.getYieldEarned(),
-            contractCCFL.getHealthFactor(loanId)
+            contractCCFL.getHealthFactor(loanId),
           ]);
         }
 
@@ -566,7 +562,9 @@ export class UserService {
           loan_size: loanInfo.amount.toString(),
           asset_price: asset.price,
           apr,
-          health: healthFactor ? BigNumber(healthFactor).div(100).toFixed() : null,
+          health: healthFactor
+            ? BigNumber(healthFactor).div(100).toFixed()
+            : null,
           is_closed: loanInfo.isClosed,
           is_liquidated: loanInfo.isLiquidated,
           debt_remain: debtRemain.toString(),
