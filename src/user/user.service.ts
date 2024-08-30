@@ -97,10 +97,10 @@ export class UserService {
 
       await this.emailService.sendMail({
         to: user.email,
-        subject: `Welcome to the CCFL application`,
+        subject: `Welcome to the FUSIONFI application`,
         template: './confirmation',
         context: {
-          username: user.username,
+          firstName: user.firstName,
           link,
         },
       });
@@ -204,10 +204,10 @@ export class UserService {
 
       await this.emailService.sendMail({
         to: email,
-        subject: 'Reset your password on CCFL application',
+        subject: 'Reset your password on FUSIONFI application',
         template: './restore-password',
         context: {
-          username: user.username,
+          firstName: user.firstName,
           link,
         },
       });

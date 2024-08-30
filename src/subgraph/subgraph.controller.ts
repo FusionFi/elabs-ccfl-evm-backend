@@ -54,9 +54,10 @@ export class SubgraphController {
     }
   }
 
-  @ApiOperation({ summary: 'Get all transfer history from an address' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @Public()
+  @ApiOperation({ summary: 'Get all history from an address' })
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @ApiQuery({
     name: 'offset',
     type: Number,
@@ -67,14 +68,14 @@ export class SubgraphController {
     type: Number,
     required: false,
   })
-  @Get('transfers/:address/history')
+  @Get('history/:address')
   async getTransfersHistory(
     @Param('address') address: string,
     @Query('offset', new IntDefaultValuePipe(0)) offset: number,
     @Query('limit', new IntDefaultValuePipe(10)) limit: number,
   ) {
     try {
-      const data = await this.subgraphService.getTransfersHistory(
+      const data = await this.subgraphService.getHistory(
         address,
         offset,
         limit,
