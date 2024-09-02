@@ -20,6 +20,7 @@ import {
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { EmailDto } from './dto/email.dto';
+import { UsernameDto } from './dto/username.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -92,6 +93,16 @@ export class UserController {
   changePassword(@Body() { token, password }: RestorePasswordDto) {
     try {
       return this.userService.changePassword(token, password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @Post('check/username')
+  checkExistingUsername(@Body() { username }: UsernameDto) {
+    try {
+      return this.userService.checkExistingUsername(username);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

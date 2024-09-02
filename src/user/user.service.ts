@@ -218,6 +218,19 @@ export class UserService {
     }
   }
 
+  async checkExistingUsername(username: string) {
+    try {
+      let exist = await this.userRepository.findOneBy({ username });
+      if (exist) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
   async changePassword(token: string, password: string) {
     try {
       const { email } = this.jwtService.verify(token, {
