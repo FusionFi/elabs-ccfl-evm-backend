@@ -138,6 +138,33 @@ export class UserService {
     }
   }
 
+  async signInWithEmail(email: string, password: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ email });
+      if (user?.emailVerified == false) {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+      }
+      if (user?.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) throw new UnauthorizedException();
+      }
+      const payload = {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
   async verifyEmail(token: string) {
     try {
       const { email } = this.jwtService.verify(token, {

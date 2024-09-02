@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignInEmailDto } from './dto/sign-in-email.dto';
 import { EmailDto } from './dto/email.dto';
 import { UsernameDto } from './dto/username.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
@@ -51,6 +52,17 @@ export class UserController {
   signIn(@Body() signinDto: SignInDto) {
     try {
       return this.userService.signIn(signinDto.username, signinDto.password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Sign in with email' })
+  @Post('signin/email')
+  signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
+    try {
+      return this.userService.signInWithEmail(signinEmailDto.email, signinEmailDto.password);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
