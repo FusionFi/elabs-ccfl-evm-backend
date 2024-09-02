@@ -61,8 +61,8 @@ export class UserService {
       const user = new User();
       user.username = signupDto.username;
       user.password = await bcrypt.hash(signupDto.password, salt);
-      user.firstName = signupDto.firstName;
-      user.lastName = signupDto.lastName;
+      // user.firstName = signupDto.firstName;
+      // user.lastName = signupDto.lastName;
       user.email = signupDto.email;
       user.isActive = true;
 
@@ -100,7 +100,7 @@ export class UserService {
         subject: `Welcome to the FUSIONFI application`,
         template: './confirmation',
         context: {
-          firstName: user.firstName,
+          username: user.username,
           link,
         },
       });
@@ -126,8 +126,8 @@ export class UserService {
         if (!isMatch) throw new UnauthorizedException();
       }
       const payload = {
-        sub: user.id,
         username: user.username,
+        email: user.email,
         role: user.role,
       };
       return {
@@ -166,8 +166,8 @@ export class UserService {
       return {
         id: user.id,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        // firstName: user.firstName,
+        // lastName: user.lastName,
         email: user.email,
         emailVerified: true,
         isActive: user.isActive,
@@ -207,7 +207,7 @@ export class UserService {
         subject: 'Reset your password on FUSIONFI application',
         template: './restore-password',
         context: {
-          firstName: user.firstName,
+          username: user.username,
           link,
         },
       });

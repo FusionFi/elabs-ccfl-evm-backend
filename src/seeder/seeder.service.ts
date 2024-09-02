@@ -35,8 +35,6 @@ export class SeederService {
   async seed() {
     try {
       const user = new User();
-      user.firstName = 'admin';
-      user.lastName = 'admin';
       user.username = 'admin';
       const salt = await bcrypt.genSalt();
       user.password = await bcrypt.hash(ConfigService.Admin.password, salt);
