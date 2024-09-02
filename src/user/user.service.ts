@@ -223,9 +223,8 @@ export class UserService {
       let exist = await this.userRepository.findOneBy({ username });
       if (exist) {
         return true;
-      } else {
-        return false;
       }
+      return false;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -236,9 +235,26 @@ export class UserService {
       let exist = await this.userRepository.findOneBy({ email });
       if (exist) {
         return true;
-      } else {
+      }
+      return false;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async checkOldPassword(username: string, password: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ username });
+
+      if (user?.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+          return true;
+        }
         return false;
       }
+
+      return false;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

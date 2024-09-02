@@ -88,7 +88,7 @@ export class UserController {
   }
 
   @Public()
-  @ApiExcludeEndpoint()
+  @ApiOperation({ summary: 'Change current password' })
   @Post('change-password')
   changePassword(@Body() { token, password }: RestorePasswordDto) {
     try {
@@ -99,6 +99,7 @@ export class UserController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Check existing username' })
   @Post('check/username')
   checkExistingUsername(@Body() { username }: UsernameDto) {
     try {
@@ -109,10 +110,26 @@ export class UserController {
   }
 
   @Public()
+  @ApiOperation({ summary: 'Check existing email' })
   @Post('check/email')
   checkExistingEmail(@Body() { email }: EmailDto) {
     try {
       return this.userService.checkExistingEmail(email);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Check old password' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post('check/old-password')
+  checkOldPassword(@Body() signinDto: SignInDto) {
+    try {
+      return this.userService.checkOldPassword(
+        signinDto.username,
+        signinDto.password,
+      );
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
