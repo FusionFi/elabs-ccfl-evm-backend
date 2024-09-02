@@ -108,6 +108,16 @@ export class UserController {
     }
   }
 
+  @Public()
+  @Post('check/email')
+  checkExistingEmail(@Body() { email }: EmailDto) {
+    try {
+      return this.userService.checkExistingEmail(email);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
   @ApiOperation({ summary: 'Get user profile' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
