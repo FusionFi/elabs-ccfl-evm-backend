@@ -11,17 +11,17 @@ export class SignUpDto {
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
-  firstName: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(255)
+  // firstName: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
-  lastName: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(255)
+  // lastName: string;
 
   @ApiProperty()
   @IsNotEmpty()

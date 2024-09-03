@@ -70,6 +70,7 @@ export class TaskService {
   }
 
   // @Cron(ConfigService.Cronjob.checkLiquidation)
+  // @Interval(10000)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
@@ -86,12 +87,13 @@ export class TaskService {
       const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, provider);
 
       const loandIds = await contractCCFL.loandIds();
+      console.log('loandIds: ', loandIds);
 
-      for (let i = 1; i < Number(loandIds); i++) {
-        const [loanAddress, healthFactor] = await Promise.all([
-          contractCCFL.getLoanAddress(i),
-          contractCCFL.getHealthFactor(i),
-        ]);
+      for (let i = 1; i < loandIds; i++) {
+        console.log('LoanId: ', i);
+
+        const loanAddress = await contractCCFL.getLoanAddress(i);
+        console.log('loanAddress: ', loanAddress);
 
         const contractLoan = new ethers.Contract(
           loanAddress,
@@ -100,34 +102,37 @@ export class TaskService {
         );
 
         const loanInfo = await contractLoan.getLoanInfo();
+        console.log('loanInfo: ', loanInfo);
 
-        if (
-          !loanInfo.isClosed &&
-          !loanInfo.isLiquidated &&
-          Number(healthFactor) < 100
-        ) {
-          await contractCCFL.liquidate(i);
-          this.logger.log(
-            `Liquidated successfully:
-            + loanId: ${i},
-            + loanAddress: ${loanAddress},
-            + healthFactor: ${healthFactor},
-            + borrower: ${loanInfo.borrower},
-            + amount: ${loanInfo.amount},
-            + stableCoin: ${loanInfo.stableCoin},
-            + isFiat: ${loanInfo.isFiat}`,
-          );
-          this.bot.telegram.sendMessage(
-            ConfigService.Telegram.groupId,
-            `Liquidated successfully:
-            + loanId: ${i},
-            + loanAddress: ${loanAddress},
-            + healthFactor: ${healthFactor},
-            + borrower: ${loanInfo.borrower},
-            + amount: ${loanInfo.amount},
-            + stableCoin: ${loanInfo.stableCoin},
-            + isFiat: ${loanInfo.isFiat}`,
-          );
+        if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
+          const healthFactor = await contractCCFL.getHealthFactor(i);
+          console.log('healthFactor: ', healthFactor);
+          if (healthFactor < 100) {
+            await contractCCFL.liquidate(i);
+            this.logger.log(
+              `Liquidated successfully:
+              + loanId: ${i},
+              + loanAddress: ${loanAddress},
+              + healthFactor: ${healthFactor},
+              + borrower: ${loanInfo.borrower},
+              + amount: ${loanInfo.amount},
+              + stableCoin: ${loanInfo.stableCoin},
+              + isFiat: ${loanInfo.isFiat}`,
+            );
+            this.bot.telegram.sendMessage(
+              ConfigService.Telegram.groupId,
+              `Liquidated successfully:
+              + loanId: ${i},
+              + loanAddress: ${loanAddress},
+              + healthFactor: ${healthFactor},
+              + borrower: ${loanInfo.borrower},
+              + amount: ${loanInfo.amount},
+              + stableCoin: ${loanInfo.stableCoin},
+              + isFiat: ${loanInfo.isFiat}`,
+            );
+          } else {
+            console.log('Good health factor');
+          }
         }
       }
     } catch (error) {

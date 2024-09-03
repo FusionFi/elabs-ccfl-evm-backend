@@ -61,8 +61,8 @@ export class UserService {
       const user = new User();
       user.username = signupDto.username;
       user.password = await bcrypt.hash(signupDto.password, salt);
-      user.firstName = signupDto.firstName;
-      user.lastName = signupDto.lastName;
+      // user.firstName = signupDto.firstName;
+      // user.lastName = signupDto.lastName;
       user.email = signupDto.email;
       user.isActive = true;
 
@@ -100,7 +100,7 @@ export class UserService {
         subject: `Welcome to the FUSIONFI application`,
         template: './confirmation',
         context: {
-          firstName: user.firstName,
+          username: user.username,
           link,
         },
       });
@@ -126,8 +126,35 @@ export class UserService {
         if (!isMatch) throw new UnauthorizedException();
       }
       const payload = {
-        sub: user.id,
         username: user.username,
+        email: user.email,
+        role: user.role,
+      };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async signInWithEmail(email: string, password: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ email });
+      if (user?.emailVerified == false) {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+      }
+      if (user?.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) throw new UnauthorizedException();
+      }
+      const payload = {
+        username: user.username,
+        email: user.email,
         role: user.role,
       };
       return {
@@ -166,8 +193,8 @@ export class UserService {
       return {
         id: user.id,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        // firstName: user.firstName,
+        // lastName: user.lastName,
         email: user.email,
         emailVerified: true,
         isActive: user.isActive,
@@ -207,7 +234,7 @@ export class UserService {
         subject: 'Reset your password on FUSIONFI application',
         template: './restore-password',
         context: {
-          firstName: user.firstName,
+          username: user.username,
           link,
         },
       });
@@ -215,6 +242,48 @@ export class UserService {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  async checkExistingUsername(username: string) {
+    try {
+      let exist = await this.userRepository.findOneBy({ username });
+      if (exist) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async checkExistingEmail(email: string) {
+    try {
+      let exist = await this.userRepository.findOneBy({ email });
+      if (exist) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async checkOldPassword(username: string, password: string) {
+    try {
+      const user = await this.userRepository.findOneBy({ username });
+
+      if (user?.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+          return true;
+        }
+        return false;
+      }
+
+      return false;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
     }
   }
 
@@ -486,10 +555,7 @@ export class UserService {
       let totalLoan = BigNumber(0);
       let totalCollateral = BigNumber(0);
       for (const loanId of maploanIds) {
-        const [loanAddress, healthFactor] = await Promise.all([
-          contractCCFL.getLoanAddress(loanId),
-          contractCCFL.getHealthFactor(loanId),
-        ]);
+        const loanAddress = await contractCCFL.getLoanAddress(loanId);
 
         const contractLoan = new ethers.Contract(
           loanAddress,
@@ -497,19 +563,22 @@ export class UserService {
           provider,
         );
 
-        const [
-          loanInfo,
-          collateralAmount,
-          collateralToken,
-          isYieldGenerating,
-          yieldEarned,
-        ] = await Promise.all([
-          contractLoan.getLoanInfo(),
-          contractLoan.collateralAmount(),
-          contractLoan.collateralToken(),
-          contractLoan.isStakeAave(),
-          contractLoan.getYieldEarned(),
-        ]);
+        const [loanInfo, collateralAmount, collateralToken, isYieldGenerating] =
+          await Promise.all([
+            contractLoan.getLoanInfo(),
+            contractLoan.collateralAmount(),
+            contractLoan.collateralToken(),
+            contractLoan.isStakeAave(),
+          ]);
+
+        let yieldEarned = null;
+        let healthFactor = null;
+        if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
+          [yieldEarned, healthFactor] = await Promise.all([
+            contractLoan.getYieldEarned(),
+            contractCCFL.getHealthFactor(loanId),
+          ]);
+        }
 
         const [asset, collateral] = await Promise.all([
           this.assetRepository.findOneBy({
@@ -562,7 +631,9 @@ export class UserService {
           loan_size: loanInfo.amount.toString(),
           asset_price: asset.price,
           apr,
-          health: BigNumber(healthFactor).div(100).toFixed(),
+          health: healthFactor
+            ? BigNumber(healthFactor).div(100).toFixed()
+            : null,
           is_closed: loanInfo.isClosed,
           is_liquidated: loanInfo.isLiquidated,
           debt_remain: debtRemain.toString(),
@@ -571,7 +642,7 @@ export class UserService {
           collateral_decimals: collateral.decimals,
           collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
-          yield_earned: yieldEarned.toString(),
+          yield_earned: yieldEarned ? yieldEarned.toString() : null,
         });
       }
 

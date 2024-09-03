@@ -78,7 +78,8 @@ export class SubgraphService {
                   }
               ) {
                   lender
-                  supply
+                  poolAddress
+                  stableCoin
                   amount
                   blockNumber
                   blockTimestamp
@@ -107,7 +108,8 @@ export class SubgraphService {
                   }
               ) {
                   lender
-                  supply
+                  poolAddress
+                  stableCoin
                   amount
                   blockNumber
                   blockTimestamp
@@ -136,13 +138,15 @@ export class SubgraphService {
                   }
               ) {
                   borrower
-                  loanAmount
-                  supply
+                  loanAddress
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
                   collateralAmount
                   collateral
                   isYieldGenerating
                   isETH
-                  loanId
+                  loanInfo_isFiat
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -170,8 +174,10 @@ export class SubgraphService {
                   }
               ) {
                   borrower
-                  loanId
-                  supply
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
+                  loanInfo_isFiat
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -199,10 +205,13 @@ export class SubgraphService {
                   }
               ) {
                   borrower
-                  loanId
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
                   collateralAmount
                   collateral
                   isETH
+                  loanInfo_isFiat
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -230,9 +239,12 @@ export class SubgraphService {
                   }
               ) {
                   borrower
-                  loanId
-                  amount
-                  supply
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
+                  repayAmount
+                  debtRemain
+                  loanInfo_isFiat
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -260,8 +272,46 @@ export class SubgraphService {
                   }
               ) {
                   borrower
-                  loanId
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
+                  collateralAmount
+                  collateral
                   isETH
+                  loanInfo_isFiat
+                  blockNumber
+                  blockTimestamp
+                  transactionHash
+              }
+          }`,
+          variables: { address: address },
+        }),
+      };
+
+      const configLiquidate = {
+        method: 'POST',
+        url: ConfigService.Subgraph.url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+          query: `query liquidates (
+              $address: Bytes!
+          ) {
+              liquidates (
+                  orderBy: blockTimestamp
+                  orderDirection: desc
+                  where: {
+                      borrower: $address
+                  }
+              ) {
+                  borrower
+                  loanInfo_loanId
+                  loanInfo_amount
+                  loanInfo_stableCoin
+                  collateralAmount
+                  collateral
+                  loanInfo_isFiat
                   blockNumber
                   blockTimestamp
                   transactionHash
@@ -279,6 +329,7 @@ export class SubgraphService {
         dataAddCollateral,
         dataRepayLoan,
         dataWithdrawAllCollateral,
+        dataLiquidate,
       ] = await Promise.all([
         axios(configAddSupply),
         axios(configWithdrawSupply),
@@ -287,6 +338,7 @@ export class SubgraphService {
         axios(configAddCollateral),
         axios(configRepayLoan),
         axios(configWithdrawAllCollateral),
+        axios(configLiquidate),
       ]);
 
       for (const item of dataAddSupply.data.data.addSupplies) {
@@ -335,6 +387,13 @@ export class SubgraphService {
         .withdrawAllCollaterals) {
         allData.push({
           type: 'withdraw_all_collateral',
+          ...item,
+        });
+      }
+
+      for (const item of dataLiquidate.data.data.liquidates) {
+        allData.push({
+          type: 'liquidate',
           ...item,
         });
       }

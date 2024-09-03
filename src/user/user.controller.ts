@@ -19,7 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignInEmailDto } from './dto/sign-in-email.dto';
 import { EmailDto } from './dto/email.dto';
+import { UsernameDto } from './dto/username.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -50,6 +52,17 @@ export class UserController {
   signIn(@Body() signinDto: SignInDto) {
     try {
       return this.userService.signIn(signinDto.username, signinDto.password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Sign in with email' })
+  @Post('signin/email')
+  signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
+    try {
+      return this.userService.signInWithEmail(signinEmailDto.email, signinEmailDto.password);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -87,11 +100,48 @@ export class UserController {
   }
 
   @Public()
-  @ApiExcludeEndpoint()
+  @ApiOperation({ summary: 'Change current password' })
   @Post('change-password')
   changePassword(@Body() { token, password }: RestorePasswordDto) {
     try {
       return this.userService.changePassword(token, password);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Check existing username' })
+  @Post('check/username')
+  checkExistingUsername(@Body() { username }: UsernameDto) {
+    try {
+      return this.userService.checkExistingUsername(username);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Check existing email' })
+  @Post('check/email')
+  checkExistingEmail(@Body() { email }: EmailDto) {
+    try {
+      return this.userService.checkExistingEmail(email);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Check old password' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post('check/old-password')
+  checkOldPassword(@Body() signinDto: SignInDto) {
+    try {
+      return this.userService.checkOldPassword(
+        signinDto.username,
+        signinDto.password,
+      );
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

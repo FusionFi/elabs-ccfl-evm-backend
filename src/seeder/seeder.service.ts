@@ -35,8 +35,6 @@ export class SeederService {
   async seed() {
     try {
       const user = new User();
-      user.firstName = 'admin';
-      user.lastName = 'admin';
       user.username = 'admin';
       const salt = await bcrypt.genSalt();
       user.password = await bcrypt.hash(ConfigService.Admin.password, salt);
@@ -408,14 +406,14 @@ export class SeederService {
       const contracts = [
         {
           type: 'ccfl',
-          address: '0xc68BDD676FDbeac643baC74bfb08e8254841cF41',
+          address: '0x5f761F256ECf4c005593066D078E51837Ee80B30',
           chainId: 11155111,
           asset: null,
           isActive: true,
         },
         {
           type: 'pool',
-          address: '0x3f4257d1E7dC2FDD98a1375f9c92eaBE9E04A5Dd',
+          address: '0xa99D9a34C57eCdFaC2E9785136d56D9F499a8076',
           chainId: 11155111,
           asset: 'USDC',
           isActive: true,
