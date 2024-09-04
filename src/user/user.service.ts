@@ -513,13 +513,21 @@ export class UserService {
     }
   }
 
-  async getAllLoan(address: string, chainId: number) {
+  async getAllLoan(address: string, chainId: number, offset: number, limit: number) {
     try {
       const key = `getAllLoan_${address}_${chainId}`;
       const cacheData = await this.cacheManager.get(key);
       if (cacheData) {
         this.logger.log(`\n:return:cache:${key}`);
-        return cacheData;
+        return {
+          ...(cacheData as Object),
+          loans: {
+            total: (cacheData as { loans: Array<any> }).loans.length,
+            offset,
+            limit,
+            data: (cacheData as { loans: Array<any> }).loans.slice(offset, offset + limit)
+          }
+        };
       }
 
       const [network, ccfl] = await Promise.all([
@@ -654,11 +662,19 @@ export class UserService {
         total_loan: totalLoan.toFixed(),
         total_collateral: totalCollateral.toFixed(),
         finance_health: null,
-      };
+      }
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
 
-      return data;
+      return {
+        ...data,
+        loans: {
+          total: allLoans.length,
+          offset,
+          limit,
+          data: data.loans.slice(offset, offset + limit)
+        }
+      };
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

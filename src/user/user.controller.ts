@@ -16,6 +16,7 @@ import {
   ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -28,6 +29,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapUser } from './response-dto/user.map';
+import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
 @ApiTags('user')
 @Controller('user')
@@ -190,13 +192,25 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's loans" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
+  @ApiQuery({
+    name: 'offset',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+  })
   @Get(':address/:chainId/loan')
   async getAllLoan(
     @Param('address') address: string,
     @Param('chainId') chainId: number,
+    @Query('offset', new IntDefaultValuePipe(0)) offset: number,
+    @Query('limit', new IntDefaultValuePipe(10)) limit: number,
   ) {
     try {
-      const allLoan = await this.userService.getAllLoan(address, chainId);
+      const allLoan = await this.userService.getAllLoan(address, chainId, offset, limit);
       return allLoan;
     } catch (e) {
       throw new HttpException(e.response, e.status);
