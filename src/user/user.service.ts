@@ -634,6 +634,7 @@ export class UserService {
         );
 
         allLoans.push({
+          is_fiat: loanInfo.isFiat,
           asset: asset.symbol,
           decimals: asset.decimals,
           loan_size: loanInfo.amount.toString(),
