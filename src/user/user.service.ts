@@ -634,6 +634,7 @@ export class UserService {
         );
 
         allLoans.push({
+          loan_id: parseInt(loanId),
           is_fiat: loanInfo.isFiat,
           asset: asset.symbol,
           decimals: asset.decimals,
@@ -653,6 +654,8 @@ export class UserService {
           yield_generating: isYieldGenerating,
           yield_earned: yieldEarned ? yieldEarned.toString() : null,
         });
+
+        allLoans.sort((a, b) => parseInt(b.loan_id) - parseInt(a.loan_id));
       }
 
       const data = {
