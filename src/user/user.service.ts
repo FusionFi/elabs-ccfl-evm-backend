@@ -468,11 +468,8 @@ export class UserService {
         );
 
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
-        const apy = BigNumber(1)
-          .plus(BigNumber(apr).div(12))
-          .pow(12)
-          .minus(1)
-          .toFixed(8);
+        const seconds = ConfigService.App.seconds_per_year;
+        const apy = ((1 + (parseFloat(apr) / seconds)) ** seconds) - 1;
         netApy = netApy.plus(apy);
 
         totalSupplyInUsd = totalSupplyInUsd.plus(
@@ -487,7 +484,7 @@ export class UserService {
           asset_price: asset.price,
           supply_balance: supplyBalance.toFixed(),
           earned_reward: null,
-          apy,
+          apy: BigNumber(apy).toFixed(8),
           wallet_balance: (walletBalance as { balance: number }).balance,
           pool_utilization: BigNumber(remainingPool)
             .div(totalSupply)

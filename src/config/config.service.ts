@@ -32,6 +32,7 @@ export class ConfigService {
     port: parseInt(process.env.APP_PORT || '3000'),
     ttl: parseInt(process.env.TTL || '10000'),
     limit: parseInt(process.env.LIMIT || '10'),
+    seconds_per_year: parseInt(process.env.SECONDS_PER_YEAR || '31536000'),
   };
 
   static Cors = {
