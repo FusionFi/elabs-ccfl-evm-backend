@@ -70,15 +70,17 @@ export class PoolService {
           }),
         ]);
 
-        const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
+        const borrowerApr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
+        const lenderApr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
         const seconds = ConfigService.App.seconds_per_year;
-        const apy = ((1 + (parseFloat(apr) / seconds)) ** seconds) - 1;
+        const lenderApy = (1 + parseFloat(lenderApr) / seconds) ** seconds - 1;
 
         finalData.push({
           asset: item.asset,
           decimals: asset.decimals,
           loan_available: BigNumber(loan_available).toFixed(),
-          apy: BigNumber(apy).toFixed(8),
+          apy: BigNumber(lenderApy).toFixed(8),
+          apr: borrowerApr,
         });
       }
 

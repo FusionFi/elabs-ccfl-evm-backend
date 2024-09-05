@@ -64,7 +64,10 @@ export class UserController {
   @Post('signin/email')
   signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
     try {
-      return this.userService.signInWithEmail(signinEmailDto.email, signinEmailDto.password);
+      return this.userService.signInWithEmail(
+        signinEmailDto.email,
+        signinEmailDto.password,
+      );
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -210,7 +213,12 @@ export class UserController {
     @Query('limit', new IntDefaultValuePipe(10)) limit: number,
   ) {
     try {
-      const allLoan = await this.userService.getAllLoan(address, chainId, offset, limit);
+      const allLoan = await this.userService.getAllLoan(
+        address,
+        chainId,
+        offset,
+        limit,
+      );
       return allLoan;
     } catch (e) {
       throw new HttpException(e.response, e.status);

@@ -469,7 +469,7 @@ export class UserService {
 
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
         const seconds = ConfigService.App.seconds_per_year;
-        const apy = ((1 + (parseFloat(apr) / seconds)) ** seconds) - 1;
+        const apy = (1 + parseFloat(apr) / seconds) ** seconds - 1;
         netApy = netApy.plus(apy);
 
         totalSupplyInUsd = totalSupplyInUsd.plus(
@@ -510,7 +510,12 @@ export class UserService {
     }
   }
 
-  async getAllLoan(address: string, chainId: number, offset: number, limit: number) {
+  async getAllLoan(
+    address: string,
+    chainId: number,
+    offset: number,
+    limit: number,
+  ) {
     try {
       const key = `getAllLoan_${address}_${chainId}`;
       const cacheData = await this.cacheManager.get(key);
@@ -522,8 +527,11 @@ export class UserService {
             total: (cacheData as { loans: Array<any> }).loans.length,
             offset,
             limit,
-            data: (cacheData as { loans: Array<any> }).loans.slice(offset, offset + limit)
-          }
+            data: (cacheData as { loans: Array<any> }).loans.slice(
+              offset,
+              offset + limit,
+            ),
+          },
         };
       }
 
@@ -663,7 +671,7 @@ export class UserService {
         total_loan: totalLoan.toFixed(),
         total_collateral: totalCollateral.toFixed(),
         finance_health: null,
-      }
+      };
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
 
@@ -673,8 +681,8 @@ export class UserService {
           total: allLoans.length,
           offset,
           limit,
-          data: data.loans.slice(offset, offset + limit)
-        }
+          data: data.loans.slice(offset, offset + limit),
+        },
       };
     } catch (e) {
       throw new HttpException(e.response, e.status);
