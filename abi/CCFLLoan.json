@@ -118,6 +118,82 @@
   },
   {
     "inputs": [],
+    "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_currentDebt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountOut",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculateLiquidation",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_currentDebt",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculateSwap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "ccfl",
     "outputs": [
       {
@@ -133,6 +209,11 @@
     "inputs": [],
     "name": "closeLoan",
     "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "",
@@ -425,7 +506,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_earnBorrower",
+        "type": "uint256"
+      }
+    ],
     "name": "getYieldEarned",
     "outputs": [
       {
@@ -580,11 +667,6 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_platform",
-        "type": "address"
-      },
-      {
         "internalType": "contract IWETH",
         "name": "_iWETH",
         "type": "address"
@@ -614,15 +696,25 @@
         "internalType": "uint256",
         "name": "_currentDebt",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_percent",
-        "type": "uint256"
       }
     ],
     "name": "liquidate",
     "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "",
@@ -653,6 +745,45 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "penaltyLender",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "penaltyLiquidator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "penaltyPlatform",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -695,6 +826,32 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "quoter",
+    "outputs": [
+      {
+        "internalType": "contract IQuoterV2",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_admin",
+        "type": "address"
+      }
+    ],
+    "name": "setAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -743,7 +900,30 @@
   {
     "inputs": [
       {
-        "internalType": "contract ISwapRouter",
+        "internalType": "uint256",
+        "name": "_platform",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_liquidator",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_lender",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPenalty",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IV3SwapRouter",
         "name": "_swapRouter",
         "type": "address"
       },
@@ -751,11 +931,55 @@
         "internalType": "contract IUniswapV3Factory",
         "name": "_factory",
         "type": "address"
+      },
+      {
+        "internalType": "contract IQuoterV2",
+        "name": "_quoter",
+        "type": "address"
       }
     ],
     "name": "setSwapRouter",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "shareBorrower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "shareLender",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sharePlatform",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -770,7 +994,7 @@
     "name": "swapRouter",
     "outputs": [
       {
-        "internalType": "contract ISwapRouter",
+        "internalType": "contract IV3SwapRouter",
         "name": "",
         "type": "address"
       }
@@ -823,15 +1047,43 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "withdrawLiquidity",
-    "outputs": [
+    "inputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawCollateralByAdmin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_earnPlatform",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_earnBorrower",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_earnLender",
         "type": "uint256"
       }
     ],
+    "name": "withdrawLiquidity",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

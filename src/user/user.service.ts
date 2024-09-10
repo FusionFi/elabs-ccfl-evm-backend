@@ -584,11 +584,12 @@ export class UserService {
             contractLoan.isStakeAave(),
           ]);
 
-        let yieldEarned = null;
+        // let yieldEarned = null;
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
-          [yieldEarned, healthFactor] = await Promise.all([
-            contractLoan.getYieldEarned(),
+          // [yieldEarned, healthFactor] = await Promise.all([
+          [healthFactor] = await Promise.all([
+            // contractLoan.getYieldEarned(),
             contractCCFL.getHealthFactor(loanId),
           ]);
         }
@@ -657,7 +658,7 @@ export class UserService {
           collateral_decimals: collateral.decimals,
           collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
-          yield_earned: yieldEarned ? yieldEarned.toString() : null,
+          yield_earned: null, // yieldEarned ? yieldEarned.toString() : null,
         });
 
         allLoans.sort((a, b) => parseInt(b.loan_id) - parseInt(a.loan_id));

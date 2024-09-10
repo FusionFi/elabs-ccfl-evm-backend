@@ -1348,6 +1348,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "quoter",
+    "outputs": [
+      {
+        "internalType": "contract IQuoterV2",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -1600,13 +1613,18 @@
   {
     "inputs": [
       {
-        "internalType": "contract ISwapRouter",
+        "internalType": "contract IV3SwapRouter",
         "name": "_swapRouter",
         "type": "address"
       },
       {
         "internalType": "contract IUniswapV3Factory",
         "name": "_factory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IQuoterV2",
+        "name": "_quoter",
         "type": "address"
       }
     ],

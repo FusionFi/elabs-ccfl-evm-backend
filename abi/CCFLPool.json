@@ -688,8 +688,19 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "withdrawAllByAdmin",
+    "inputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawByAdmin",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
