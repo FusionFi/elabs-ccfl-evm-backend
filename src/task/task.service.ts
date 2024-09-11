@@ -4,6 +4,7 @@ import { Repository, ILike } from 'typeorm';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
+import { Fiat } from 'src/fiat/entity/fiat.entity';
 import { Cron, Interval } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
@@ -29,13 +30,16 @@ export class TaskService {
     @InjectRepository(Contract)
     private contractRepository: Repository<Contract>,
 
+    @InjectRepository(Fiat)
+    private fiatRepository: Repository<Fiat>,
+
     @InjectBot() private bot: Telegraf<any>,
   ) {}
 
-  @Cron(ConfigService.Cronjob.updatePrice)
-  async handleUpdatePrice() {
+  @Cron(ConfigService.Cronjob.updateCryptoPrice)
+  async handleUpdateCryptoPrice() {
     try {
-      this.logger.log('Called every 1 minute to update all prices');
+      this.logger.log('Called every 1 minute to update all crypto prices');
       const data = await this.assetRepository
         .createQueryBuilder('asset')
         .select('DISTINCT(asset.coingecko_id)')
@@ -57,7 +61,7 @@ export class TaskService {
           { price: price.data[item]['usd'] },
         );
       }
-      this.logger.log('Done for updating all prices');
+      this.logger.log('Done for updating all crypto prices');
     } catch (error) {
       this.logger.error(
         `Error in updating all prices from coingecko: ${error}`,
@@ -141,6 +145,50 @@ export class TaskService {
         ConfigService.Telegram.groupId,
         `[SOS] Error in checking liquidation: ${error}`,
       );
+    }
+  }
+
+  @Cron(ConfigService.Cronjob.updateFiatPrice)
+  async handleUpdateFiatPrice() {
+    try {
+      this.logger.log('Called every 30 minutes to update all fiat prices');
+      let prices = await axios.get(ConfigService.FiatPrice.url_1);
+
+      let data = [];
+      for (let key in prices.data.conversion_rates) {
+        data.push({
+          currency: key,
+          price: prices.data.conversion_rates[key]
+        });
+      }
+
+      await this.fiatRepository.save(data);
+      this.logger.log('Done for updating all fiat prices');
+    } catch (err) {
+      try {
+        let prices = await axios.get(ConfigService.FiatPrice.url_2);
+
+        let data = [];
+        for (let key in prices.data.rates) {
+          data.push({
+            currency: key,
+            price: prices.data.rates[key]
+          });
+        }
+        await this.fiatRepository.save(data);
+        this.logger.log('Done for updating all fiat prices');
+      } catch (error) {
+        this.logger.error(`Error in updating fiat price with ${ConfigService.FiatPrice.url_1}: ${err}`);
+        this.logger.error(`Error in updating fiat price with ${ConfigService.FiatPrice.url_2}: ${error}`);
+        this.bot.telegram.sendMessage(
+          ConfigService.Telegram.groupId,
+          `[SOS] Error in updating fiat price with ${ConfigService.FiatPrice.url_1}: ${err}`,
+        );
+        this.bot.telegram.sendMessage(
+          ConfigService.Telegram.groupId,
+          `[SOS] Error in updating fiat price with ${ConfigService.FiatPrice.url_2}: ${error}`,
+        );
+      }
     }
   }
 }

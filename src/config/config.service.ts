@@ -82,7 +82,13 @@ export class ConfigService {
   };
 
   static Cronjob = {
-    updatePrice: process.env.CRONJOB_UPDATE_PRICE,
+    updateCryptoPrice: process.env.CRONJOB_UPDATE_CRYPTO_PRICE,
+    updateFiatPrice: process.env.CRONJOB_UPDATE_FIAT_PRICE,
     checkLiquidation: process.env.CRONJOB_CHECK_LIQUIDATION,
   };
+
+  static FiatPrice = {
+    url_1: process.env.URL_UPDATE_FIAT_PRICE_1,
+    url_2: process.env.URL_UPDATE_FIAT_PRICE_2
+  }
 }
