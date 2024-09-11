@@ -33,14 +33,22 @@ export class FiatController {
     required: false,
   })
   @Get('price')
-  async findAllFiatPrice(
-    @Query('currency') currency?: string
-  ) {
+  async findAllFiatPrice(@Query('currency') currency?: string) {
     try {
-      const allFiat = await this.fiatService.findAllFiatPrice(
-        currency
-      );
+      const allFiat = await this.fiatService.findAllFiatPrice(currency);
       return mapFiat(allFiat);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Find fiat price' })
+  @Get('price/:currency')
+  async findFiatPrice(@Param('currency') currency: string) {
+    try {
+      const fiat = await this.fiatService.findFiatPrice(currency);
+      return mapFiat(fiat);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

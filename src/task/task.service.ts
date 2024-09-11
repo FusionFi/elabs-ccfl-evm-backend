@@ -152,13 +152,13 @@ export class TaskService {
   async handleUpdateFiatPrice() {
     try {
       this.logger.log('Called every 30 minutes to update all fiat prices');
-      let prices = await axios.get(ConfigService.FiatPrice.url_1);
+      const prices = await axios.get(ConfigService.FiatPrice.url_1);
 
-      let data = [];
-      for (let key in prices.data.conversion_rates) {
+      const data = [];
+      for (const key in prices.data.conversion_rates) {
         data.push({
           currency: key,
-          price: prices.data.conversion_rates[key]
+          price: prices.data.conversion_rates[key],
         });
       }
 
@@ -166,20 +166,24 @@ export class TaskService {
       this.logger.log('Done for updating all fiat prices');
     } catch (err) {
       try {
-        let prices = await axios.get(ConfigService.FiatPrice.url_2);
+        const prices = await axios.get(ConfigService.FiatPrice.url_2);
 
-        let data = [];
-        for (let key in prices.data.rates) {
+        const data = [];
+        for (const key in prices.data.rates) {
           data.push({
             currency: key,
-            price: prices.data.rates[key]
+            price: prices.data.rates[key],
           });
         }
         await this.fiatRepository.save(data);
         this.logger.log('Done for updating all fiat prices');
       } catch (error) {
-        this.logger.error(`Error in updating fiat price with ${ConfigService.FiatPrice.url_1}: ${err}`);
-        this.logger.error(`Error in updating fiat price with ${ConfigService.FiatPrice.url_2}: ${error}`);
+        this.logger.error(
+          `Error in updating fiat price with ${ConfigService.FiatPrice.url_1}: ${err}`,
+        );
+        this.logger.error(
+          `Error in updating fiat price with ${ConfigService.FiatPrice.url_2}: ${error}`,
+        );
         this.bot.telegram.sendMessage(
           ConfigService.Telegram.groupId,
           `[SOS] Error in updating fiat price with ${ConfigService.FiatPrice.url_1}: ${err}`,

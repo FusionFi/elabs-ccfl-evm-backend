@@ -89,6 +89,6 @@ export class ConfigService {
 
   static FiatPrice = {
     url_1: process.env.URL_UPDATE_FIAT_PRICE_1,
-    url_2: process.env.URL_UPDATE_FIAT_PRICE_2
-  }
+    url_2: process.env.URL_UPDATE_FIAT_PRICE_2,
+  };
 }

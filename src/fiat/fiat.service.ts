@@ -12,9 +12,7 @@ export class FiatService {
     private fiatRepository: Repository<Fiat>,
   ) {}
 
-  async findAllFiatPrice(
-    currency: string,
-  ) {
+  async findAllFiatPrice(currency: string) {
     try {
       const searchObj: any = {};
 
@@ -23,6 +21,16 @@ export class FiatService {
       }
 
       return await this.fiatRepository.findBy(searchObj);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async findFiatPrice(currency: string) {
+    try {
+      return await this.fiatRepository.findOneBy({
+        currency: ILike(`%${currency}%`),
+      });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

@@ -247,7 +247,7 @@ export class UserService {
 
   async checkExistingUsername(username: string) {
     try {
-      let exist = await this.userRepository.findOneBy({ username });
+      const exist = await this.userRepository.findOneBy({ username });
       if (exist) {
         return true;
       }
@@ -259,7 +259,7 @@ export class UserService {
 
   async checkExistingEmail(email: string) {
     try {
-      let exist = await this.userRepository.findOneBy({ email });
+      const exist = await this.userRepository.findOneBy({ email });
       if (exist) {
         return true;
       }
