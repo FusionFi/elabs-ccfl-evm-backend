@@ -1,20 +1,14 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Fiat {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({
-    nullable: false,
-    unique: true,
-  })
+  @PrimaryColumn()
   currency: string;
 
   @Column({

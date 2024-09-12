@@ -154,28 +154,25 @@ export class TaskService {
       this.logger.log('Called every 30 minutes to update all fiat prices');
       const prices = await axios.get(ConfigService.FiatPrice.url_1);
 
-      const data = [];
       for (const key in prices.data.conversion_rates) {
-        data.push({
+        await this.fiatRepository.save({
           currency: key,
-          price: prices.data.conversion_rates[key],
+          price: prices.data.conversion_rates[key]
         });
       }
 
-      await this.fiatRepository.save(data);
       this.logger.log('Done for updating all fiat prices');
     } catch (err) {
       try {
         const prices = await axios.get(ConfigService.FiatPrice.url_2);
 
-        const data = [];
         for (const key in prices.data.rates) {
-          data.push({
+          await this.fiatRepository.save({
             currency: key,
-            price: prices.data.rates[key],
+            price: prices.data.rates[key]
           });
         }
-        await this.fiatRepository.save(data);
+
         this.logger.log('Done for updating all fiat prices');
       } catch (error) {
         this.logger.error(
