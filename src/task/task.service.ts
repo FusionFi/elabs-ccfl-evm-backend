@@ -5,7 +5,7 @@ import { Asset } from 'src/asset/entity/asset.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
 import { Fiat } from 'src/fiat/entity/fiat.entity';
-import { Cron, Interval } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { InjectBot } from 'nestjs-telegraf';
@@ -157,7 +157,7 @@ export class TaskService {
       for (const key in prices.data.conversion_rates) {
         await this.fiatRepository.save({
           currency: key,
-          price: prices.data.conversion_rates[key]
+          price: prices.data.conversion_rates[key],
         });
       }
 
@@ -169,7 +169,7 @@ export class TaskService {
         for (const key in prices.data.rates) {
           await this.fiatRepository.save({
             currency: key,
-            price: prices.data.rates[key]
+            price: prices.data.rates[key],
           });
         }
 

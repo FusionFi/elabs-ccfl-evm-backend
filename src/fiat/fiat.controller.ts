@@ -1,21 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpException,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiTags,
-  ApiOperation,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { Controller, Get, Param, HttpException, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { FiatService } from './fiat.service';
 import { Public } from 'src/common/decorators/public.decorator';
 import { mapFiat } from './response-dto/fiat.map';

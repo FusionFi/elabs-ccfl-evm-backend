@@ -91,4 +91,12 @@ export class ConfigService {
     url_1: process.env.URL_UPDATE_FIAT_PRICE_1,
     url_2: process.env.URL_UPDATE_FIAT_PRICE_2,
   };
+
+  static Encryptus = {
+    url: process.env.URL_ENCRYPTUS,
+    partner_email: process.env.PARTNER_EMAIL,
+    partner_password: process.env.PARTNER_PASSWORD,
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+  };
 }

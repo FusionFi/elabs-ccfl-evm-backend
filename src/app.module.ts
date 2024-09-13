@@ -24,6 +24,7 @@ import { PoolModule } from './pool/pool.module';
 import { SubgraphModule } from './subgraph/subgraph.module';
 import { PriceModule } from './price/price.module';
 import { FiatModule } from './fiat/fiat.module';
+import { EncryptusModule } from './encryptus/encryptus.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import {
   I18nModule,
@@ -86,6 +87,7 @@ import * as path from 'path';
     FiatModule,
     AssetModule,
     SubgraphModule,
+    EncryptusModule,
     SettingModule,
     ContractModule,
     NetworkModule,

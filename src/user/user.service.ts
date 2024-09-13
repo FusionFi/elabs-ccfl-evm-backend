@@ -61,8 +61,6 @@ export class UserService {
       const user = new User();
       user.username = signupDto.username;
       user.password = await bcrypt.hash(signupDto.password, salt);
-      // user.firstName = signupDto.firstName;
-      // user.lastName = signupDto.lastName;
       user.email = signupDto.email;
       user.isActive = true;
 
@@ -193,8 +191,6 @@ export class UserService {
       return {
         id: user.id,
         username: user.username,
-        // firstName: user.firstName,
-        // lastName: user.lastName,
         email: user.email,
         emailVerified: true,
         isActive: user.isActive,
@@ -522,7 +518,7 @@ export class UserService {
       if (cacheData) {
         this.logger.log(`\n:return:cache:${key}`);
         return {
-          ...(cacheData as Object),
+          ...(cacheData as any),
           loans: {
             total: (cacheData as { loans: Array<any> }).loans.length,
             offset,
