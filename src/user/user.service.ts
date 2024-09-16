@@ -10,6 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository, ILike } from 'typeorm';
+import { Setting } from 'src/setting/entity/setting.entity';
 import { User } from './entity/user.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
@@ -36,6 +37,9 @@ export class UserService {
   constructor(
     private jwtService: JwtService,
     private readonly emailService: MailerService,
+
+    @InjectRepository(Setting)
+    private settingRepository: Repository<Setting>,
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -483,7 +487,9 @@ export class UserService {
           pool_utilization: BigNumber(remainingPool)
             .div(totalSupply)
             .toFixed(8),
-          withdraw_available: BigNumber(supplyBalance).lte(remainingPool) ? supplyBalance.toFixed() : remainingPool,
+          withdraw_available: BigNumber(supplyBalance).lte(remainingPool)
+            ? supplyBalance.toFixed()
+            : remainingPool.toString(),
         });
       }
 
@@ -529,7 +535,10 @@ export class UserService {
         };
       }
 
-      const [network, ccfl] = await Promise.all([
+      const [yieldBorrower, network, ccfl] = await Promise.all([
+        this.settingRepository.findOneBy({
+          key: 'YIELD_BORROWER',
+        }),
         this.networkRepository.findOneBy({
           isActive: true,
           chainId,
@@ -578,12 +587,11 @@ export class UserService {
             contractLoan.isStakeAave(),
           ]);
 
-        // let yieldEarned = null;
+        let yieldEarned = null;
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
-          // [yieldEarned, healthFactor] = await Promise.all([
-          [healthFactor] = await Promise.all([
-            // contractLoan.getYieldEarned(),
+          [yieldEarned, healthFactor] = await Promise.all([
+            contractLoan.getYieldEarned(100 * parseInt(yieldBorrower.value)),
             contractCCFL.getHealthFactor(loanId),
           ]);
         }
@@ -652,7 +660,7 @@ export class UserService {
           collateral_decimals: collateral.decimals,
           collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
-          yield_earned: null, // yieldEarned ? yieldEarned.toString() : null,
+          yield_earned: yieldEarned == null ? null : yieldEarned.toString(),
         });
 
         allLoans.sort((a, b) => parseInt(b.loan_id) - parseInt(a.loan_id));
