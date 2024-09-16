@@ -440,14 +440,14 @@ export class UserService {
         );
 
         const [
-          share,
+          balanceOf,
           currentRate,
           remainingPool,
           totalSupply,
           walletBalance,
           asset,
         ] = await Promise.all([
-          contract.share(address),
+          contract.balanceOf(address),
           contract.getCurrentRate(),
           contract.getRemainingPool(),
           contract.getTotalSupply(),
@@ -459,9 +459,7 @@ export class UserService {
           }),
         ]);
 
-        const supplyBalance = BigNumber(share.toString()).div(
-          BigNumber(10).pow(27 - asset.decimals),
-        );
+        const supplyBalance = BigNumber(balanceOf.toString());
 
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
         const seconds = ConfigService.App.seconds_per_year;
@@ -485,7 +483,7 @@ export class UserService {
           pool_utilization: BigNumber(remainingPool)
             .div(totalSupply)
             .toFixed(8),
-          withdraw_available: null,
+          withdraw_available: BigNumber(supplyBalance).lte(remainingPool) ? supplyBalance.toFixed() : remainingPool,
         });
       }
 
