@@ -69,6 +69,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -159,6 +164,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -268,6 +278,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -346,6 +361,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -424,6 +444,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -508,6 +533,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -592,6 +622,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "indexed": false,

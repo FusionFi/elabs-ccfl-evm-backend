@@ -436,6 +436,7 @@ export class UserService {
       const supplies = [];
       let netApy = BigNumber(0);
       let totalSupplyInUsd = BigNumber(0);
+      let totalEarned = BigNumber(0);
       for (const item of allPools) {
         const contract = new ethers.Contract(
           item.address,
@@ -444,6 +445,7 @@ export class UserService {
         );
 
         const [
+          originSupply,
           balanceOf,
           currentRate,
           remainingPool,
@@ -451,6 +453,7 @@ export class UserService {
           walletBalance,
           asset,
         ] = await Promise.all([
+          contract.getDepositWithdrawAmount(address),
           contract.balanceOf(address),
           contract.getCurrentRate(),
           contract.getRemainingPool(),
@@ -463,7 +466,7 @@ export class UserService {
           }),
         ]);
 
-        const supplyBalance = BigNumber(balanceOf.toString());
+        const supplyAndProfit = BigNumber(balanceOf.toString());
 
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
         const seconds = ConfigService.App.seconds_per_year;
@@ -471,24 +474,27 @@ export class UserService {
         netApy = netApy.plus(apy);
 
         totalSupplyInUsd = totalSupplyInUsd.plus(
-          supplyBalance
+          BigNumber(originSupply.toString())
             .div(BigNumber(10).pow(asset.decimals))
             .times(asset.price),
         );
+
+        const profit = supplyAndProfit.minus(originSupply.toString()).toFixed();
+        totalEarned = totalEarned.plus(profit);
 
         supplies.push({
           asset: item.asset,
           decimals: asset.decimals,
           asset_price: asset.price,
-          supply_balance: supplyBalance.toFixed(),
-          earned_reward: null,
+          supply_balance: originSupply.toString(),
+          earned_reward: profit,
           apy: BigNumber(apy).toFixed(8),
           wallet_balance: (walletBalance as { balance: number }).balance,
           pool_utilization: BigNumber(remainingPool)
             .div(totalSupply)
             .toFixed(8),
-          withdraw_available: BigNumber(supplyBalance).lte(remainingPool)
-            ? supplyBalance.toFixed()
+          withdraw_available: supplyAndProfit.lte(remainingPool)
+            ? supplyAndProfit.toFixed()
             : remainingPool.toString(),
         });
       }
@@ -499,7 +505,7 @@ export class UserService {
         total_supply: totalSupplyInUsd.toFixed(),
         net_apy:
           supplies.length == 0 ? null : netApy.div(supplies.length).toFixed(8),
-        total_earned: null,
+        total_earned: totalEarned.toFixed(),
       };
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);

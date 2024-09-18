@@ -209,6 +209,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "cap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -217,6 +230,25 @@
       }
     ],
     "name": "debt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "depositWithdrawAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -301,6 +333,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "getDepositWithdrawAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getRemainingPool",
     "outputs": [
@@ -337,6 +388,11 @@
         "internalType": "address",
         "name": "interestRateStrategyAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_cap",
+        "type": "uint256"
       }
     ],
     "name": "initialize",
@@ -448,6 +504,11 @@
         "internalType": "bool",
         "name": "isFiat",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "closedAmount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -555,6 +616,19 @@
       }
     ],
     "name": "setCCFL",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_cap",
+        "type": "uint256"
+      }
+    ],
+    "name": "setCap",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

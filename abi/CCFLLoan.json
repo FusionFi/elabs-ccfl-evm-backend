@@ -438,6 +438,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "internalType": "struct DataTypes.Loan",
@@ -559,6 +564,11 @@
         "internalType": "bool",
         "name": "isFiat",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "closedAmount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -612,6 +622,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "closedAmount",
+            "type": "uint256"
           }
         ],
         "internalType": "struct DataTypes.Loan",
