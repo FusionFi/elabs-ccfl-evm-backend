@@ -668,6 +668,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_interestRateStrategyAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setReserveInterestRateStrategy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "",
         "type": "address"
       }

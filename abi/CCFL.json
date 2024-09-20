@@ -658,19 +658,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "aaveAddressProvider",
-    "outputs": [
-      {
-        "internalType": "contract IPoolAddressesProvider",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -743,7 +730,7 @@
         "type": "address"
       }
     ],
-    "name": "ccflActiveCollaterals",
+    "name": "ccflActiveCoins",
     "outputs": [
       {
         "internalType": "bool",
@@ -755,19 +742,13 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "ccflActivePoolStableCoins",
+    "inputs": [],
+    "name": "ccflConfig",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "contract ICCFLConfig",
         "name": "",
-        "type": "bool"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -899,30 +880,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "collaterals",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
@@ -992,45 +949,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "earnBorrower",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "earnLender",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "earnPlatform",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "contract IERC20Standard",
@@ -1059,19 +977,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "factory",
-    "outputs": [
-      {
-        "internalType": "contract IUniswapV3Factory",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1191,19 +1096,9 @@
         "type": "address[]"
       },
       {
-        "internalType": "contract IPoolAddressesProvider",
-        "name": "_aaveAddressProvider",
+        "internalType": "contract ICCFLConfig",
+        "name": "_ccflConfig",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_maxLTV",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_liquidationThreshold",
-        "type": "uint256"
       },
       {
         "internalType": "contract ICCFLLoan",
@@ -1244,46 +1139,7 @@
   },
   {
     "inputs": [],
-    "name": "liquidationThreshold",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "liquidator",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "loandIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxLTV",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1327,58 +1183,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "penaltyLender",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "penaltyLiquidator",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "penaltyPlatform",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "platform",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "contract IERC20Standard",
@@ -1409,19 +1213,6 @@
     "outputs": [
       {
         "internalType": "contract AggregatorV3Interface",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "quoter",
-    "outputs": [
-      {
-        "internalType": "contract IQuoterV2",
         "name": "",
         "type": "address"
       }
@@ -1472,19 +1263,6 @@
       }
     ],
     "name": "repayLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IPoolAddressesProvider",
-        "name": "_aaveAddressProvider",
-        "type": "address"
-      }
-    ],
-    "name": "setAaveProvider",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1551,42 +1329,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_borrower",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_platform",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_lender",
-        "type": "uint256"
-      }
-    ],
-    "name": "setEarnShare",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_isActived",
-        "type": "bool"
-      }
-    ],
-    "name": "setEnableETHNative",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address[]",
         "name": "_addresses",
         "type": "address[]"
@@ -1618,47 +1360,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_platform",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_liquidator",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_lender",
-        "type": "uint256"
-      }
-    ],
-    "name": "setPenalty",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_liquidator",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_platform",
-        "type": "address"
-      }
-    ],
-    "name": "setPlatformAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "contract IERC20Standard[]",
         "name": "_ccflPoolStableCoin",
         "type": "address[]"
@@ -1675,60 +1376,6 @@
       }
     ],
     "name": "setPools",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IV3SwapRouter",
-        "name": "_swapRouter",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IUniswapV3Factory",
-        "name": "_factory",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IQuoterV2",
-        "name": "_quoter",
-        "type": "address"
-      }
-    ],
-    "name": "setSwapRouter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_maxLTV",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_liquidationThreshold",
-        "type": "uint256"
-      }
-    ],
-    "name": "setThreshold",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IWETH",
-        "name": "_iWETH",
-        "type": "address"
-      }
-    ],
-    "name": "setWETH",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1758,19 +1405,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "wETH",
-    "outputs": [
-      {
-        "internalType": "contract IWETH",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -1779,7 +1413,7 @@
       },
       {
         "internalType": "bool",
-        "name": "isETH",
+        "name": "_isETH",
         "type": "bool"
       }
     ],
