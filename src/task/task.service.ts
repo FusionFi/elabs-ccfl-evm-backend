@@ -5,7 +5,7 @@ import { Asset } from 'src/asset/entity/asset.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
 import { Fiat } from 'src/fiat/entity/fiat.entity';
-import { Cron } from '@nestjs/schedule';
+import { Cron, Interval } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { InjectBot } from 'nestjs-telegraf';
@@ -74,7 +74,7 @@ export class TaskService {
   }
 
   // @Cron(ConfigService.Cronjob.checkLiquidation)
-  // @Interval(10000)
+  // @Interval(300000)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
@@ -88,16 +88,15 @@ export class TaskService {
       });
 
       const provider = new ethers.JsonRpcProvider(network.rpcUrl);
-      const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, provider);
+      const wallet = new ethers.Wallet(ConfigService.Cronjob.operatorPrivateKey, provider);
+      const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, wallet);
 
       const loandIds = await contractCCFL.loandIds();
-      console.log('loandIds: ', loandIds);
 
       for (let i = 1; i < loandIds; i++) {
-        console.log('LoanId: ', i);
+        console.log("\n================================");
 
         const loanAddress = await contractCCFL.getLoanAddress(i);
-        console.log('loanAddress: ', loanAddress);
 
         const contractLoan = new ethers.Contract(
           loanAddress,
@@ -106,22 +105,26 @@ export class TaskService {
         );
 
         const loanInfo = await contractLoan.getLoanInfo();
-        console.log('loanInfo: ', loanInfo);
 
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
           const healthFactor = await contractCCFL.getHealthFactor(i);
-          console.log('healthFactor: ', healthFactor);
+          this.logger.log(
+            `Loan info:
+            + loanId: ${i},
+            + loanAddress: ${loanAddress},
+            + healthFactor: ${healthFactor},
+            + borrower: ${loanInfo.borrower},
+            + amount: ${loanInfo.amount},
+            + stableCoin: ${loanInfo.stableCoin},
+            + isFiat: ${loanInfo.isFiat}`
+          );
+
           if (healthFactor < 100) {
-            await contractCCFL.liquidate(i);
+            const txResponse = await contractCCFL.liquidate(i);
+            const txReceipt = await txResponse.wait();
             this.logger.log(
               `Liquidated successfully:
-              + loanId: ${i},
-              + loanAddress: ${loanAddress},
-              + healthFactor: ${healthFactor},
-              + borrower: ${loanInfo.borrower},
-              + amount: ${loanInfo.amount},
-              + stableCoin: ${loanInfo.stableCoin},
-              + isFiat: ${loanInfo.isFiat}`,
+              + txReceipt: ${txReceipt}`
             );
             this.bot.telegram.sendMessage(
               ConfigService.Telegram.groupId,
@@ -132,10 +135,13 @@ export class TaskService {
               + borrower: ${loanInfo.borrower},
               + amount: ${loanInfo.amount},
               + stableCoin: ${loanInfo.stableCoin},
-              + isFiat: ${loanInfo.isFiat}`,
+              + isFiat: ${loanInfo.isFiat},
+              + txReceipt: ${txReceipt}`
             );
+            console.log("================================\n");
           } else {
             console.log('Good health factor');
+            console.log("================================\n");
           }
         }
       }
@@ -145,6 +151,7 @@ export class TaskService {
         ConfigService.Telegram.groupId,
         `[SOS] Error in checking liquidation: ${error}`,
       );
+      console.log("================================\n");
     }
   }
 
