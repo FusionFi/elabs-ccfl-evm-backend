@@ -650,6 +650,7 @@ export class UserService {
 
         allLoans.push({
           loan_id: parseInt(loanId),
+          is_paid: loanInfo.isPaid,
           is_fiat: loanInfo.isFiat,
           asset: asset.symbol,
           decimals: asset.decimals,
