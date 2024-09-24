@@ -596,11 +596,10 @@ export class UserService {
         let yieldEarned = null;
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
-          // [yieldEarned, healthFactor] = await Promise.all([
-          //   contractLoan.getYieldEarned(100 * parseInt(yieldBorrower.value)),
-          //   contractCCFL.getHealthFactor(loanId),
-          // ]);
-          healthFactor = await contractCCFL.getHealthFactor(loanId);
+          [yieldEarned, healthFactor] = await Promise.all([
+            contractLoan.getYieldEarned(100 * parseInt(yieldBorrower.value)),
+            contractCCFL.getHealthFactor(loanId),
+          ]);
         }
 
         const [asset, collateral] = await Promise.all([
@@ -650,7 +649,6 @@ export class UserService {
 
         allLoans.push({
           loan_id: parseInt(loanId),
-          is_paid: loanInfo.isPaid,
           is_fiat: loanInfo.isFiat,
           asset: asset.symbol,
           decimals: asset.decimals,

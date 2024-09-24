@@ -406,21 +406,21 @@ export class SeederService {
       const contracts = [
         {
           type: 'ccfl',
-          address: '0xDD20c2e2cf399Cc3c688a0A73241B8e8eA7b6F78',
+          address: '0x023CE898cB9E07688594014dd7F05b82844AfbBa',
           chainId: 11155111,
           asset: null,
           isActive: true,
         },
         {
           type: 'pool',
-          address: '0x55A60534c16E1039E4BDf2E437bCc8419e4551D9',
+          address: '0x0Bf6868f8E100c142BA1304435cBDdfF3e6416F3',
           chainId: 11155111,
           asset: 'USDC',
           isActive: true,
         },
         {
           type: 'pool',
-          address: '0x9352EC98DA4896C7eDfBa230E94ccaF1e4e1DbAd',
+          address: '0xeaE813a7eb9A003ba5e8905F977c578c53aea5E5',
           chainId: 11155111,
           asset: 'USDT',
           isActive: true,

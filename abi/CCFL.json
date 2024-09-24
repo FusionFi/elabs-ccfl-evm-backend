@@ -31,11 +31,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
-          },
-          {
             "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
@@ -124,11 +119,6 @@
             "internalType": "uint256",
             "name": "loanId",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -240,11 +230,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
-          },
-          {
             "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
@@ -323,11 +308,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
-          },
-          {
             "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
@@ -404,11 +384,6 @@
             "internalType": "uint256",
             "name": "loanId",
             "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -495,11 +470,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
-          },
-          {
             "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
@@ -568,96 +538,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "borrower",
-        "type": "address"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "loanId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isPaid",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isClosed",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "borrower",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "isLiquidated",
-            "type": "bool"
-          },
-          {
-            "internalType": "contract IERC20Standard",
-            "name": "stableCoin",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "isFinalty",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isFiat",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "closedAmount",
-            "type": "uint256"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct DataTypes.Loan",
-        "name": "loanInfo",
-        "type": "tuple"
-      }
-    ],
-    "name": "WithdrawLoan",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "aTokens",
-    "outputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -723,25 +603,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "ccflActiveCoins",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "ccflConfig",
     "outputs": [
@@ -760,25 +621,6 @@
     "outputs": [
       {
         "internalType": "contract ICCFLLoan",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "ccflPoolStableCoins",
-    "outputs": [
-      {
-        "internalType": "contract IERC20Standard",
         "name": "",
         "type": "address"
       }
@@ -853,25 +695,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "collateralTokens",
-    "outputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1004,30 +827,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20Standard",
-        "name": "_stableCoin",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "isPool",
-        "type": "bool"
-      }
-    ],
-    "name": "getLatestPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "_loanId",
         "type": "uint256"
@@ -1071,28 +870,8 @@
         "type": "address[]"
       },
       {
-        "internalType": "contract AggregatorV3Interface[]",
-        "name": "_poolAggregators",
-        "type": "address[]"
-      },
-      {
         "internalType": "contract ICCFLPool[]",
         "name": "_ccflPools",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract IERC20Standard[]",
-        "name": "_collateralTokens",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract AggregatorV3Interface[]",
-        "name": "_collateralAggregators",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract IERC20Standard[]",
-        "name": "_aTokens",
         "type": "address[]"
       },
       {
@@ -1185,44 +964,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "priceFeeds",
-    "outputs": [
-      {
-        "internalType": "contract AggregatorV3Interface",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "pricePoolFeeds",
-    "outputs": [
-      {
-        "internalType": "contract AggregatorV3Interface",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "_loanId",
         "type": "uint256"
@@ -1270,58 +1011,12 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20Standard",
-        "name": "_token",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "_isActived",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "_isPoolToken",
-        "type": "bool"
-      }
-    ],
-    "name": "setActiveToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "contract ICCFLLoan",
         "name": "_loan",
         "type": "address"
       }
     ],
     "name": "setCCFLLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard[]",
-        "name": "_collateralTokens",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract AggregatorV3Interface[]",
-        "name": "_collateralAggregators",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract IERC20Standard[]",
-        "name": "_aTokens",
-        "type": "address[]"
-      }
-    ],
-    "name": "setCollaterals",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1362,11 +1057,6 @@
       {
         "internalType": "contract IERC20Standard[]",
         "name": "_ccflPoolStableCoin",
-        "type": "address[]"
-      },
-      {
-        "internalType": "contract AggregatorV3Interface[]",
-        "name": "_poolAggregators",
         "type": "address[]"
       },
       {
@@ -1436,42 +1126,6 @@
       }
     ],
     "name": "withdrawAllCollateralByAdmin",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "_stableCoin",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_loanId",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawFiatLoan",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "_stableCoin",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_loanId",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawLoan",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
