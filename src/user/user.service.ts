@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository, ILike } from 'typeorm';
 import { Setting } from 'src/setting/entity/setting.entity';
 import { User } from './entity/user.entity';
+import { Subscriber } from './entity/subscriber.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
@@ -43,6 +44,9 @@ export class UserService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Subscriber)
+    private subscriberRepository: Repository<Subscriber>,
 
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
@@ -693,6 +697,98 @@ export class UserService {
           data: data.loans.slice(offset, offset + limit),
         },
       };
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async subscribe(email: string) {
+    try {
+      const existSubscriber = await this.subscriberRepository.findOneBy({
+        email
+      });
+
+      if (existSubscriber) {
+        if (existSubscriber.isSubscribed) {
+          throw new HttpException(
+            this.i18n.translate('message.EMAIL_ALREADY_SUBSCRIBED', {
+              lang: I18nContext.current().lang,
+            }),
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          await this.subscriberRepository.update(
+            { email },
+            {
+              lastSubscribedAt: new Date(),
+              numSubscribed: existSubscriber.numSubscribed + 1,
+              isSubscribed: true
+            }
+          );
+
+          const updated = await this.subscriberRepository.findOneBy({ email });
+          return updated;
+        }
+      } else {
+        const subscriber = new Subscriber();
+        subscriber.email = email;
+        subscriber.firstSubscribedAt = new Date();
+        subscriber.numSubscribed = 1;
+        subscriber.isSubscribed = true;
+
+        return await this.subscriberRepository.save(subscriber);
+      }
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async unsubscribe(email: string) {
+    try {
+      const existSubscriber = await this.subscriberRepository.findOneBy({
+        email
+      });
+
+      if (existSubscriber) {
+        if (!existSubscriber.isSubscribed) {
+          throw new HttpException(
+            this.i18n.translate('message.EMAIL_ALREADY_UNSUBSCRIBED', {
+              lang: I18nContext.current().lang,
+            }),
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          if (existSubscriber.numUnsubscribed == 0) {
+            await this.subscriberRepository.update(
+              { email },
+              {
+                firstUnsubscribedAt: new Date(),
+                numUnsubscribed: existSubscriber.numUnsubscribed + 1,
+                isSubscribed: false
+              }
+            );
+          } else {
+            await this.subscriberRepository.update(
+              { email },
+              {
+                lastUnsubscribedAt: new Date(),
+                numUnsubscribed: existSubscriber.numUnsubscribed + 1,
+                isSubscribed: false
+              }
+            );
+          }
+          
+          const updated = await this.subscriberRepository.findOneBy({ email });
+          return updated;
+        }
+      } else {
+        throw new HttpException(
+          this.i18n.translate('message.EMAIL_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

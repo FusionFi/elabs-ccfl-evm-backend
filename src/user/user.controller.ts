@@ -29,6 +29,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapUser } from './response-dto/user.map';
+import { mapSubscriber } from './response-dto/subscriber.map';
 import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
 @ApiTags('user')
@@ -242,6 +243,30 @@ export class UserController {
         asset,
       );
       return addressBalance;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Subscribe' })
+  @Post('subscribe')
+  async subscribe(@Body() { email }: EmailDto) {
+    try {
+      const result = await this.userService.subscribe(email);
+      return mapSubscriber(result);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Unsubscribe' })
+  @Post('unsubscribe')
+  async unsubscribe(@Body() { email }: EmailDto) {
+    try {
+      const result = await this.userService.unsubscribe(email);
+      return mapSubscriber(result);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
