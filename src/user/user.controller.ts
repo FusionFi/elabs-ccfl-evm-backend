@@ -271,27 +271,15 @@ export class UserController {
     }
   }
 
-  // @Public()
-  // @ApiOperation({ summary: 'Subscribe' })
-  // @Post('subscribe')
-  // async subscribe(@Body() { email }: EmailDto) {
-  //   try {
-  //     const result = await this.userService.subscribe(email);
-  //     return mapSubscriber(result);
-  //   } catch (e) {
-  //     throw new HttpException(e.response, e.status);
-  //   }
-  // }
-
-  // @Public()
-  // @ApiOperation({ summary: 'Unsubscribe' })
-  // @Post('unsubscribe')
-  // async unsubscribe(@Body() { email }: EmailDto) {
-  //   try {
-  //     const result = await this.userService.unsubscribe(email);
-  //     return mapSubscriber(result);
-  //   } catch (e) {
-  //     throw new HttpException(e.response, e.status);
-  //   }
-  // }
+  @Public()
+  @ApiExcludeEndpoint()
+  @Get('confirm-unsubscribe')
+  @Render('confirm-unsubscribe')
+  renderConfirmUnsubscribe(@Query('token') token: string) {
+    try {
+      return this.userService.unsubscribe(token);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }

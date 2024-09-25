@@ -708,18 +708,19 @@ export class UserService {
         { email },
         {
           secret: ConfigService.JWTConfig.secret,
-          expiresIn: ConfigService.JWTConfig.expire,
         },
       );
 
-      const link = `${ConfigService.App.domain}/user/confirm-subscribe?token=${token}`;
+      const linkSubscribe = `${ConfigService.App.domain}/user/confirm-subscribe?token=${token}`;
+      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${token}`;
 
       await this.emailService.sendMail({
         to: email,
         subject: 'Confirm your subscription on FUSIONFI application',
         template: './confirm-subscribe',
         context: {
-          link,
+          linkSubscribe,
+          linkUnsubscribe,
         },
       });
 
@@ -774,8 +775,12 @@ export class UserService {
     }
   }
 
-  async unsubscribe(email: string) {
+  async unsubscribe(token: string) {
     try {
+      const { email } = this.jwtService.verify(token, {
+        secret: ConfigService.JWTConfig.secret,
+      });
+      
       const existSubscriber = await this.subscriberRepository.findOneBy({
         email
       });

@@ -39,7 +39,7 @@ const changePassword = async (token, password) => {
 
     if (response.status !== 200 && response.status !== 201) {
       messageBox.classList.add('error');
-      messageBox.textContent = "There was an error. Please try again.";
+      messageBox.textContent = "There was an error! Please try again!";
       return;
     }
 
@@ -48,6 +48,6 @@ const changePassword = async (token, password) => {
 
   } catch (e) {
     messageBox.classList.add('error');
-    messageBox.textContent = "There was an error. Please try again.";
+    messageBox.textContent = "There was an error! Please try again!";
   }
 }
