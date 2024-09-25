@@ -74,7 +74,7 @@ export class TaskService {
   }
 
   // @Cron(ConfigService.Cronjob.checkLiquidation)
-  // @Interval(300000)
+  // @Interval(10000)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
@@ -95,6 +95,7 @@ export class TaskService {
 
       for (let i = 1; i < loandIds; i++) {
         console.log("\n================================");
+        console.log('loanId: ', i);
 
         const loanAddress = await contractCCFL.getLoanAddress(i);
 
@@ -105,6 +106,7 @@ export class TaskService {
         );
 
         const loanInfo = await contractLoan.getLoanInfo();
+        console.log('loanInfo: ', loanInfo);
 
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
           const healthFactor = await contractCCFL.getHealthFactor(i);
@@ -119,16 +121,39 @@ export class TaskService {
             + isFiat: ${loanInfo.isFiat}`
           );
 
-          if (healthFactor < 100) {
-            const txResponse = await contractCCFL.liquidate(i);
-            const txReceipt = await txResponse.wait();
+          try {
+            if (healthFactor < 100) {
+              const txResponse = await contractCCFL.liquidate(i);
+              const txReceipt = await txResponse.wait();
+              this.logger.log(
+                `Liquidated successfully:
+                + txHash: ${txReceipt.hash}`
+              );
+              this.bot.telegram.sendMessage(
+                ConfigService.Telegram.groupId,
+                `Liquidated successfully:
+                + loanId: ${i},
+                + loanAddress: ${loanAddress},
+                + healthFactor: ${healthFactor},
+                + borrower: ${loanInfo.borrower},
+                + amount: ${loanInfo.amount},
+                + stableCoin: ${loanInfo.stableCoin},
+                + isFiat: ${loanInfo.isFiat},
+                + txHash: ${txReceipt.hash}`
+              );
+              console.log("================================\n");
+            } else {
+              console.log('Good health factor');
+              console.log("================================\n");
+            }
+          } catch (err) {
             this.logger.log(
-              `Liquidated successfully:
-              + txReceipt: ${txReceipt}`
+              `Liquidated failed:
+              + error: ${err}`
             );
             this.bot.telegram.sendMessage(
               ConfigService.Telegram.groupId,
-              `Liquidated successfully:
+              `Liquidated failed:
               + loanId: ${i},
               + loanAddress: ${loanAddress},
               + healthFactor: ${healthFactor},
@@ -136,12 +161,10 @@ export class TaskService {
               + amount: ${loanInfo.amount},
               + stableCoin: ${loanInfo.stableCoin},
               + isFiat: ${loanInfo.isFiat},
-              + txReceipt: ${txReceipt}`
+              + error: ${err}`
             );
             console.log("================================\n");
-          } else {
-            console.log('Good health factor');
-            console.log("================================\n");
+            continue;
           }
         }
       }
