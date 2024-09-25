@@ -251,24 +251,47 @@ export class UserController {
   @Public()
   @ApiOperation({ summary: 'Subscribe' })
   @Post('subscribe')
-  async subscribe(@Body() { email }: EmailDto) {
+  sendSubscribeLink(@Body() { email }: EmailDto) {
     try {
-      const result = await this.userService.subscribe(email);
-      return mapSubscriber(result);
+      return this.userService.sendSubscribeLink(email);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
   }
 
   @Public()
-  @ApiOperation({ summary: 'Unsubscribe' })
-  @Post('unsubscribe')
-  async unsubscribe(@Body() { email }: EmailDto) {
+  @ApiExcludeEndpoint()
+  @Get('confirm-subscribe')
+  @Render('confirm-subscribe')
+  renderConfirmSubscribe(@Query('token') token: string) {
     try {
-      const result = await this.userService.unsubscribe(email);
-      return mapSubscriber(result);
+      return this.userService.subscribe(token);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  // @Public()
+  // @ApiOperation({ summary: 'Subscribe' })
+  // @Post('subscribe')
+  // async subscribe(@Body() { email }: EmailDto) {
+  //   try {
+  //     const result = await this.userService.subscribe(email);
+  //     return mapSubscriber(result);
+  //   } catch (e) {
+  //     throw new HttpException(e.response, e.status);
+  //   }
+  // }
+
+  // @Public()
+  // @ApiOperation({ summary: 'Unsubscribe' })
+  // @Post('unsubscribe')
+  // async unsubscribe(@Body() { email }: EmailDto) {
+  //   try {
+  //     const result = await this.userService.unsubscribe(email);
+  //     return mapSubscriber(result);
+  //   } catch (e) {
+  //     throw new HttpException(e.response, e.status);
+  //   }
+  // }
 }

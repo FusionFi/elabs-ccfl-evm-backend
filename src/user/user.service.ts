@@ -702,8 +702,39 @@ export class UserService {
     }
   }
 
-  async subscribe(email: string) {
+  async sendSubscribeLink(email: string) {
     try {
+      const token = this.jwtService.sign(
+        { email },
+        {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: ConfigService.JWTConfig.expire,
+        },
+      );
+
+      const link = `${ConfigService.App.domain}/user/confirm-subscribe?token=${token}`;
+
+      await this.emailService.sendMail({
+        to: email,
+        subject: 'Confirm your subscription on FUSIONFI application',
+        template: './confirm-subscribe',
+        context: {
+          link,
+        },
+      });
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async subscribe(token: string) {
+    try {
+      const { email } = this.jwtService.verify(token, {
+        secret: ConfigService.JWTConfig.secret,
+      });
+
       const existSubscriber = await this.subscriberRepository.findOneBy({
         email
       });
