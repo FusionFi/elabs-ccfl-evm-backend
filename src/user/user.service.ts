@@ -829,4 +829,19 @@ export class UserService {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  async getAllSubscribers() {
+    try {
+      let result = [];
+      const all = await this.subscriberRepository.findBy({
+        isSubscribed: true,
+      });
+      for (let item of all) {
+        result.push(item.email);
+      }
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }

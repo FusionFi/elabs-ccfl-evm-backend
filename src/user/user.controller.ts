@@ -282,4 +282,16 @@ export class UserController {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all subscribers' })
+  @Get('subscribe/all')
+  async getAllSubscribers() {
+    try {
+      const result = await this.userService.getAllSubscribers();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }
