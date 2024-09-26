@@ -392,6 +392,26 @@ export class SeederService {
           value: '0.5',
           type: 'number',
         },
+        {
+          key: 'MIN_AMOUNT_REPAY',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_BORROW',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_ADD_COLLATERAL',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_SUPPLY',
+          value: '10',
+          type: 'number',
+        },
       ];
 
       for (const item of settings) {
