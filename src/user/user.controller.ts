@@ -251,21 +251,10 @@ export class UserController {
   @Public()
   @ApiOperation({ summary: 'Subscribe' })
   @Post('subscribe')
-  sendSubscribeLink(@Body() { email }: EmailDto) {
+  async sendSubscribeEmail(@Body() { email }: EmailDto) {
     try {
-      return this.userService.sendSubscribeLink(email);
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  @Public()
-  @ApiExcludeEndpoint()
-  @Get('confirm-subscribe')
-  @Render('confirm-subscribe')
-  renderConfirmSubscribe(@Query('token') token: string) {
-    try {
-      return this.userService.subscribe(token);
+      const result = await this.userService.sendSubscribeEmail(email);
+      return mapSubscriber(result);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

@@ -702,39 +702,9 @@ export class UserService {
     }
   }
 
-  async sendSubscribeLink(email: string) {
+  async sendSubscribeEmail(email: string) {
     try {
-      const token = this.jwtService.sign(
-        { email },
-        {
-          secret: ConfigService.JWTConfig.secret,
-        },
-      );
-
-      const linkSubscribe = `${ConfigService.App.domain}/user/confirm-subscribe?token=${token}`;
-      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${token}`;
-
-      await this.emailService.sendMail({
-        to: email,
-        subject: 'Confirm your subscription on FUSIONFI application',
-        template: './confirm-subscribe',
-        context: {
-          linkSubscribe,
-          linkUnsubscribe,
-        },
-      });
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  async subscribe(token: string) {
-    try {
-      const { email } = this.jwtService.verify(token, {
-        secret: ConfigService.JWTConfig.secret,
-      });
+      let result = null;
 
       const existSubscriber = await this.subscriberRepository.findOneBy({
         email
@@ -758,8 +728,7 @@ export class UserService {
             }
           );
 
-          const updated = await this.subscriberRepository.findOneBy({ email });
-          return updated;
+          result = await this.subscriberRepository.findOneBy({ email });
         }
       } else {
         const subscriber = new Subscriber();
@@ -768,8 +737,28 @@ export class UserService {
         subscriber.numSubscribed = 1;
         subscriber.isSubscribed = true;
 
-        return await this.subscriberRepository.save(subscriber);
+        result = await this.subscriberRepository.save(subscriber);
       }
+
+      const token = this.jwtService.sign(
+        { email },
+        {
+          secret: ConfigService.JWTConfig.secret,
+        },
+      );
+
+      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${token}`;
+
+      await this.emailService.sendMail({
+        to: email,
+        subject: 'Your new subscription on FUSIONFI application',
+        template: './new-subscribe',
+        context: {
+          linkUnsubscribe,
+        },
+      });
+
+      return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
