@@ -10,7 +10,7 @@ export class EncryptusController {
 
   @Public()
   @ApiOperation({ summary: 'Generate token' })
-  @Post('generate/token')
+  @Post('partners/generate/token')
   async generateToken() {
     try {
       const token = await this.encryptusService.generateToken();

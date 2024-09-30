@@ -15,7 +15,7 @@ export class EncryptusService {
         {
           partnerEmail: ConfigService.Encryptus.partner_email,
           partnerPassword: ConfigService.Encryptus.partner_password,
-          grant_services: ['FORENSICS'],
+          grant_services: ['FORENSICS', 'QUOTESANDORDERS'],
           clientID: ConfigService.Encryptus.client_id,
           clientSecret: ConfigService.Encryptus.client_secret,
         },

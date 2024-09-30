@@ -707,7 +707,7 @@ export class UserService {
       let result = null;
 
       const existSubscriber = await this.subscriberRepository.findOneBy({
-        email
+        email,
       });
 
       if (existSubscriber) {
@@ -724,8 +724,8 @@ export class UserService {
             {
               lastSubscribedAt: new Date(),
               numSubscribed: existSubscriber.numSubscribed + 1,
-              isSubscribed: true
-            }
+              isSubscribed: true,
+            },
           );
 
           result = await this.subscriberRepository.findOneBy({ email });
@@ -769,9 +769,9 @@ export class UserService {
       const { email } = this.jwtService.verify(token, {
         secret: ConfigService.JWTConfig.secret,
       });
-      
+
       const existSubscriber = await this.subscriberRepository.findOneBy({
-        email
+        email,
       });
 
       if (existSubscriber) {
@@ -789,8 +789,8 @@ export class UserService {
               {
                 firstUnsubscribedAt: new Date(),
                 numUnsubscribed: existSubscriber.numUnsubscribed + 1,
-                isSubscribed: false
-              }
+                isSubscribed: false,
+              },
             );
           } else {
             await this.subscriberRepository.update(
@@ -798,11 +798,11 @@ export class UserService {
               {
                 lastUnsubscribedAt: new Date(),
                 numUnsubscribed: existSubscriber.numUnsubscribed + 1,
-                isSubscribed: false
-              }
+                isSubscribed: false,
+              },
             );
           }
-          
+
           const updated = await this.subscriberRepository.findOneBy({ email });
           return updated;
         }
@@ -821,11 +821,11 @@ export class UserService {
 
   async getAllSubscribers() {
     try {
-      let result = [];
+      const result = [];
       const all = await this.subscriberRepository.findBy({
         isSubscribed: true,
       });
-      for (let item of all) {
+      for (const item of all) {
         result.push(item.email);
       }
       return result;

@@ -88,13 +88,16 @@ export class TaskService {
       });
 
       const provider = new ethers.JsonRpcProvider(network.rpcUrl);
-      const wallet = new ethers.Wallet(ConfigService.Cronjob.operatorPrivateKey, provider);
+      const wallet = new ethers.Wallet(
+        ConfigService.Cronjob.operatorPrivateKey,
+        provider,
+      );
       const contractCCFL = new ethers.Contract(ccfl.address, abiCCFL, wallet);
 
       const loandIds = await contractCCFL.loandIds();
 
       for (let i = 1; i < loandIds; i++) {
-        console.log("\n================================");
+        console.log('\n================================');
         console.log('loanId: ', i);
 
         const loanAddress = await contractCCFL.getLoanAddress(i);
@@ -118,7 +121,7 @@ export class TaskService {
             + borrower: ${loanInfo.borrower},
             + amount: ${loanInfo.amount},
             + stableCoin: ${loanInfo.stableCoin},
-            + isFiat: ${loanInfo.isFiat}`
+            + isFiat: ${loanInfo.isFiat}`,
           );
 
           try {
@@ -127,7 +130,7 @@ export class TaskService {
               const txReceipt = await txResponse.wait();
               this.logger.log(
                 `Liquidated successfully:
-                + txHash: ${txReceipt.hash}`
+                + txHash: ${txReceipt.hash}`,
               );
               this.bot.telegram.sendMessage(
                 ConfigService.Telegram.groupId,
@@ -139,17 +142,17 @@ export class TaskService {
                 + amount: ${loanInfo.amount},
                 + stableCoin: ${loanInfo.stableCoin},
                 + isFiat: ${loanInfo.isFiat},
-                + txHash: ${txReceipt.hash}`
+                + txHash: ${txReceipt.hash}`,
               );
-              console.log("================================\n");
+              console.log('================================\n');
             } else {
               console.log('Good health factor');
-              console.log("================================\n");
+              console.log('================================\n');
             }
           } catch (err) {
             this.logger.log(
               `Liquidated failed:
-              + error: ${err}`
+              + error: ${err}`,
             );
             this.bot.telegram.sendMessage(
               ConfigService.Telegram.groupId,
@@ -161,9 +164,9 @@ export class TaskService {
               + amount: ${loanInfo.amount},
               + stableCoin: ${loanInfo.stableCoin},
               + isFiat: ${loanInfo.isFiat},
-              + error: ${err}`
+              + error: ${err}`,
             );
-            console.log("================================\n");
+            console.log('================================\n');
             continue;
           }
         }
@@ -174,7 +177,7 @@ export class TaskService {
         ConfigService.Telegram.groupId,
         `[SOS] Error in checking liquidation: ${error}`,
       );
-      console.log("================================\n");
+      console.log('================================\n');
     }
   }
 

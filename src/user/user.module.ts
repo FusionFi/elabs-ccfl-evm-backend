@@ -16,7 +16,14 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Setting, User, Subscriber, Network, Asset, Contract]),
+    TypeOrmModule.forFeature([
+      Setting,
+      User,
+      Subscriber,
+      Network,
+      Asset,
+      Contract,
+    ]),
     JwtModule.register({
       global: true,
       secret: ConfigService.JWTConfig.secret,
