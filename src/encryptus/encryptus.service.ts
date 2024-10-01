@@ -1,30 +1,50 @@
 import { Injectable, HttpException, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, ILike } from 'typeorm';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
+import { Setting } from 'src/setting/entity/setting.entity';
 
 @Injectable()
 export class EncryptusService {
   private readonly logger = new Logger(EncryptusService.name);
 
-  constructor() {}
+  constructor(
+    @InjectRepository(Setting)
+    private settingRepository: Repository<Setting>,
+  ) {}
 
-  async generateToken() {
+  async createUser(email: string) {
     try {
-      const token = await axios.post(
-        `${ConfigService.Encryptus.url}/v1/partners/generate/token`,
-        {
-          partnerEmail: ConfigService.Encryptus.partner_email,
-          partnerPassword: ConfigService.Encryptus.partner_password,
-          grant_services: ['FORENSICS', 'QUOTESANDORDERS'],
-          clientID: ConfigService.Encryptus.client_id,
-          clientSecret: ConfigService.Encryptus.client_secret,
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const data = JSON.stringify({
+        email: email,
+      });
+
+      const config = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
         },
-      );
-      return {
-        access_token: token.data.access_token,
+        data: data,
       };
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
+
+      const result = await axios(config);
+      return result.data;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
     }
   }
 }

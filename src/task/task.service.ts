@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
+import { Setting } from 'src/setting/entity/setting.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
@@ -21,6 +22,9 @@ export class TaskService {
   private readonly logger = new Logger(TaskService.name);
 
   constructor(
+    @InjectRepository(Setting)
+    private settingRepository: Repository<Setting>,
+
     @InjectRepository(Asset)
     private assetRepository: Repository<Asset>,
 
@@ -35,6 +39,36 @@ export class TaskService {
 
     @InjectBot() private bot: Telegraf<any>,
   ) {}
+
+  @Cron(ConfigService.Cronjob.updateEncryptusToken)
+  async handleUpdateEncryptusToken() {
+    try {
+      this.logger.log('Called every 1 hour to update encryptus token');
+      const token = await axios.post(
+        `${ConfigService.Encryptus.url}/v1/partners/generate/token`,
+        {
+          partnerEmail: ConfigService.Encryptus.partner_email,
+          partnerPassword: ConfigService.Encryptus.partner_password,
+          grant_services: ['FORENSICS', 'QUOTESANDORDERS'],
+          clientID: ConfigService.Encryptus.client_id,
+          clientSecret: ConfigService.Encryptus.client_secret,
+        },
+      );
+
+      await this.settingRepository.update(
+        { key: 'ENCRYPTUS_TOKEN' },
+        {
+          value: token.data.access_token,
+        },
+      );
+    } catch (error) {
+      this.logger.error(`Error in updating encryptus token: ${error}`);
+      this.bot.telegram.sendMessage(
+        ConfigService.Telegram.groupId,
+        `[SOS] Error in updating encryptus token: ${error}`,
+      );
+    }
+  }
 
   @Cron(ConfigService.Cronjob.updateCryptoPrice)
   async handleUpdateCryptoPrice() {

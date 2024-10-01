@@ -412,6 +412,11 @@ export class SeederService {
           value: '10',
           type: 'number',
         },
+        {
+          key: 'ENCRYPTUS_TOKEN',
+          value: '',
+          type: 'string',
+        },
       ];
 
       for (const item of settings) {

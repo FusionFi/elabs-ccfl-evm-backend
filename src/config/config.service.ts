@@ -86,6 +86,7 @@ export class ConfigService {
     updateFiatPrice: process.env.CRONJOB_UPDATE_FIAT_PRICE,
     checkLiquidation: process.env.CRONJOB_CHECK_LIQUIDATION,
     operatorPrivateKey: process.env.OPERATOR_PRIVATE_KEY,
+    updateEncryptusToken: process.env.CRONJOB_UPDATE_ENCRYPTUS_TOKEN,
   };
 
   static FiatPrice = {
