@@ -1,6 +1,6 @@
 import { Injectable, HttpException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { Setting } from 'src/setting/entity/setting.entity';

@@ -6,7 +6,7 @@ import { Asset } from 'src/asset/entity/asset.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
 import { Fiat } from 'src/fiat/entity/fiat.entity';
-import { Cron, Interval } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { InjectBot } from 'nestjs-telegraf';
@@ -108,7 +108,7 @@ export class TaskService {
   }
 
   // @Cron(ConfigService.Cronjob.checkLiquidation)
-  // @Interval(10000)
+  @Interval(30000)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
