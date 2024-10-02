@@ -107,8 +107,7 @@ export class TaskService {
     }
   }
 
-  // @Cron(ConfigService.Cronjob.checkLiquidation)
-  @Interval(30000)
+  @Cron(ConfigService.Cronjob.checkLiquidation)
   async handleCheckLiquidation() {
     try {
       const ccfl = await this.contractRepository.findOneBy({
