@@ -60,7 +60,7 @@ export class PoolService {
       for (const item of allPools) {
         const contract = new ethers.Contract(item.address, abi, provider);
 
-        const [loan_available, apr, asset] = await Promise.all([
+        const [loan_available, currentRate, asset] = await Promise.all([
           contract.getRemainingPool(),
           contract.getCurrentRate(),
           this.assetRepository.findOneBy({
@@ -70,11 +70,17 @@ export class PoolService {
           }),
         ]);
 
+        const borrowerApr = BigNumber(currentRate[0]).div(1e27).toFixed(8);
+        const lenderApr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
+        const seconds = ConfigService.App.seconds_per_year;
+        const lenderApy = (1 + parseFloat(lenderApr) / seconds) ** seconds - 1;
+
         finalData.push({
           asset: item.asset,
           decimals: asset.decimals,
           loan_available: BigNumber(loan_available).toFixed(),
-          apr: BigNumber(apr[0]).div(1e27).toFixed(8),
+          apy: BigNumber(lenderApy).toFixed(8),
+          apr: borrowerApr,
         });
       }
 

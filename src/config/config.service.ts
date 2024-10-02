@@ -32,6 +32,7 @@ export class ConfigService {
     port: parseInt(process.env.APP_PORT || '3000'),
     ttl: parseInt(process.env.TTL || '10000'),
     limit: parseInt(process.env.LIMIT || '10'),
+    seconds_per_year: parseInt(process.env.SECONDS_PER_YEAR || '31536000'),
   };
 
   static Cors = {
@@ -81,7 +82,23 @@ export class ConfigService {
   };
 
   static Cronjob = {
-    updatePrice: process.env.CRONJOB_UPDATE_PRICE,
+    updateCryptoPrice: process.env.CRONJOB_UPDATE_CRYPTO_PRICE,
+    updateFiatPrice: process.env.CRONJOB_UPDATE_FIAT_PRICE,
     checkLiquidation: process.env.CRONJOB_CHECK_LIQUIDATION,
+    operatorPrivateKey: process.env.OPERATOR_PRIVATE_KEY,
+    updateEncryptusToken: process.env.CRONJOB_UPDATE_ENCRYPTUS_TOKEN,
+  };
+
+  static FiatPrice = {
+    url_1: process.env.URL_UPDATE_FIAT_PRICE_1,
+    url_2: process.env.URL_UPDATE_FIAT_PRICE_2,
+  };
+
+  static Encryptus = {
+    url: process.env.URL_ENCRYPTUS,
+    partner_email: process.env.PARTNER_EMAIL,
+    partner_password: process.env.PARTNER_PASSWORD,
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
   };
 }

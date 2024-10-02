@@ -156,37 +156,6 @@ export class SubgraphService {
         }),
       };
 
-      const configWithdrawLoan = {
-        method: 'POST',
-        url: ConfigService.Subgraph.url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: JSON.stringify({
-          query: `query withdrawLoans (
-              $address: Bytes!
-          ) {
-              withdrawLoans (
-                  orderBy: blockTimestamp
-                  orderDirection: desc
-                  where: {
-                      borrower: $address
-                  }
-              ) {
-                  borrower
-                  loanInfo_loanId
-                  loanInfo_amount
-                  loanInfo_stableCoin
-                  loanInfo_isFiat
-                  blockNumber
-                  blockTimestamp
-                  transactionHash
-              }
-          }`,
-          variables: { address: address },
-        }),
-      };
-
       const configAddCollateral = {
         method: 'POST',
         url: ConfigService.Subgraph.url,
@@ -325,7 +294,6 @@ export class SubgraphService {
         dataAddSupply,
         dataWithdrawSupply,
         dataCreateLoan,
-        dataWithdrawLoan,
         dataAddCollateral,
         dataRepayLoan,
         dataWithdrawAllCollateral,
@@ -334,7 +302,6 @@ export class SubgraphService {
         axios(configAddSupply),
         axios(configWithdrawSupply),
         axios(configCreateLoan),
-        axios(configWithdrawLoan),
         axios(configAddCollateral),
         axios(configRepayLoan),
         axios(configWithdrawAllCollateral),
@@ -358,13 +325,6 @@ export class SubgraphService {
       for (const item of dataCreateLoan.data.data.createLoans) {
         allData.push({
           type: 'create_loan',
-          ...item,
-        });
-      }
-
-      for (const item of dataWithdrawLoan.data.data.withdrawLoans) {
-        allData.push({
-          type: 'withdraw_loan',
           ...item,
         });
       }

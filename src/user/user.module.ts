@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './entity/user.entity';
+import { Subscriber } from './entity/subscriber.entity';
+import { Setting } from 'src/setting/entity/setting.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
@@ -14,7 +16,14 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Network, Asset, Contract]),
+    TypeOrmModule.forFeature([
+      Setting,
+      User,
+      Subscriber,
+      Network,
+      Asset,
+      Contract,
+    ]),
     JwtModule.register({
       global: true,
       secret: ConfigService.JWTConfig.secret,

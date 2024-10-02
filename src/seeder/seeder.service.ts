@@ -392,6 +392,31 @@ export class SeederService {
           value: '0.5',
           type: 'number',
         },
+        {
+          key: 'MIN_AMOUNT_REPAY',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_BORROW',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_ADD_COLLATERAL',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'MIN_AMOUNT_SUPPLY',
+          value: '10',
+          type: 'number',
+        },
+        {
+          key: 'ENCRYPTUS_TOKEN',
+          value: '',
+          type: 'string',
+        },
       ];
 
       for (const item of settings) {
@@ -406,16 +431,23 @@ export class SeederService {
       const contracts = [
         {
           type: 'ccfl',
-          address: '0x5f761F256ECf4c005593066D078E51837Ee80B30',
+          address: '0x023CE898cB9E07688594014dd7F05b82844AfbBa',
           chainId: 11155111,
           asset: null,
           isActive: true,
         },
         {
           type: 'pool',
-          address: '0xa99D9a34C57eCdFaC2E9785136d56D9F499a8076',
+          address: '0x0Bf6868f8E100c142BA1304435cBDdfF3e6416F3',
           chainId: 11155111,
           asset: 'USDC',
+          isActive: true,
+        },
+        {
+          type: 'pool',
+          address: '0xeaE813a7eb9A003ba5e8905F977c578c53aea5E5',
+          chainId: 11155111,
+          asset: 'USDT',
           isActive: true,
         },
       ];

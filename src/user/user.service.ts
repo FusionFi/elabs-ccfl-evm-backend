@@ -10,7 +10,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository, ILike } from 'typeorm';
+import { Setting } from 'src/setting/entity/setting.entity';
 import { User } from './entity/user.entity';
+import { Subscriber } from './entity/subscriber.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
@@ -37,8 +39,14 @@ export class UserService {
     private jwtService: JwtService,
     private readonly emailService: MailerService,
 
+    @InjectRepository(Setting)
+    private settingRepository: Repository<Setting>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Subscriber)
+    private subscriberRepository: Repository<Subscriber>,
 
     @InjectRepository(Network)
     private networkRepository: Repository<Network>,
@@ -61,8 +69,6 @@ export class UserService {
       const user = new User();
       user.username = signupDto.username;
       user.password = await bcrypt.hash(signupDto.password, salt);
-      // user.firstName = signupDto.firstName;
-      // user.lastName = signupDto.lastName;
       user.email = signupDto.email;
       user.isActive = true;
 
@@ -193,8 +199,6 @@ export class UserService {
       return {
         id: user.id,
         username: user.username,
-        // firstName: user.firstName,
-        // lastName: user.lastName,
         email: user.email,
         emailVerified: true,
         isActive: user.isActive,
@@ -247,7 +251,7 @@ export class UserService {
 
   async checkExistingUsername(username: string) {
     try {
-      let exist = await this.userRepository.findOneBy({ username });
+      const exist = await this.userRepository.findOneBy({ username });
       if (exist) {
         return true;
       }
@@ -259,7 +263,7 @@ export class UserService {
 
   async checkExistingEmail(email: string) {
     try {
-      let exist = await this.userRepository.findOneBy({ email });
+      const exist = await this.userRepository.findOneBy({ email });
       if (exist) {
         return true;
       }
@@ -436,6 +440,7 @@ export class UserService {
       const supplies = [];
       let netApy = BigNumber(0);
       let totalSupplyInUsd = BigNumber(0);
+      let totalEarned = BigNumber(0);
       for (const item of allPools) {
         const contract = new ethers.Contract(
           item.address,
@@ -444,14 +449,16 @@ export class UserService {
         );
 
         const [
-          share,
+          originSupply,
+          balanceOf,
           currentRate,
           remainingPool,
           totalSupply,
           walletBalance,
           asset,
         ] = await Promise.all([
-          contract.share(address),
+          contract.getDepositWithdrawAmount(address),
+          contract.balanceOf(address),
           contract.getCurrentRate(),
           contract.getRemainingPool(),
           contract.getTotalSupply(),
@@ -463,36 +470,36 @@ export class UserService {
           }),
         ]);
 
-        const supplyBalance = BigNumber(share.toString()).div(
-          BigNumber(10).pow(27 - asset.decimals),
-        );
+        const supplyAndProfit = BigNumber(balanceOf.toString());
 
         const apr = BigNumber(currentRate[1]).div(1e27).toFixed(8);
-        const apy = BigNumber(1)
-          .plus(BigNumber(apr).div(12))
-          .pow(12)
-          .minus(1)
-          .toFixed(8);
+        const seconds = ConfigService.App.seconds_per_year;
+        const apy = (1 + parseFloat(apr) / seconds) ** seconds - 1;
         netApy = netApy.plus(apy);
 
         totalSupplyInUsd = totalSupplyInUsd.plus(
-          supplyBalance
+          BigNumber(originSupply.toString())
             .div(BigNumber(10).pow(asset.decimals))
             .times(asset.price),
         );
+
+        const profit = supplyAndProfit.minus(originSupply.toString()).toFixed();
+        totalEarned = totalEarned.plus(profit);
 
         supplies.push({
           asset: item.asset,
           decimals: asset.decimals,
           asset_price: asset.price,
-          supply_balance: supplyBalance.toFixed(),
-          earned_reward: null,
-          apy,
+          supply_balance: originSupply.toString(),
+          earned_reward: profit,
+          apy: BigNumber(apy).toFixed(8),
           wallet_balance: (walletBalance as { balance: number }).balance,
           pool_utilization: BigNumber(remainingPool)
             .div(totalSupply)
             .toFixed(8),
-          withdraw_available: null,
+          withdraw_available: supplyAndProfit.lte(remainingPool)
+            ? supplyAndProfit.toFixed()
+            : remainingPool.toString(),
         });
       }
 
@@ -502,7 +509,7 @@ export class UserService {
         total_supply: totalSupplyInUsd.toFixed(),
         net_apy:
           supplies.length == 0 ? null : netApy.div(supplies.length).toFixed(8),
-        total_earned: null,
+        total_earned: totalEarned.toFixed(),
       };
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
@@ -513,16 +520,35 @@ export class UserService {
     }
   }
 
-  async getAllLoan(address: string, chainId: number) {
+  async getAllLoan(
+    address: string,
+    chainId: number,
+    offset: number,
+    limit: number,
+  ) {
     try {
       const key = `getAllLoan_${address}_${chainId}`;
       const cacheData = await this.cacheManager.get(key);
       if (cacheData) {
         this.logger.log(`\n:return:cache:${key}`);
-        return cacheData;
+        return {
+          ...(cacheData as any),
+          loans: {
+            total: (cacheData as { loans: Array<any> }).loans.length,
+            offset,
+            limit,
+            data: (cacheData as { loans: Array<any> }).loans.slice(
+              offset,
+              offset + limit,
+            ),
+          },
+        };
       }
 
-      const [network, ccfl] = await Promise.all([
+      const [yieldBorrower, network, ccfl] = await Promise.all([
+        this.settingRepository.findOneBy({
+          key: 'YIELD_BORROWER',
+        }),
         this.networkRepository.findOneBy({
           isActive: true,
           chainId,
@@ -575,7 +601,7 @@ export class UserService {
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
           [yieldEarned, healthFactor] = await Promise.all([
-            contractLoan.getYieldEarned(),
+            contractLoan.getYieldEarned(100 * parseInt(yieldBorrower.value)),
             contractCCFL.getHealthFactor(loanId),
           ]);
         }
@@ -626,6 +652,8 @@ export class UserService {
         );
 
         allLoans.push({
+          loan_id: parseInt(loanId),
+          is_fiat: loanInfo.isFiat,
           asset: asset.symbol,
           decimals: asset.decimals,
           loan_size: loanInfo.amount.toString(),
@@ -642,8 +670,10 @@ export class UserService {
           collateral_decimals: collateral.decimals,
           collateral_price: collateral.price,
           yield_generating: isYieldGenerating,
-          yield_earned: yieldEarned ? yieldEarned.toString() : null,
+          yield_earned: yieldEarned == null ? null : yieldEarned.toString(),
         });
+
+        allLoans.sort((a, b) => parseInt(b.loan_id) - parseInt(a.loan_id));
       }
 
       const data = {
@@ -658,7 +688,147 @@ export class UserService {
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
 
-      return data;
+      return {
+        ...data,
+        loans: {
+          total: allLoans.length,
+          offset,
+          limit,
+          data: data.loans.slice(offset, offset + limit),
+        },
+      };
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async sendSubscribeEmail(email: string) {
+    try {
+      let result = null;
+
+      const existSubscriber = await this.subscriberRepository.findOneBy({
+        email,
+      });
+
+      if (existSubscriber) {
+        if (existSubscriber.isSubscribed) {
+          throw new HttpException(
+            this.i18n.translate('message.EMAIL_ALREADY_SUBSCRIBED', {
+              lang: I18nContext.current().lang,
+            }),
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          await this.subscriberRepository.update(
+            { email },
+            {
+              lastSubscribedAt: new Date(),
+              numSubscribed: existSubscriber.numSubscribed + 1,
+              isSubscribed: true,
+            },
+          );
+
+          result = await this.subscriberRepository.findOneBy({ email });
+        }
+      } else {
+        const subscriber = new Subscriber();
+        subscriber.email = email;
+        subscriber.firstSubscribedAt = new Date();
+        subscriber.numSubscribed = 1;
+        subscriber.isSubscribed = true;
+
+        result = await this.subscriberRepository.save(subscriber);
+      }
+
+      const token = this.jwtService.sign(
+        { email },
+        {
+          secret: ConfigService.JWTConfig.secret,
+        },
+      );
+
+      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${token}`;
+
+      await this.emailService.sendMail({
+        to: email,
+        subject: 'Your new subscription on FUSIONFI application',
+        template: './new-subscribe',
+        context: {
+          linkUnsubscribe,
+        },
+      });
+
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async unsubscribe(token: string) {
+    try {
+      const { email } = this.jwtService.verify(token, {
+        secret: ConfigService.JWTConfig.secret,
+      });
+
+      const existSubscriber = await this.subscriberRepository.findOneBy({
+        email,
+      });
+
+      if (existSubscriber) {
+        if (!existSubscriber.isSubscribed) {
+          throw new HttpException(
+            this.i18n.translate('message.EMAIL_ALREADY_UNSUBSCRIBED', {
+              lang: I18nContext.current().lang,
+            }),
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          if (existSubscriber.numUnsubscribed == 0) {
+            await this.subscriberRepository.update(
+              { email },
+              {
+                firstUnsubscribedAt: new Date(),
+                numUnsubscribed: existSubscriber.numUnsubscribed + 1,
+                isSubscribed: false,
+              },
+            );
+          } else {
+            await this.subscriberRepository.update(
+              { email },
+              {
+                lastUnsubscribedAt: new Date(),
+                numUnsubscribed: existSubscriber.numUnsubscribed + 1,
+                isSubscribed: false,
+              },
+            );
+          }
+
+          const updated = await this.subscriberRepository.findOneBy({ email });
+          return updated;
+        }
+      } else {
+        throw new HttpException(
+          this.i18n.translate('message.EMAIL_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async getAllSubscribers() {
+    try {
+      const result = [];
+      const all = await this.subscriberRepository.findBy({
+        isSubscribed: true,
+      });
+      for (const item of all) {
+        result.push(item.email);
+      }
+      return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

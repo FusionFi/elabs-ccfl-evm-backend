@@ -16,6 +16,7 @@ import {
   ApiExcludeEndpoint,
   ApiTags,
   ApiOperation,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -28,6 +29,8 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapUser } from './response-dto/user.map';
+import { mapSubscriber } from './response-dto/subscriber.map';
+import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
 @ApiTags('user')
 @Controller('user')
@@ -62,7 +65,10 @@ export class UserController {
   @Post('signin/email')
   signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
     try {
-      return this.userService.signInWithEmail(signinEmailDto.email, signinEmailDto.password);
+      return this.userService.signInWithEmail(
+        signinEmailDto.email,
+        signinEmailDto.password,
+      );
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -190,13 +196,30 @@ export class UserController {
   @ApiOperation({ summary: "Get all user's loans" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard)
+  @ApiQuery({
+    name: 'offset',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+  })
   @Get(':address/:chainId/loan')
   async getAllLoan(
     @Param('address') address: string,
     @Param('chainId') chainId: number,
+    @Query('offset', new IntDefaultValuePipe(0)) offset: number,
+    @Query('limit', new IntDefaultValuePipe(10)) limit: number,
   ) {
     try {
-      const allLoan = await this.userService.getAllLoan(address, chainId);
+      const allLoan = await this.userService.getAllLoan(
+        address,
+        chainId,
+        offset,
+        limit,
+      );
       return allLoan;
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -220,6 +243,42 @@ export class UserController {
         asset,
       );
       return addressBalance;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Subscribe' })
+  @Post('subscribe')
+  async sendSubscribeEmail(@Body() { email }: EmailDto) {
+    try {
+      const result = await this.userService.sendSubscribeEmail(email);
+      return mapSubscriber(result);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiExcludeEndpoint()
+  @Get('confirm-unsubscribe')
+  @Render('confirm-unsubscribe')
+  renderConfirmUnsubscribe(@Query('token') token: string) {
+    try {
+      return this.userService.unsubscribe(token);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all subscribers' })
+  @Get('subscribe/all')
+  async getAllSubscribers() {
+    try {
+      const result = await this.userService.getAllSubscribers();
+      return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
