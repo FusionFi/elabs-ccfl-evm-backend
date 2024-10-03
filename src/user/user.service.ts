@@ -664,6 +664,7 @@ export class UserService {
             : null,
           is_closed: loanInfo.isClosed,
           is_liquidated: loanInfo.isLiquidated,
+          is_finally: loanInfo.isFinalty,
           debt_remain: debtRemain.toString(),
           collateral_amount: collateralAmount.toString(),
           collateral_asset: collateral.symbol,
