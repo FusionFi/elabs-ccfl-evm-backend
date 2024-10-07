@@ -197,7 +197,7 @@ export class UserService {
       );
 
       return {
-        url: `${ConfigService.App.callback_url_signup}?token=${token}`
+        url: `${ConfigService.App.frontend_url}/profile?token=${token}`
       };
     } catch (e) {
       this.logger.error(
