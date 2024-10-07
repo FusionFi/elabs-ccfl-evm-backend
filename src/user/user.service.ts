@@ -99,7 +99,7 @@ export class UserService {
         },
       );
 
-      const link = `${ConfigService.App.domain}/user/verify-email?token=${token}`;
+      const link = `${ConfigService.App.callback_url_signup}?token=${token}`;
 
       await this.emailService.sendMail({
         to: user.email,
