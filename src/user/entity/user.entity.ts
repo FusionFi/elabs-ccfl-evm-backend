@@ -40,6 +40,12 @@ export class User {
   role: string;
 
   @Column({
+    nullable: true,
+    name: 'encryptus_id',
+  })
+  encryptusId: string;
+
+  @Column({
     default: true,
     name: 'is_active',
   })

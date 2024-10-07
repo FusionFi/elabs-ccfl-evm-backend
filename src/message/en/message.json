@@ -8,5 +8,6 @@
   "CANNOT_CHANGE_PASSWORD": "Cannot change password",
   "EMAIL_ALREADY_SUBSCRIBED": "This email has been subscribed already",
   "EMAIL_NOT_FOUND": "Email not found",
-  "EMAIL_ALREADY_UNSUBSCRIBED": "This email has been unsubscribed already"
+  "EMAIL_ALREADY_UNSUBSCRIBED": "This email has been unsubscribed already",
+  "ENCRYPTUS_USER_ALREADY_EXIST": "This encryptus user is already exist"
 }

@@ -26,6 +26,7 @@ import BigNumber from 'bignumber.js';
 import * as fs from 'fs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import axios from 'axios';
 
 const abiCCFL = JSON.parse(fs.readFileSync('abi/CCFL.json', 'utf8'));
 const abiCCFLPool = JSON.parse(fs.readFileSync('abi/CCFLPool.json', 'utf8'));
@@ -89,6 +90,46 @@ export class UserService {
         );
       }
 
+      const encryptusToken = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      try {
+        const data = JSON.stringify({
+          email: signupDto.email,
+        });
+
+        const configCreateUser = {
+          method: 'POST',
+          url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${encryptusToken.value}`,
+          },
+          data: data,
+        };
+
+        const encryptusUser = await axios(configCreateUser);
+        user.encryptusId = encryptusUser?.data?.data?._id;
+      } catch (error) {
+        const configFetchallUser = {
+          method: 'GET',
+          url: `${ConfigService.Encryptus.url}/v1/partners/fetchall/user`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${encryptusToken.value}`,
+          },
+        };
+
+        const result = await axios(configFetchallUser);
+
+        const info = result.data.data.usersList.find(
+          (item) => item.email === signupDto.email,
+        );
+
+        user.encryptusId = info._id;
+      }
+
       const email = user.email;
 
       const token = this.jwtService.sign(
@@ -131,11 +172,30 @@ export class UserService {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) throw new UnauthorizedException();
       }
+
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const configUserInfo = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/partners/user/${user.encryptusId}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const result = await axios(configUserInfo);
+
       const payload = {
         username: user.username,
         email: user.email,
         role: user.role,
+        encryptus_id: user.encryptusId,
+        kyc_info: result?.data?.data?.data?.kyc_info || null,
       };
+
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -158,11 +218,30 @@ export class UserService {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) throw new UnauthorizedException();
       }
+
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const configUserInfo = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/partners/user/${user.encryptusId}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const result = await axios(configUserInfo);
+
       const payload = {
         username: user.username,
         email: user.email,
         role: user.role,
+        encryptus_id: user.encryptusId,
+        kyc_info: result?.data?.data?.data?.kyc_info || null,
       };
+
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -197,7 +276,7 @@ export class UserService {
       );
 
       return {
-        url: `${ConfigService.App.frontend_url}/my-profile?token=${token}`
+        url: `${ConfigService.App.frontend_url}/my-profile?token=${token}`,
       };
     } catch (e) {
       this.logger.error(
@@ -593,7 +672,7 @@ export class UserService {
             contractLoan.isStakeAave(),
           ]);
 
-        let yieldEarned = null;
+        const yieldEarned = null;
         let healthFactor = null;
         if (!loanInfo.isClosed && !loanInfo.isLiquidated) {
           // [yieldEarned, healthFactor] = await Promise.all([
