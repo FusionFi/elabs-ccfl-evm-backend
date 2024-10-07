@@ -173,27 +173,11 @@ export class UserService {
         if (!isMatch) throw new UnauthorizedException();
       }
 
-      const token = await this.settingRepository.findOneBy({
-        key: 'ENCRYPTUS_TOKEN',
-      });
-
-      const configUserInfo = {
-        method: 'GET',
-        url: `${ConfigService.Encryptus.url}/v1/partners/user/${user.encryptusId}`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token.value}`,
-        },
-      };
-
-      const result = await axios(configUserInfo);
-
       const payload = {
         username: user.username,
         email: user.email,
         role: user.role,
         encryptus_id: user.encryptusId || null,
-        kyc_info: result?.data?.data?.data?.kyc_info || null,
       };
 
       return {
@@ -226,13 +210,37 @@ export class UserService {
         if (!isMatch) throw new UnauthorizedException();
       }
 
+      const payload = {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        encryptus_id: user.encryptusId || null,
+      };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (e) {
+      if (e?.response) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
+  async getProfile(user: any) {
+    try {
       const token = await this.settingRepository.findOneBy({
         key: 'ENCRYPTUS_TOKEN',
       });
 
       const configUserInfo = {
         method: 'GET',
-        url: `${ConfigService.Encryptus.url}/v1/partners/user/${user.encryptusId}`,
+        url: `${ConfigService.Encryptus.url}/v1/partners/user/${user.encryptus_id}`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,
@@ -241,17 +249,10 @@ export class UserService {
 
       const result = await axios(configUserInfo);
 
-      const payload = {
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        encryptus_id: user.encryptusId || null,
-        kyc_info: result?.data?.data?.data?.kyc_info || null,
-      };
-
       return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
+        ...user,
+        kyc_info: result?.data?.data?.data?.kyc_info || null,
+      }
     } catch (e) {
       if (e?.response) {
         throw new HttpException(

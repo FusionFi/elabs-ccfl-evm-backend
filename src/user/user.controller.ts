@@ -158,8 +158,12 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    try {
+      return await this.userService.getProfile(req.user);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
   }
 
   @ApiOperation({ summary: 'Get all users' })
