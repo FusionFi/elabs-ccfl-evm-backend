@@ -99,7 +99,7 @@ export class UserService {
         },
       );
 
-      const link = `${ConfigService.App.callback_url_signup}?token=${token}`;
+      const link = `${ConfigService.App.domain}/user/verify-email?token=${token}`;
 
       await this.emailService.sendMail({
         to: user.email,
@@ -197,11 +197,7 @@ export class UserService {
       );
 
       return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        emailVerified: true,
-        isActive: user.isActive,
+        url: `${ConfigService.App.callback_url_signup}?token=${token}`
       };
     } catch (e) {
       this.logger.error(

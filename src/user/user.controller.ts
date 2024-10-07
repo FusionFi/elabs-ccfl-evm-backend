@@ -9,6 +9,7 @@ import {
   Render,
   UseGuards,
   Param,
+  Redirect,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -77,7 +78,7 @@ export class UserController {
   @Public()
   @ApiExcludeEndpoint()
   @Get('verify-email')
-  @Render('confirm-email')
+  @Redirect()
   verifyEmail(@Query('token') token: string) {
     try {
       return this.userService.verifyEmail(token);
