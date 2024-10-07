@@ -192,7 +192,7 @@ export class UserService {
         username: user.username,
         email: user.email,
         role: user.role,
-        encryptus_id: user.encryptusId,
+        encryptus_id: user.encryptusId || null,
         kyc_info: result?.data?.data?.data?.kyc_info || null,
       };
 
@@ -200,7 +200,14 @@ export class UserService {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -238,7 +245,7 @@ export class UserService {
         username: user.username,
         email: user.email,
         role: user.role,
-        encryptus_id: user.encryptusId,
+        encryptus_id: user.encryptusId || null,
         kyc_info: result?.data?.data?.data?.kyc_info || null,
       };
 
@@ -246,7 +253,14 @@ export class UserService {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
