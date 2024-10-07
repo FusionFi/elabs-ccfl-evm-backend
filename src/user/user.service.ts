@@ -197,7 +197,7 @@ export class UserService {
       );
 
       return {
-        url: `${ConfigService.App.frontend_url}/profile?token=${token}`
+        url: `${ConfigService.App.frontend_url}/my-profile?token=${token}`
       };
     } catch (e) {
       this.logger.error(
@@ -227,7 +227,7 @@ export class UserService {
         },
       );
 
-      const link = `${ConfigService.App.domain}/user/restore-password?token=${token}`;
+      const link = `${ConfigService.App.frontend_url}/my-profile?token=${token}`;
 
       await this.emailService.sendMail({
         to: email,
