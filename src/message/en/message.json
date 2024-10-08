@@ -1,8 +1,8 @@
 {
   "HELLO": "Hello",
   "WELCOME": "Welcome to our application!",
-  "USERNAME_ALREADY_USED": "This username has already been used",
-  "EMAIL_ALREADY_USED": "This email has already been used",
+  "USERNAME_ALREADY_USED": "Username existed!",
+  "EMAIL_ALREADY_USED": "Email existed!",
   "EMAIL_NOT_VERIFIED": "Email has not been verified",
   "CANNOT_VERIFY_EMAIL": "Cannot verify email",
   "USER_NOT_FOUND": "User not found",
