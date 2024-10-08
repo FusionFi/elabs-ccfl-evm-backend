@@ -623,7 +623,7 @@ export class UserService {
       const supplies = [];
       let netApy = BigNumber(0);
       let totalSupplyInUsd = BigNumber(0);
-      let totalEarned = BigNumber(0);
+      let totalEarnedInUsd = BigNumber(0);
       for (const item of allPools) {
         const contract = new ethers.Contract(
           item.address,
@@ -667,7 +667,11 @@ export class UserService {
         );
 
         const profit = supplyAndProfit.minus(originSupply.toString()).toFixed();
-        totalEarned = totalEarned.plus(profit);
+        totalEarnedInUsd = totalEarnedInUsd.plus(
+          BigNumber(profit)
+            .div(BigNumber(10).pow(asset.decimals))
+            .times(asset.price),
+        );
 
         supplies.push({
           asset: item.asset,
@@ -692,7 +696,7 @@ export class UserService {
         total_supply: totalSupplyInUsd.toFixed(),
         net_apy:
           supplies.length == 0 ? null : netApy.div(supplies.length).toFixed(8),
-        total_earned: totalEarned.toFixed(),
+        total_earned: totalEarnedInUsd.toFixed(),
       };
 
       this.cacheManager.store.set(key, data, ConfigService.Cache.ttl);
