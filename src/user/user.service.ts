@@ -179,8 +179,8 @@ export class UserService {
       const user = await this.userRepository.findOneBy({ username });
 
       if (!user) {
-        throw new NotFoundException(
-          this.i18n.translate('message.USER_NOT_FOUND', {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
             lang: I18nContext.current().lang,
           }),
         );
@@ -195,7 +195,13 @@ export class UserService {
       }
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) throw new UnauthorizedException();
+        if (!isMatch) {
+          throw new UnauthorizedException(
+            this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
+              lang: I18nContext.current().lang,
+            }),
+          );
+        }
       }
 
       const payload = {
@@ -225,8 +231,8 @@ export class UserService {
       const user = await this.userRepository.findOneBy({ email });
 
       if (!user) {
-        throw new NotFoundException(
-          this.i18n.translate('message.USER_NOT_FOUND', {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
             lang: I18nContext.current().lang,
           }),
         );
@@ -241,7 +247,13 @@ export class UserService {
       }
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) throw new UnauthorizedException();
+        if (!isMatch) {
+          throw new UnauthorizedException(
+            this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
+              lang: I18nContext.current().lang,
+            }),
+          );
+        }
       }
 
       const payload = {
