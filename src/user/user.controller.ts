@@ -25,6 +25,7 @@ import { SignInEmailDto } from './dto/sign-in-email.dto';
 import { EmailDto } from './dto/email.dto';
 import { UsernameDto } from './dto/username.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
@@ -53,9 +54,12 @@ export class UserController {
   @Public()
   @ApiOperation({ summary: 'Sign in' })
   @Post('signin')
-  signIn(@Body() signinDto: SignInDto) {
+  async signIn(@Body() signinDto: SignInDto) {
     try {
-      return this.userService.signIn(signinDto.username, signinDto.password);
+      return await this.userService.signIn(
+        signinDto.username,
+        signinDto.password,
+      );
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
@@ -64,12 +68,23 @@ export class UserController {
   @Public()
   @ApiOperation({ summary: 'Sign in with email' })
   @Post('signin/email')
-  signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
+  async signInWithEmail(@Body() signinEmailDto: SignInEmailDto) {
     try {
-      return this.userService.signInWithEmail(
+      return await this.userService.signInWithEmail(
         signinEmailDto.email,
         signinEmailDto.password,
       );
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Refresh token' })
+  @Post('refresh-token')
+  async refreshToken(@Body() { refreshToken }: RefreshTokenDto) {
+    try {
+      return await this.userService.refreshToken(refreshToken);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

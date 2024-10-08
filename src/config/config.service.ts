@@ -16,7 +16,9 @@ export class ConfigService {
 
   static JWTConfig = {
     secret: process.env.JWT_SECRET,
-    expire: process.env.JWT_EXPIRE || '84600s',
+    expire: process.env.JWT_EXPIRE || '1h',
+    refresh_secret: process.env.JWT_REFRESH_SECRET,
+    refresh_expire: process.env.JWT_REFRESH_EXPIRE || '7d',
   };
 
   static EncryptConfig = {

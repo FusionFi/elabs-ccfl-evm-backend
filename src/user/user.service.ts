@@ -181,7 +181,14 @@ export class UserService {
       };
 
       return {
-        access_token: await this.jwtService.signAsync(payload),
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: ConfigService.JWTConfig.expire,
+        }),
+        refresh_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.refresh_secret,
+          expiresIn: ConfigService.JWTConfig.refresh_expire,
+        }),
       };
     } catch (e) {
       if (e?.response) {
@@ -218,7 +225,14 @@ export class UserService {
       };
 
       return {
-        access_token: await this.jwtService.signAsync(payload),
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: ConfigService.JWTConfig.expire,
+        }),
+        refresh_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.refresh_secret,
+          expiresIn: ConfigService.JWTConfig.refresh_expire,
+        }),
       };
     } catch (e) {
       if (e?.response) {
@@ -228,6 +242,50 @@ export class UserService {
         );
       } else {
         throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: ConfigService.JWTConfig.refresh_secret,
+      });
+
+      if (!payload) {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+      }
+
+      delete payload.iat;
+      delete payload.exp;
+
+      return {
+        access_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.secret,
+          expiresIn: ConfigService.JWTConfig.expire,
+        }),
+        refresh_token: await this.jwtService.signAsync(payload, {
+          secret: ConfigService.JWTConfig.refresh_secret,
+          expiresIn: ConfigService.JWTConfig.refresh_expire,
+        }),
+      };
+    } catch (e) {
+      if (e.name === 'TokenExpiredError') {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.EXPIRED_REFRESH_TOKEN', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+      } else {
+        throw new UnauthorizedException(
+          this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
+            lang: I18nContext.current().lang,
+          }),
+        );
       }
     }
   }
@@ -249,10 +307,13 @@ export class UserService {
 
       const result = await axios(configUserInfo);
 
+      delete user.iat;
+      delete user.exp;
+
       return {
         ...user,
         kyc_info: result?.data?.data?.data?.kyc_info || null,
-      }
+      };
     } catch (e) {
       if (e?.response) {
         throw new HttpException(
