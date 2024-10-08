@@ -161,6 +161,15 @@ export class UserService {
   async signIn(username: string, password: string) {
     try {
       const user = await this.userRepository.findOneBy({ username });
+
+      if (!user) {
+        throw new NotFoundException(
+          this.i18n.translate('message.USER_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+      }
+      
       if (user?.emailVerified == false) {
         throw new UnauthorizedException(
           this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
