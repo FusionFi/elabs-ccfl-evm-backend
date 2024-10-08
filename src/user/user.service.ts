@@ -129,22 +129,26 @@ export class UserService {
         const encryptusUser = await axios(configCreateUser);
         user.encryptusId = encryptusUser?.data?.data?._id;
       } catch (error) {
-        const configFetchallUser = {
-          method: 'GET',
-          url: `${ConfigService.Encryptus.url}/v1/partners/fetchall/user`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${encryptusToken.value}`,
-          },
-        };
+        try {
+          const configFetchallUser = {
+            method: 'GET',
+            url: `${ConfigService.Encryptus.url}/v1/partners/fetchall/user`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${encryptusToken.value}`,
+            },
+          };
 
-        const result = await axios(configFetchallUser);
+          const result = await axios(configFetchallUser);
 
-        const info = result.data.data.usersList.find(
-          (item) => item.email === signupDto.email,
-        );
+          const info = result.data.data.usersList.find(
+            (item) => item.email === signupDto.email,
+          );
 
-        user.encryptusId = info._id;
+          user.encryptusId = info?._id;
+        } catch (anotherError) {
+          user.encryptusId = null;
+        }
       }
 
       const email = user.email;
@@ -337,14 +341,20 @@ export class UserService {
         },
       };
 
-      const result = await axios(configUserInfo);
+      let kycInfo = null;
+      try {
+        const result = await axios(configUserInfo);
+        kycInfo = result?.data?.data?.data?.kyc_info;
+      } catch (e) {
+        this.logger.error("Cannot get user info from Encryptus");
+      }
 
       delete user.iat;
       delete user.exp;
 
       return {
         ...user,
-        kyc_info: result?.data?.data?.data?.kyc_info || null,
+        kyc_info: kycInfo
       };
     } catch (e) {
       if (e?.response) {
