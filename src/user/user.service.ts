@@ -135,8 +135,7 @@ export class UserService {
       const token = this.jwtService.sign(
         { email },
         {
-          secret: ConfigService.JWTConfig.secret,
-          expiresIn: ConfigService.JWTConfig.expire,
+          secret: ConfigService.JWTConfig.secret
         },
       );
 
@@ -215,7 +214,7 @@ export class UserService {
           }),
         );
       }
-      
+
       if (user?.emailVerified == false) {
         throw new UnauthorizedException(
           this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
