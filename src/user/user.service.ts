@@ -191,14 +191,7 @@ export class UserService {
         }),
       };
     } catch (e) {
-      if (e?.response) {
-        throw new HttpException(
-          e?.response?.data?.message,
-          e?.response?.status,
-        );
-      } else {
-        throw new HttpException(e?.response, e?.status);
-      }
+      throw new HttpException(e?.response, e?.status);
     }
   }
 
@@ -235,14 +228,7 @@ export class UserService {
         }),
       };
     } catch (e) {
-      if (e?.response) {
-        throw new HttpException(
-          e?.response?.data?.message,
-          e?.response?.status,
-        );
-      } else {
-        throw new HttpException(e?.response, e?.status);
-      }
+      throw new HttpException(e?.response, e?.status);
     }
   }
 
