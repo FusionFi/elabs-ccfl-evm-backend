@@ -90,6 +90,23 @@ export class UserService {
         );
       }
 
+      const existEmail = await this.userRepository.findOneBy({
+        email: user.email,
+      });
+      if (existEmail) {
+        this.logger.error(
+          this.i18n.translate('message.EMAIL_ALREADY_USED', {
+            lang: I18nContext.current().lang,
+          }),
+        );
+        throw new HttpException(
+          this.i18n.translate('message.EMAIL_ALREADY_USED', {
+            lang: I18nContext.current().lang,
+          }),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const encryptusToken = await this.settingRepository.findOneBy({
         key: 'ENCRYPTUS_TOKEN',
       });

@@ -2,6 +2,7 @@
   "HELLO": "Bonjour",
   "WELCOME": "Bienvenue dans notre application !",
   "USERNAME_ALREADY_USED": "",
+  "EMAIL_ALREADY_USED": "",
   "EMAIL_NOT_VERIFIED": "",
   "CANNOT_VERIFY_EMAIL": "",
   "USER_NOT_FOUND": "",
