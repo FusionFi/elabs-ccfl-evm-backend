@@ -164,7 +164,7 @@ export class UserService {
 
       await this.emailService.sendMail({
         to: user.email,
-        subject: `Welcome to the FUSIONFI application`,
+        subject: `Fusionfi - Activation Email`,
         template: './confirmation',
         context: {
           username: user.username,
@@ -393,8 +393,25 @@ export class UserService {
         },
       );
 
+      const payload = {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        encryptus_id: user.encryptusId || null,
+      };
+
+      const access_token = await this.jwtService.signAsync(payload, {
+        secret: ConfigService.JWTConfig.secret,
+        expiresIn: ConfigService.JWTConfig.expire,
+      });
+
+      const refresh_token = await this.jwtService.signAsync(payload, {
+        secret: ConfigService.JWTConfig.refresh_secret,
+        expiresIn: ConfigService.JWTConfig.refresh_expire,
+      });
+
       return {
-        url: `${ConfigService.App.frontend_url}/my-profile?token=${token}`,
+        url: `${ConfigService.App.frontend_url}/my-profile?access_token=${access_token}&refresh_token=${refresh_token}`,
       };
     } catch (e) {
       this.logger.error(
@@ -416,19 +433,28 @@ export class UserService {
         );
       }
 
-      const token = this.jwtService.sign(
-        { email },
-        {
-          secret: ConfigService.JWTConfig.secret,
-          expiresIn: ConfigService.JWTConfig.expire,
-        },
-      );
+      const payload = {
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        encryptus_id: user.encryptusId || null,
+      };
 
-      const link = `${ConfigService.App.frontend_url}/my-profile?token=${token}`;
+      const access_token = await this.jwtService.signAsync(payload, {
+        secret: ConfigService.JWTConfig.secret,
+        expiresIn: ConfigService.JWTConfig.expire,
+      });
+
+      const refresh_token = await this.jwtService.signAsync(payload, {
+        secret: ConfigService.JWTConfig.refresh_secret,
+        expiresIn: ConfigService.JWTConfig.refresh_expire,
+      });
+
+      const link = `${ConfigService.App.frontend_url}/my-profile?access_token=${access_token}&refresh_token=${refresh_token}`;
 
       await this.emailService.sendMail({
         to: email,
-        subject: 'Reset your password on FUSIONFI application',
+        subject: 'Fusionfi - Password recovery',
         template: './restore-password',
         context: {
           username: user.username,
@@ -953,7 +979,7 @@ export class UserService {
 
       await this.emailService.sendMail({
         to: email,
-        subject: 'Your new subscription on FUSIONFI application',
+        subject: 'Fusionfi - New Subscription',
         template: './new-subscribe',
         context: {
           linkUnsubscribe,
