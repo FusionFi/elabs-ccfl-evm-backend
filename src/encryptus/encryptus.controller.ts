@@ -1,4 +1,4 @@
-import { Controller, HttpException, Get } from '@nestjs/common';
+import { Controller, HttpException, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -14,6 +14,18 @@ export class EncryptusController {
   async generateKYCLink() {
     try {
       const result = await this.encryptusService.generateKYCLink();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get user info via id' })
+  @Get('partners/user/:id')
+  async getUserInfo(@Param('id') id: string) {
+    try {
+      const result = await this.encryptusService.getUserInfo(id);
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);

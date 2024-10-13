@@ -156,7 +156,7 @@ export class UserService {
       const token = this.jwtService.sign(
         { email },
         {
-          secret: ConfigService.JWTConfig.secret
+          secret: ConfigService.JWTConfig.secret,
         },
       );
 
@@ -346,7 +346,7 @@ export class UserService {
         const result = await axios(configUserInfo);
         kycInfo = result?.data?.data?.data?.kyc_info;
       } catch (e) {
-        this.logger.error("Cannot get user info from Encryptus");
+        this.logger.error('Cannot get user info from Encryptus');
       }
 
       delete user.iat;
@@ -354,7 +354,7 @@ export class UserService {
 
       return {
         ...user,
-        kyc_info: kycInfo
+        kyc_info: kycInfo,
       };
     } catch (e) {
       if (e?.response) {
