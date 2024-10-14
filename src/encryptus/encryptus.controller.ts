@@ -1,7 +1,15 @@
-import { Controller, HttpException, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  HttpException,
+  Get,
+  Param,
+  Post,
+  Body,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('encryptus')
 @Controller('encryptus')
@@ -9,11 +17,11 @@ export class EncryptusController {
   constructor(private readonly encryptusService: EncryptusService) {}
 
   @Public()
-  @ApiOperation({ summary: 'Generate KYC link for individual' })
-  @Get('partners/kycurl')
-  async generateKYCLink() {
+  @ApiOperation({ summary: 'Create a new user on Encryptus' })
+  @Post('partners/create/user')
+  async createNewUser(@Body() { email }: CreateUserDto) {
     try {
-      const result = await this.encryptusService.generateKYCLink();
+      const result = await this.encryptusService.createNewUser(email);
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);
@@ -26,6 +34,18 @@ export class EncryptusController {
   async getUserInfo(@Param('id') id: string) {
     try {
       const result = await this.encryptusService.getUserInfo(id);
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Generate KYC link for individual' })
+  @Get('partners/kycurl')
+  async generateKYCLink() {
+    try {
+      const result = await this.encryptusService.generateKYCLink();
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);

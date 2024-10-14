@@ -14,19 +14,24 @@ export class EncryptusService {
     private settingRepository: Repository<Setting>,
   ) {}
 
-  async generateKYCLink() {
+  async createNewUser(email: string) {
     try {
       const token = await this.settingRepository.findOneBy({
         key: 'ENCRYPTUS_TOKEN',
       });
 
+      const data = JSON.stringify({
+        email: email,
+      });
+
       const config = {
-        method: 'GET',
-        url: `${ConfigService.Encryptus.url}/v1/partners/kycurl?accountType=Individual`,
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,
         },
+        data: data,
       };
 
       const result = await axios(config);
@@ -52,6 +57,35 @@ export class EncryptusService {
       const config = {
         method: 'GET',
         url: `${ConfigService.Encryptus.url}/v1/partners/user/${id}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const result = await axios(config);
+      return result.data;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
+
+  async generateKYCLink() {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/partners/kycurl?accountType=Individual`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,
