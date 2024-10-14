@@ -142,19 +142,6 @@
   },
   {
     "inputs": [],
-    "name": "ccfl",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "closeLoan",
     "outputs": [
       {
@@ -205,6 +192,19 @@
         "internalType": "uint24",
         "name": "",
         "type": "uint24"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fsfi",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -398,10 +398,10 @@
   },
   {
     "inputs": [],
-    "name": "iCCFLConfig",
+    "name": "iFSFIConfig",
     "outputs": [
       {
-        "internalType": "contract ICCFLConfig",
+        "internalType": "contract IFSFIConfig",
         "name": "",
         "type": "address"
       }
@@ -522,8 +522,8 @@
         "type": "address"
       },
       {
-        "internalType": "contract ICCFLConfig",
-        "name": "_iCCFLConfig",
+        "internalType": "contract IFSFIConfig",
+        "name": "_iFSFIConfig",
         "type": "address"
       }
     ],
@@ -609,11 +609,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_ccfl",
+        "name": "_fsfi",
         "type": "address"
       }
     ],
-    "name": "setCCFL",
+    "name": "setFSFI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

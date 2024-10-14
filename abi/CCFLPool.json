@@ -150,7 +150,7 @@
   },
   {
     "inputs": [],
-    "name": "CCFL",
+    "name": "FSFI",
     "outputs": [
       {
         "internalType": "address",
@@ -386,7 +386,7 @@
       },
       {
         "internalType": "address",
-        "name": "interestRateStrategyAddress",
+        "name": "_interestRateStrategyAddress",
         "type": "address"
       },
       {
@@ -605,12 +605,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_ccfl",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_cap",
+        "type": "uint256"
       }
     ],
-    "name": "setCCFL",
+    "name": "setCap",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -618,12 +618,12 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_cap",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_fsfi",
+        "type": "address"
       }
     ],
-    "name": "setCap",
+    "name": "setFSFI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

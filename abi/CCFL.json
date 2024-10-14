@@ -603,51 +603,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "ccflConfig",
-    "outputs": [
-      {
-        "internalType": "contract ICCFLConfig",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ccflLoan",
-    "outputs": [
-      {
-        "internalType": "contract ICCFLLoan",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20Standard",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "ccflPools",
-    "outputs": [
-      {
-        "internalType": "contract ICCFLPool",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "contract IERC20Standard[]",
@@ -806,6 +761,51 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "fsfiConfig",
+    "outputs": [
+      {
+        "internalType": "contract IFSFIConfig",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fsfiLoan",
+    "outputs": [
+      {
+        "internalType": "contract IFSFILoan",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20Standard",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "fsfiPools",
+    "outputs": [
+      {
+        "internalType": "contract IFSFIPool",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -866,22 +866,22 @@
     "inputs": [
       {
         "internalType": "contract IERC20Standard[]",
-        "name": "_ccflPoolStableCoin",
+        "name": "_fsfiPoolStableCoin",
         "type": "address[]"
       },
       {
-        "internalType": "contract ICCFLPool[]",
-        "name": "_ccflPools",
+        "internalType": "contract IFSFIPool[]",
+        "name": "_fsfiPools",
         "type": "address[]"
       },
       {
-        "internalType": "contract ICCFLConfig",
-        "name": "_ccflConfig",
+        "internalType": "contract IFSFIConfig",
+        "name": "_fsfiConfig",
         "type": "address"
       },
       {
-        "internalType": "contract ICCFLLoan",
-        "name": "_ccflLoan",
+        "internalType": "contract IFSFILoan",
+        "name": "_fsfiLoan",
         "type": "address"
       }
     ],
@@ -1011,12 +1011,12 @@
   {
     "inputs": [
       {
-        "internalType": "contract ICCFLLoan",
+        "internalType": "contract IFSFILoan",
         "name": "_loan",
         "type": "address"
       }
     ],
-    "name": "setCCFLLoan",
+    "name": "setFSFILoan",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1056,12 +1056,12 @@
     "inputs": [
       {
         "internalType": "contract IERC20Standard[]",
-        "name": "_ccflPoolStableCoin",
+        "name": "_fsfiPoolStableCoin",
         "type": "address[]"
       },
       {
-        "internalType": "contract ICCFLPool[]",
-        "name": "_ccflPools",
+        "internalType": "contract IFSFIPool[]",
+        "name": "_fsfiPools",
         "type": "address[]"
       }
     ],
