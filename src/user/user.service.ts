@@ -183,28 +183,31 @@ export class UserService {
       const user = await this.userRepository.findOneBy({ username });
 
       if (!user) {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
 
       if (user?.emailVerified == false) {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          throw new UnauthorizedException(
-            this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
+          throw new UnauthorizedException({
+            statusCode: 400,
+            message: this.i18n.translate('message.WRONG_SIGNIN_USERNAME', {
               lang: I18nContext.current().lang,
             }),
-          );
+          });
         }
       }
 
@@ -235,28 +238,31 @@ export class UserService {
       const user = await this.userRepository.findOneBy({ email });
 
       if (!user) {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
 
       if (user?.emailVerified == false) {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.EMAIL_NOT_VERIFIED', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          throw new UnauthorizedException(
-            this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
+          throw new UnauthorizedException({
+            statusCode: 400,
+            message: this.i18n.translate('message.WRONG_SIGNIN_EMAIL', {
               lang: I18nContext.current().lang,
             }),
-          );
+          });
         }
       }
 
@@ -289,11 +295,12 @@ export class UserService {
       });
 
       if (!payload) {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
 
       delete payload.iat;
@@ -317,11 +324,12 @@ export class UserService {
           }),
         );
       } else {
-        throw new UnauthorizedException(
-          this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
+        throw new UnauthorizedException({
+          statusCode: 400,
+          message: this.i18n.translate('message.INVALID_REFRESH_TOKEN', {
             lang: I18nContext.current().lang,
           }),
-        );
+        });
       }
     }
   }
