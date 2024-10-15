@@ -160,7 +160,7 @@ export class UserService {
         },
       );
 
-      const link = `${ConfigService.App.domain}/user/verify-email?token=${token}`;
+      const link = `${ConfigService.App.domain}/user/verify-email?token=${encodeURIComponent(token)}`;
 
       await this.emailService.sendMail({
         to: user.email,
@@ -538,7 +538,7 @@ export class UserService {
       });
 
       return {
-        url: `${ConfigService.App.frontend_url}/my-profile?access_token=${access_token}&refresh_token=${refresh_token}`,
+        url: `${ConfigService.App.frontend_url}/my-profile?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`,
       };
     } catch (e) {
       this.logger.error(
@@ -577,7 +577,7 @@ export class UserService {
         expiresIn: ConfigService.JWTConfig.refresh_expire,
       });
 
-      const link = `${ConfigService.App.frontend_url}/my-profile?access_token=${access_token}&refresh_token=${refresh_token}`;
+      const link = `${ConfigService.App.frontend_url}/my-profile?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`;
 
       await this.emailService.sendMail({
         to: email,
@@ -1102,7 +1102,7 @@ export class UserService {
         },
       );
 
-      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${token}`;
+      const linkUnsubscribe = `${ConfigService.App.domain}/user/confirm-unsubscribe?token=${encodeURIComponent(token)}`;
 
       await this.emailService.sendMail({
         to: email,
