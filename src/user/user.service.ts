@@ -199,6 +199,7 @@ export class UserService {
           }),
         });
       }
+
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -211,11 +212,71 @@ export class UserService {
         }
       }
 
+      let createdEncryptusId = null;
+      if (user.encryptusId == null) {
+        const encryptusToken = await this.settingRepository.findOneBy({
+          key: 'ENCRYPTUS_TOKEN',
+        });
+
+        try {
+          const data = JSON.stringify({
+            email: user.email,
+          });
+
+          const configCreateUser = {
+            method: 'POST',
+            url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${encryptusToken.value}`,
+            },
+            data: data,
+          };
+
+          const encryptusUser = await axios(configCreateUser);
+          createdEncryptusId = encryptusUser?.data?.data?._id;
+
+          await this.userRepository.update(
+            { email: user.email },
+            {
+              encryptusId: createdEncryptusId,
+            },
+          );
+        } catch (error) {
+          try {
+            const configFetchallUser = {
+              method: 'GET',
+              url: `${ConfigService.Encryptus.url}/v1/partners/fetchall/user`,
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${encryptusToken.value}`,
+              },
+            };
+
+            const result = await axios(configFetchallUser);
+
+            const info = result.data.data.usersList.find(
+              (item) => item.email === user.email,
+            );
+            createdEncryptusId = info?._id;
+
+            await this.userRepository.update(
+              { email: user.email },
+              {
+                encryptusId: createdEncryptusId,
+              },
+            );
+          } catch (anotherError) {
+            // Do nothing
+          }
+        }
+      }
+
       const payload = {
         username: user.username,
         email: user.email,
         role: user.role,
-        encryptus_id: user.encryptusId || null,
+        encryptus_id: user.encryptusId ?? createdEncryptusId,
       };
 
       return {
@@ -254,6 +315,7 @@ export class UserService {
           }),
         });
       }
+
       if (user?.password) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -266,11 +328,71 @@ export class UserService {
         }
       }
 
+      let createdEncryptusId = null;
+      if (user.encryptusId == null) {
+        const encryptusToken = await this.settingRepository.findOneBy({
+          key: 'ENCRYPTUS_TOKEN',
+        });
+
+        try {
+          const data = JSON.stringify({
+            email: user.email,
+          });
+
+          const configCreateUser = {
+            method: 'POST',
+            url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${encryptusToken.value}`,
+            },
+            data: data,
+          };
+
+          const encryptusUser = await axios(configCreateUser);
+          createdEncryptusId = encryptusUser?.data?.data?._id;
+
+          await this.userRepository.update(
+            { email: user.email },
+            {
+              encryptusId: createdEncryptusId,
+            },
+          );
+        } catch (error) {
+          try {
+            const configFetchallUser = {
+              method: 'GET',
+              url: `${ConfigService.Encryptus.url}/v1/partners/fetchall/user`,
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${encryptusToken.value}`,
+              },
+            };
+
+            const result = await axios(configFetchallUser);
+
+            const info = result.data.data.usersList.find(
+              (item) => item.email === user.email,
+            );
+            createdEncryptusId = info?._id;
+
+            await this.userRepository.update(
+              { email: user.email },
+              {
+                encryptusId: createdEncryptusId,
+              },
+            );
+          } catch (anotherError) {
+            // Do nothing
+          }
+        }
+      }
+
       const payload = {
         username: user.username,
         email: user.email,
         role: user.role,
-        encryptus_id: user.encryptusId || null,
+        encryptus_id: user.encryptusId ?? createdEncryptusId,
       };
 
       return {
@@ -349,10 +471,10 @@ export class UserService {
         },
       };
 
-      let kycInfo = null;
+      user.kyc_info = null;
       try {
         const result = await axios(configUserInfo);
-        kycInfo = result?.data?.data?.data?.kyc_info;
+        user.kyc_info = result?.data?.data?.data?.kyc_info;
       } catch (e) {
         this.logger.error('Cannot get user info from Encryptus');
       }
@@ -360,10 +482,7 @@ export class UserService {
       delete user.iat;
       delete user.exp;
 
-      return {
-        ...user,
-        kyc_info: kycInfo,
-      };
+      return user;
     } catch (e) {
       if (e?.response) {
         throw new HttpException(
