@@ -577,7 +577,7 @@ export class UserService {
         expiresIn: ConfigService.JWTConfig.refresh_expire,
       });
 
-      const link = `${ConfigService.App.frontend_url}/my-profile?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`;
+      const link = `${ConfigService.App.frontend_url}/my-profile?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}&isForgot=true`;
 
       await this.emailService.sendMail({
         to: email,
