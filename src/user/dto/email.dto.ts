@@ -4,6 +4,6 @@ import { ApiProperty } from '@nestjs/swagger';
 export class EmailDto {
   @ApiProperty()
   @IsNotEmpty()
-  @IsEmail()
+  @IsEmail({}, { message: 'Wrong email format' })
   email: string;
 }

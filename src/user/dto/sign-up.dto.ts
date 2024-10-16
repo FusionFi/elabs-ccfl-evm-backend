@@ -13,6 +13,6 @@ export class SignUpDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsEmail()
+  @IsEmail({}, { message: 'Wrong email format' })
   email: string;
 }
