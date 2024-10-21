@@ -308,10 +308,23 @@ export class UserController {
 
   @Public()
   @ApiOperation({ summary: 'Save info of the fiat loan' })
-  @Post('create/fiat/loan')
+  @Post('fiat/loan/create')
   async createFiatLoan(@Body() fiatLoanDto: FiatLoanDto) {
     try {
       const result = await this.userService.createFiatLoan(fiatLoanDto);
+      return mapFiatLoan(result);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @ApiOperation({ summary: 'Get the list of fiat loan' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('fiat/loan/all')
+  async getFiatLoan(@Request() req) {
+    try {
+      const result = await this.userService.getFiatLoan(req.user.encryptus_id);
       return mapFiatLoan(result);
     } catch (e) {
       throw new HttpException(e.response, e.status);
