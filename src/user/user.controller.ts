@@ -26,12 +26,14 @@ import { EmailDto } from './dto/email.dto';
 import { UsernameDto } from './dto/username.dto';
 import { RestorePasswordDto } from './dto/restore-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { FiatLoanDto } from './dto/fiat-loan.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { mapUser } from './response-dto/user.map';
 import { mapSubscriber } from './response-dto/subscriber.map';
+import { mapFiatLoan } from './response-dto/fiat-loan.map';
 import { IntDefaultValuePipe } from 'src/common/pipes/int-default-value.pipe';
 
 @ApiTags('user')
@@ -299,6 +301,18 @@ export class UserController {
     try {
       const result = await this.userService.getAllSubscribers();
       return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Save info of the fiat loan' })
+  @Post('create/fiat/loan')
+  async createFiatLoan(@Body() fiatLoanDto: FiatLoanDto) {
+    try {
+      const result = await this.userService.createFiatLoan(fiatLoanDto);
+      return mapFiatLoan(result);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

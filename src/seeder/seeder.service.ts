@@ -417,6 +417,11 @@ export class SeederService {
           value: '',
           type: 'string',
         },
+        {
+          key: 'FIAT_TX_FEE',
+          value: '4',
+          type: 'number',
+        },
       ];
 
       for (const item of settings) {

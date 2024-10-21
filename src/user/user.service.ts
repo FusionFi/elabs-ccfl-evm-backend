@@ -16,7 +16,9 @@ import { Subscriber } from './entity/subscriber.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
+import { FiatLoan } from './entity/fiat-loan.entity';
 import { SignUpDto } from './dto/sign-up.dto';
+import { FiatLoanDto } from './dto/fiat-loan.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
@@ -57,6 +59,9 @@ export class UserService {
 
     @InjectRepository(Contract)
     private contractRepository: Repository<Contract>,
+
+    @InjectRepository(FiatLoan)
+    private fiatLoanRepository: Repository<FiatLoan>,
 
     private readonly i18n: I18nService,
 
@@ -1184,6 +1189,40 @@ export class UserService {
         result.push(item.email);
       }
       return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  async createFiatLoan(fiatLoanDto: FiatLoanDto) {
+    try {
+      const user = await this.userRepository.findOneBy({
+        encryptusId: fiatLoanDto.userEncryptusId,
+      });
+
+      if (!user) {
+        throw new HttpException(
+          this.i18n.translate('message.USER_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const network = await this.networkRepository.findOneBy({
+        chainId: fiatLoanDto.networkId,
+      });
+
+      if (!network) {
+        throw new HttpException(
+          this.i18n.translate('message.NETWORK_NOT_FOUND', {
+            lang: I18nContext.current().lang,
+          }),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return await this.fiatLoanRepository.save(fiatLoanDto);
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }

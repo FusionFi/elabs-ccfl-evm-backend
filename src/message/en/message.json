@@ -6,6 +6,7 @@
   "EMAIL_NOT_VERIFIED": "Email has not been verified",
   "CANNOT_VERIFY_EMAIL": "Cannot verify email",
   "USER_NOT_FOUND": "User not found",
+  "NETWORK_NOT_FOUND": "Network not found",
   "WRONG_SIGNIN_USERNAME": "Incorrect username or password!",
   "WRONG_SIGNIN_EMAIL": "Incorrect email or password!",
   "CANNOT_CHANGE_PASSWORD": "Cannot change password",
