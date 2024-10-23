@@ -105,4 +105,62 @@ export class EncryptusService {
       }
     }
   }
+
+  async getAllSupportedCountries() {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/supportedcountries`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const result = await axios(config);
+      return result?.data?.data?.supportedCountries;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
+
+  async getAllSupportedCurrencies() {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/supportedcurrencies`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const result = await axios(config);
+      return result?.data?.data;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
 }

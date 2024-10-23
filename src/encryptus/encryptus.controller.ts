@@ -51,4 +51,28 @@ export class EncryptusController {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all supported countries' })
+  @Get('payout/bankwire/supportedcountries')
+  async getAllSupportedCountries() {
+    try {
+      const result = await this.encryptusService.getAllSupportedCountries();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all supported currencies' })
+  @Get('payout/bankwire/supportedcurrencies')
+  async getAllSupportedCurrencies() {
+    try {
+      const result = await this.encryptusService.getAllSupportedCurrencies();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }
