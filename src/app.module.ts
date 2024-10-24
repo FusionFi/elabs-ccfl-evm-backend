@@ -25,6 +25,7 @@ import { SubgraphModule } from './subgraph/subgraph.module';
 import { PriceModule } from './price/price.module';
 import { FiatModule } from './fiat/fiat.module';
 import { EncryptusModule } from './encryptus/encryptus.module';
+import { CardanoModule } from './cardano/cardano.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import {
   I18nModule,
@@ -91,6 +92,7 @@ import * as path from 'path';
     SettingModule,
     ContractModule,
     NetworkModule,
+    CardanoModule,
   ],
   controllers: [AppController],
   providers: [
