@@ -317,4 +317,17 @@ export class UserController {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  @ApiOperation({ summary: 'Get the list of fiat loan' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Get('fiat/loan/all')
+  async getFiatLoan(@Request() req) {
+    try {
+      const result = await this.userService.getFiatLoan(req.user.encryptus_id);
+      return mapFiatLoan(result);
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }

@@ -1280,4 +1280,14 @@ export class UserService {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  async getFiatLoan(userEncryptusId: string) {
+    try {
+      return await this.fiatLoanRepository.findBy({
+        userEncryptusId,
+      });
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }
