@@ -8,6 +8,7 @@ import { Setting } from 'src/setting/entity/setting.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
+import { Fiat } from 'src/fiat/entity/fiat.entity';
 import { FiatLoan } from './entity/fiat-loan.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from 'src/config/config.service';
@@ -25,6 +26,7 @@ import { join } from 'path';
       Asset,
       Contract,
       FiatLoan,
+      Fiat,
     ]),
     JwtModule.register({
       global: true,

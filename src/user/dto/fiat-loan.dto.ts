@@ -8,11 +8,11 @@ export class FiatLoanDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  networkId: number;
+  userWalletAddress: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  loanId: number;
+  networkId: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -26,6 +26,10 @@ export class FiatLoanDto {
   @ApiProperty()
   @IsNotEmpty()
   currency: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  amount: number;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -19,17 +19,16 @@ export class FiatLoan {
 
   @Column({
     nullable: false,
+    name: 'user_wallet_address',
+  })
+  userWalletAddress: string;
+
+  @Column({
+    nullable: false,
     name: 'network_id',
     type: 'int',
   })
   networkId: number;
-
-  @Column({
-    nullable: false,
-    name: 'loan_id',
-    type: 'int',
-  })
-  loanId: number;
 
   @Column({
     nullable: true,
@@ -53,6 +52,11 @@ export class FiatLoan {
     nullable: false,
   })
   currency: string;
+
+  @Column({
+    nullable: false,
+  })
+  amount: number;
 
   @Column({
     nullable: false,

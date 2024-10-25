@@ -16,6 +16,7 @@ import { Subscriber } from './entity/subscriber.entity';
 import { Network } from 'src/network/entity/network.entity';
 import { Asset } from 'src/asset/entity/asset.entity';
 import { Contract } from 'src/contract/entity/contract.entity';
+import { Fiat } from 'src/fiat/entity/fiat.entity';
 import { FiatLoan } from './entity/fiat-loan.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { FiatLoanDto } from './dto/fiat-loan.dto';
@@ -62,6 +63,9 @@ export class UserService {
 
     @InjectRepository(FiatLoan)
     private fiatLoanRepository: Repository<FiatLoan>,
+
+    @InjectRepository(Fiat)
+    private fiatRepository: Repository<Fiat>,
 
     private readonly i18n: I18nService,
 
@@ -1010,9 +1014,58 @@ export class UserService {
             .times(collateral.price),
         );
 
+        const configCreateLoan = {
+          method: 'POST',
+          url: ConfigService.Subgraph.url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: JSON.stringify({
+            query: `query createLoans (
+                $address: Bytes!
+                $loanId: BigInt!
+            ) {
+                createLoans (
+                    where: {
+                      and: [
+                        { borrower: $address }
+                        { loanInfo_loanId: $loanId }
+                      ]
+                    }
+                ) {
+                    borrower
+                    loanInfo_loanId
+                    transactionHash
+                }
+            }`,
+            variables: { address: address, loanId: loanId },
+          }),
+        };
+
+        const response = await axios(configCreateLoan);
+        const txHash = response.data.data.createLoans[0].transactionHash;
+
+        const fiatLoanDetail = await this.fiatLoanRepository.findOneBy({
+          txHash,
+          networkId: chainId,
+          userWalletAddress: address,
+        });
+        const rate = await this.fiatRepository.findOneBy({
+          currency: fiatLoanDetail.currency,
+        });
+
         allLoans.push({
           loan_id: parseInt(loanId),
           is_fiat: loanInfo.isFiat,
+          fiat_loan_detail: loanInfo.isFiat
+            ? {
+                country: fiatLoanDetail.country,
+                currency: fiatLoanDetail.currency,
+                amount: fiatLoanDetail.amount,
+                currency_rate: rate.price,
+                status: fiatLoanDetail.status,
+              }
+            : null,
           asset: asset.symbol,
           decimals: asset.decimals,
           loan_size: loanInfo.amount.toString(),
@@ -1223,16 +1276,6 @@ export class UserService {
       }
 
       return await this.fiatLoanRepository.save(fiatLoanDto);
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  async getFiatLoan(userEncryptusId: string) {
-    try {
-      return await this.fiatLoanRepository.findBy({
-        userEncryptusId,
-      });
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
