@@ -63,4 +63,41 @@ export class EncryptusController {
       throw new HttpException(e.response, e.status);
     }
   }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all remittance purposes' })
+  @Get('setting/remittance-purpose')
+  async getSettingRemittancePurpose() {
+    try {
+      const result = await this.encryptusService.getSettingRemittancePurpose();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all source of funds' })
+  @Get('setting/source-of-funds')
+  async getSettingSourceOfFunds() {
+    try {
+      const result = await this.encryptusService.getSettingSourceOfFunds();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get all recipient relationship' })
+  @Get('setting/recipient-relationship')
+  async getSettingRecipientRelationship() {
+    try {
+      const result =
+        await this.encryptusService.getSettingRecipientRelationship();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
 }

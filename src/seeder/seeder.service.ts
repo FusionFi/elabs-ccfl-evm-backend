@@ -422,6 +422,23 @@ export class SeederService {
           value: '4',
           type: 'number',
         },
+        {
+          key: 'REMITTANCE_PURPOSE',
+          value:
+            "['Education Support', 'Home Improvement', 'Gift', 'Salary', 'Savings', 'Real Estate']",
+          type: 'array',
+        },
+        {
+          key: 'SOURCE_OF_FUNDS',
+          value:
+            "['Salary', 'Savings', 'Lottery', 'Loan', 'Business Income', 'Others']",
+          type: 'array',
+        },
+        {
+          key: 'RECIPIENT_RELATIONSHIP',
+          value: "['Self', 'Spouse', 'Son', 'Daughter', 'Mother', 'Father']",
+          type: 'array',
+        },
       ];
 
       for (const item of settings) {

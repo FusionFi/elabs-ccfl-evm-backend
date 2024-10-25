@@ -153,4 +153,73 @@ export class EncryptusService {
       }
     }
   }
+
+  async getSettingRemittancePurpose() {
+    try {
+      const data = await this.settingRepository.findOneBy({
+        key: 'REMITTANCE_PURPOSE',
+      });
+
+      const cleanedStr = data.value.replace(/[\[\]']+/g, '');
+
+      const result = cleanedStr.split(',').map((item) => item.trim());
+
+      return result;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
+
+  async getSettingSourceOfFunds() {
+    try {
+      const data = await this.settingRepository.findOneBy({
+        key: 'SOURCE_OF_FUNDS',
+      });
+
+      const cleanedStr = data.value.replace(/[\[\]']+/g, '');
+
+      const result = cleanedStr.split(',').map((item) => item.trim());
+
+      return result;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
+
+  async getSettingRecipientRelationship() {
+    try {
+      const data = await this.settingRepository.findOneBy({
+        key: 'RECIPIENT_RELATIONSHIP',
+      });
+
+      const cleanedStr = data.value.replace(/[\[\]']+/g, '');
+
+      const result = cleanedStr.split(',').map((item) => item.trim());
+
+      return result;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
 }
