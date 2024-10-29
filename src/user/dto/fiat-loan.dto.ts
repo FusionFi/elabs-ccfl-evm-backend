@@ -16,6 +16,10 @@ export class FiatLoanDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  txHash: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsIn(['BANK_WIRE', 'GIFT_CODE'])
   payoutMethod: string;
 
