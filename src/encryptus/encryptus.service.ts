@@ -77,7 +77,7 @@ export class EncryptusService {
     }
   }
 
-  async generateKYCLink() {
+  async generateKYCLink(email: string) {
     try {
       const token = await this.settingRepository.findOneBy({
         key: 'ENCRYPTUS_TOKEN',
@@ -85,7 +85,7 @@ export class EncryptusService {
 
       const config = {
         method: 'GET',
-        url: `${ConfigService.Encryptus.url}/v1/partners/kycurl?accountType=Individual`,
+        url: `${ConfigService.Encryptus.url}/v1/partners/kycurl/v2?accountType=Individual&email=${email}`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,

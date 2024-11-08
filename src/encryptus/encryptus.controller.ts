@@ -42,10 +42,10 @@ export class EncryptusController {
 
   @Public()
   @ApiOperation({ summary: 'Generate KYC link for individual' })
-  @Get('partners/kycurl')
-  async generateKYCLink() {
+  @Get('partners/kycurl/:email')
+  async generateKYCLink(@Param('email') email: string) {
     try {
-      const result = await this.encryptusService.generateKYCLink();
+      const result = await this.encryptusService.generateKYCLink(email);
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);
