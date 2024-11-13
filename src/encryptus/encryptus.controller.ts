@@ -10,6 +10,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
+import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
 
 @ApiTags('encryptus')
 @Controller('encryptus')
@@ -95,6 +96,22 @@ export class EncryptusController {
     try {
       const result =
         await this.encryptusService.getSettingRecipientRelationship();
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Estimate quote by amount' })
+  @Post('payout/bankwire/estimatedquotebyamount')
+  async estimateQuoteByAmount(
+    @Body() estimateQuoteByAmountDto: EstimateQuoteByAmountDto,
+  ) {
+    try {
+      const result = await this.encryptusService.estimateQuoteByAmount(
+        estimateQuoteByAmountDto,
+      );
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);

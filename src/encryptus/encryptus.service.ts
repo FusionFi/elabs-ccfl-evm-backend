@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { Setting } from 'src/setting/entity/setting.entity';
+import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
 
 @Injectable()
 export class EncryptusService {
@@ -211,6 +212,37 @@ export class EncryptusService {
       const result = cleanedStr.split(',').map((item) => item.trim());
 
       return result;
+    } catch (error) {
+      if (error?.response) {
+        throw new HttpException(
+          error?.response?.data?.message,
+          error?.response?.status,
+        );
+      } else {
+        throw new HttpException(error?.response, error?.status);
+      }
+    }
+  }
+
+  async estimateQuoteByAmount(estimateQuoteByAmount: EstimateQuoteByAmountDto) {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/estimatedquotebyamount`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        data: estimateQuoteByAmount,
+      };
+
+      const response = await axios(config);
+
+      return response.data;
     } catch (error) {
       if (error?.response) {
         throw new HttpException(
