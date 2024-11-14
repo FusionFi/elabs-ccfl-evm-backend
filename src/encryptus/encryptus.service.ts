@@ -15,40 +15,6 @@ export class EncryptusService {
     private settingRepository: Repository<Setting>,
   ) {}
 
-  async createNewUser(email: string) {
-    try {
-      const token = await this.settingRepository.findOneBy({
-        key: 'ENCRYPTUS_TOKEN',
-      });
-
-      const data = JSON.stringify({
-        email: email,
-      });
-
-      const config = {
-        method: 'POST',
-        url: `${ConfigService.Encryptus.url}/v1/partners/create/user`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token.value}`,
-        },
-        data: data,
-      };
-
-      const result = await axios(config);
-      return result.data;
-    } catch (error) {
-      if (error?.response) {
-        throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
-        );
-      } else {
-        throw new HttpException(error?.response, error?.status);
-      }
-    }
-  }
-
   async getUserInfo(id: string) {
     try {
       const token = await this.settingRepository.findOneBy({

@@ -18,18 +18,6 @@ export class EncryptusController {
   constructor(private readonly encryptusService: EncryptusService) {}
 
   @Public()
-  @ApiOperation({ summary: 'Create a new user on Encryptus' })
-  @Post('partners/create/user')
-  async createNewUser(@Body() { email }: CreateUserDto) {
-    try {
-      const result = await this.encryptusService.createNewUser(email);
-      return result;
-    } catch (e) {
-      throw new HttpException(e.response, e.status);
-    }
-  }
-
-  @Public()
   @ApiOperation({ summary: 'Get user info via id' })
   @Get('partners/user/:id')
   async getUserInfo(@Param('id') id: string) {
