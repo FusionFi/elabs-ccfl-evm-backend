@@ -56,7 +56,7 @@ export class FiatLoan {
   @Column({
     nullable: false,
   })
-  amount: number;
+  amount: string;
 
   @Column({
     nullable: false,
@@ -73,16 +73,34 @@ export class FiatLoan {
 
   @Column({
     nullable: false,
+    default: false,
+    name: 'is_receive_email',
+  })
+  isReceiveEmail: boolean;
+
+  @Column({
+    nullable: false,
     default: 'UNPROCESSED',
   })
   status: string;
 
   @Column({
-    nullable: false,
-    default: false,
-    name: 'is_receive_email',
+    nullable: true,
+    name: 'quote_id',
   })
-  isReceiveEmail: boolean;
+  quoteId: string;
+
+  @Column({
+    nullable: true,
+    name: 'encryptus_order_id',
+  })
+  encryptusOrderId: string;
+
+  @Column({
+    nullable: true,
+    name: 'coin_quantity_charged',
+  })
+  coinQuantityCharged: string;
 
   @CreateDateColumn({
     name: 'created_at',

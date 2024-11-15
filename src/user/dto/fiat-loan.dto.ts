@@ -33,11 +33,13 @@ export class FiatLoanDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  amount: number;
+  amount: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsIn(['USDC', 'USDT'])
+  @IsIn(['USDC', 'USDT'], {
+    message: 'repayment token must be either USDC or USDT',
+  })
   repaymentToken: string;
 
   @ApiProperty()

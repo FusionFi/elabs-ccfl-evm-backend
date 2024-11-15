@@ -20,6 +20,7 @@ import { Fiat } from 'src/fiat/entity/fiat.entity';
 import { FiatLoan } from './entity/fiat-loan.entity';
 import { SignUpDto } from './dto/sign-up.dto';
 import { FiatLoanDto } from './dto/fiat-loan.dto';
+import { PayoutDetailBankwireDto } from './dto/payout-detail-bankwire.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from 'src/config/config.service';
 import * as bcrypt from 'bcrypt';
@@ -1275,9 +1276,229 @@ export class UserService {
         );
       }
 
-      return await this.fiatLoanRepository.save(fiatLoanDto);
+      const existing = await this.fiatLoanRepository.findOneBy({
+        txHash: fiatLoanDto.txHash,
+      });
+
+      if (!existing) {
+        await this.fiatLoanRepository.save(fiatLoanDto);
+      }
+
+      const encryptusToken = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      // Check and add whitelist wallet if needed
+
+      const configFetchWhitelistWallet = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/partners/user/forensics/fetchAll/whitelisted/WalletAddress`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${encryptusToken.value}`,
+        },
+        data: {
+          userEmail: user.email,
+        },
+      };
+
+      const whitelistWallet = await axios(configFetchWhitelistWallet);
+      console.log('whitelistWallet: ', whitelistWallet?.data);
+
+      let checkWhitelistWallet = false;
+      for (const item of whitelistWallet.data?.data?.walletList) {
+        if (item.address == fiatLoanDto.userWalletAddress) {
+          checkWhitelistWallet = true;
+          break;
+        }
+      }
+      console.log('checkWhitelistWallet: ', checkWhitelistWallet);
+
+      if (!checkWhitelistWallet) {
+        const configAddWhitelistWallet = {
+          method: 'POST',
+          url: `${ConfigService.Encryptus.url}/v1/partners/user/forensics/whitelist/walletAddress`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${encryptusToken.value}`,
+          },
+          data: {
+            address: fiatLoanDto.userWalletAddress,
+            coin: 'eth',
+            network: 'ethereum',
+            label: `${fiatLoanDto.userEncryptusId}-${fiatLoanDto.userWalletAddress}-${fiatLoanDto.networkId}`,
+            userEmail: user.email,
+          },
+        };
+
+        const resultAddWhitelistWallet = await axios(configAddWhitelistWallet);
+
+        console.log(
+          'resultAddWhitelistWallet: ',
+          resultAddWhitelistWallet?.data,
+        );
+      }
+
+      // Check and add whitelist bank account if needed
+
+      const configFetchWhitelistBankAccount = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/partners/user/forensics/fetchAll/whitelisted/BankAccount`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${encryptusToken.value}`,
+        },
+        data: {
+          userEmail: user.email,
+        },
+      };
+
+      const whitelistBankAccount = await axios(configFetchWhitelistBankAccount);
+      console.log('whitelistBankAccount: ', whitelistBankAccount?.data);
+
+      const payoutDetail = fiatLoanDto.payoutDetail as PayoutDetailBankwireDto;
+
+      let checkWhitelistBankAccount = false;
+      for (const item of whitelistBankAccount.data?.data?.walletList) {
+        if (item.bankAccountNumber == payoutDetail.accountNumber) {
+          checkWhitelistBankAccount = true;
+          break;
+        }
+      }
+      console.log('checkWhitelistBankAccount: ', checkWhitelistBankAccount);
+
+      if (!checkWhitelistBankAccount) {
+        const configAddWhitelistBankAccount = {
+          method: 'POST',
+          url: `${ConfigService.Encryptus.url}/v1/partners/user/forensics/whitelist/bankAccount`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${encryptusToken.value}`,
+          },
+          data: {
+            accountHolderName: payoutDetail.accountOwner,
+            accountType: 'Savings',
+            mobile: payoutDetail.mobile,
+            provider: payoutDetail.provider,
+            accountHolderAddress: payoutDetail.accountOwnerAddress,
+            beneficiaryBankName: payoutDetail.bankName,
+            beneficiaryBankAddress: payoutDetail.bankAddress,
+            beneficiaryBankCountry: payoutDetail.bankCountry,
+            bankAccountNumber: payoutDetail.accountNumber,
+            bicSwift: payoutDetail.bicSwift,
+            bankcode: payoutDetail.bankCode,
+            banksubcode: payoutDetail.bankSubcode,
+            country: fiatLoanDto.country,
+            fiatCurrency: 'ALL',
+            userEmail: user.email,
+          },
+        };
+
+        const resultAddWhitelistBankAccount = await axios(
+          configAddWhitelistBankAccount,
+        );
+
+        console.log(
+          'resultAddWhitelistBankAccount: ',
+          resultAddWhitelistBankAccount?.data,
+        );
+      }
+
+      // Create quote and update quote_id into DB
+
+      const configCreateQuote = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/quotebyamount`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${encryptusToken.value}`,
+        },
+        data: {
+          userEmail: user.email,
+          coin: fiatLoanDto.repaymentToken,
+          recipientRelationship: 'Self',
+          remittancePurpose: payoutDetail.purposeOfPayment,
+          transferType: 'BANK',
+          msisdn: payoutDetail.mobile,
+          accountNo: payoutDetail.accountNumber,
+          requestCurrency: fiatLoanDto.currency,
+          sendingCurrency: 'USD',
+          sendingCountry: 'US',
+          receivingCurrency: fiatLoanDto.currency,
+          receivingCountry: fiatLoanDto.country,
+          amount: parseFloat(fiatLoanDto.amount),
+        },
+      };
+
+      const resultCreateQuote = await axios(configCreateQuote);
+      console.log('resultCreateQuote: ', resultCreateQuote?.data);
+
+      await this.fiatLoanRepository.update(
+        {
+          txHash: fiatLoanDto.txHash,
+        },
+        {
+          quoteId: resultCreateQuote.data?.quote?.quoteId,
+          coinQuantityCharged:
+            resultCreateQuote.data?.quote?.coinQuantityCharged,
+        },
+      );
+
+      // Submit order and update encryptus_order_id into DB
+
+      const nameParts = payoutDetail.accountOwner.trim().split(' ');
+
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ');
+
+      const configSubmitOrder = {
+        method: 'POST',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/submitOrder/bank`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${encryptusToken.value}`,
+        },
+        data: {
+          transactionType: 'p2p',
+          quoteId: resultCreateQuote.data?.quote?.quoteId,
+          sourceOfFunds: payoutDetail.sourceOfIncome,
+          sender_msisdn: payoutDetail.mobile,
+          receiver_msisdn: payoutDetail.mobile,
+          accountNo: payoutDetail.accountNumber,
+          receiver_firstName: firstName,
+          receiver_lastName: lastName,
+        },
+      };
+
+      const resultSubmitOrder = await axios(configSubmitOrder);
+      console.log('resultSubmitOrder: ', resultSubmitOrder);
+
+      await this.fiatLoanRepository.update(
+        {
+          txHash: fiatLoanDto.txHash,
+        },
+        {
+          encryptusOrderId: resultSubmitOrder.data?.encryptus_order_id,
+        },
+      );
+
+      const finalObj = await this.fiatLoanRepository.findOneBy({
+        txHash: fiatLoanDto.txHash,
+      });
+
+      console.log('finalObj: ', finalObj);
+
+      return finalObj;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      console.log('error: ', e);
+      if (e?.response) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 

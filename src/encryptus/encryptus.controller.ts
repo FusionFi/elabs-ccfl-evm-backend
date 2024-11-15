@@ -9,7 +9,6 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
-import { CreateUserDto } from './dto/create-user.dto';
 import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
 
 @ApiTags('encryptus')
