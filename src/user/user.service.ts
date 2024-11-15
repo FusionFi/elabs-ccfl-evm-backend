@@ -1282,6 +1282,11 @@ export class UserService {
 
       if (!existing) {
         await this.fiatLoanRepository.save(fiatLoanDto);
+      } else {
+        await this.fiatLoanRepository.update(
+          { txHash: fiatLoanDto.txHash },
+          fiatLoanDto,
+        );
       }
 
       const encryptusToken = await this.settingRepository.findOneBy({
@@ -1504,9 +1509,19 @@ export class UserService {
 
   async getFiatLoan(userEncryptusId: string) {
     try {
-      return await this.fiatLoanRepository.findBy({
-        userEncryptusId,
+      const result = await this.fiatLoanRepository.find({
+        where: {
+          userEncryptusId,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
       });
+
+      return result.map((item) => ({
+        ...item,
+        createdDate: item.createdAt.toISOString(),
+      }));
     } catch (e) {
       throw new HttpException(e.response, e.status);
     }
