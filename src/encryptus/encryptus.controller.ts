@@ -6,10 +6,11 @@ import {
   Post,
   Body,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
 import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
+import { TransactionStatusDto } from './dto/transaction-status.dto';
 
 @ApiTags('encryptus')
 @Controller('encryptus')
@@ -99,6 +100,24 @@ export class EncryptusController {
       const result = await this.encryptusService.estimateQuoteByAmount(
         estimateQuoteByAmountDto,
       );
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiExcludeEndpoint()
+  @ApiOperation({ summary: 'Update transaction status' })
+  @Post('transaction/update-status')
+  async updateTransactionStatus(
+    @Body() transactionStatusDto: TransactionStatusDto,
+  ) {
+    try {
+      const result =
+        await this.encryptusService.updateTransactionStatus(
+          transactionStatusDto,
+        );
       return result;
     } catch (e) {
       throw new HttpException(e.response, e.status);

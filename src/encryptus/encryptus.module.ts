@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EncryptusService } from './encryptus.service';
 import { EncryptusController } from './encryptus.controller';
 import { Setting } from 'src/setting/entity/setting.entity';
+import { FiatLoan } from 'src/user/entity/fiat-loan.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Setting])],
+  imports: [TypeOrmModule.forFeature([Setting, FiatLoan])],
   controllers: [EncryptusController],
   providers: [EncryptusService],
 })

@@ -4,7 +4,9 @@ import { Repository } from 'typeorm';
 import { ConfigService } from 'src/config/config.service';
 import axios from 'axios';
 import { Setting } from 'src/setting/entity/setting.entity';
+import { FiatLoan } from 'src/user/entity/fiat-loan.entity';
 import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
+import { TransactionStatusDto } from './dto/transaction-status.dto';
 
 @Injectable()
 export class EncryptusService {
@@ -13,6 +15,9 @@ export class EncryptusService {
   constructor(
     @InjectRepository(Setting)
     private settingRepository: Repository<Setting>,
+
+    @InjectRepository(FiatLoan)
+    private fiatLoanRepository: Repository<FiatLoan>,
   ) {}
 
   async getUserInfo(id: string) {
@@ -209,6 +214,28 @@ export class EncryptusService {
       const response = await axios(config);
 
       return response.data;
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
+  async updateTransactionStatus(transactionStatusDto: TransactionStatusDto) {
+    try {
+      await this.fiatLoanRepository.update(
+        {
+          encryptusOrderId: transactionStatusDto.encryptus_order_id,
+        },
+        {
+          status: transactionStatusDto.transaction_status,
+        },
+      );
     } catch (e) {
       if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
