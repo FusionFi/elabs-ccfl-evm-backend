@@ -32,14 +32,14 @@ export class EncryptusService {
 
       const result = await axios(config);
       return result.data;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -61,14 +61,14 @@ export class EncryptusService {
 
       const result = await axios(config);
       return result.data;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -109,14 +109,14 @@ export class EncryptusService {
       result.sort((a, b) => a.countryName.localeCompare(b.countryName));
 
       return result;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -132,14 +132,14 @@ export class EncryptusService {
       const result = cleanedStr.split(',').map((item) => item.trim());
 
       return result;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -155,14 +155,14 @@ export class EncryptusService {
       const result = cleanedStr.split(',').map((item) => item.trim());
 
       return result;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -178,14 +178,14 @@ export class EncryptusService {
       const result = cleanedStr.split(',').map((item) => item.trim());
 
       return result;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }
@@ -209,14 +209,14 @@ export class EncryptusService {
       const response = await axios(config);
 
       return response.data;
-    } catch (error) {
-      if (error?.response) {
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
-          error?.response?.data?.message,
-          error?.response?.status,
+          e?.response?.data?.message,
+          e?.response?.status,
         );
       } else {
-        throw new HttpException(error?.response, error?.status);
+        throw new HttpException(e?.response, e?.status);
       }
     }
   }

@@ -184,7 +184,14 @@ export class UserService {
 
       return await this.userRepository.save(user);
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -300,7 +307,14 @@ export class UserService {
         }),
       };
     } catch (e) {
-      throw new HttpException(e?.response, e?.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -416,7 +430,14 @@ export class UserService {
         }),
       };
     } catch (e) {
-      throw new HttpException(e?.response, e?.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -494,7 +515,7 @@ export class UserService {
 
       return user;
     } catch (e) {
-      if (e?.response) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
           e?.response?.data?.message,
           e?.response?.status,
@@ -613,7 +634,14 @@ export class UserService {
       }
       return false;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -625,7 +653,14 @@ export class UserService {
       }
       return false;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -643,7 +678,14 @@ export class UserService {
 
       return false;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -688,7 +730,14 @@ export class UserService {
     try {
       return await this.userRepository.find();
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -756,7 +805,14 @@ export class UserService {
 
       return data;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -876,7 +932,14 @@ export class UserService {
 
       return data;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -1112,7 +1175,14 @@ export class UserService {
         },
       };
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -1174,7 +1244,14 @@ export class UserService {
 
       return result;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -1229,7 +1306,14 @@ export class UserService {
         );
       }
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -1244,7 +1328,14 @@ export class UserService {
       }
       return result;
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 
@@ -1308,16 +1399,17 @@ export class UserService {
       };
 
       const whitelistWallet = await axios(configFetchWhitelistWallet);
-      console.log('whitelistWallet: ', whitelistWallet?.data);
 
       let checkWhitelistWallet = false;
       for (const item of whitelistWallet.data?.data?.walletList) {
-        if (item.address == fiatLoanDto.userWalletAddress) {
+        if (
+          item.address.toLowerCase() ==
+          fiatLoanDto.userWalletAddress.toLowerCase()
+        ) {
           checkWhitelistWallet = true;
           break;
         }
       }
-      console.log('checkWhitelistWallet: ', checkWhitelistWallet);
 
       if (!checkWhitelistWallet) {
         const configAddWhitelistWallet = {
@@ -1336,12 +1428,7 @@ export class UserService {
           },
         };
 
-        const resultAddWhitelistWallet = await axios(configAddWhitelistWallet);
-
-        console.log(
-          'resultAddWhitelistWallet: ',
-          resultAddWhitelistWallet?.data,
-        );
+        await axios(configAddWhitelistWallet);
       }
 
       // Check and add whitelist bank account if needed
@@ -1359,18 +1446,20 @@ export class UserService {
       };
 
       const whitelistBankAccount = await axios(configFetchWhitelistBankAccount);
-      console.log('whitelistBankAccount: ', whitelistBankAccount?.data);
 
       const payoutDetail = fiatLoanDto.payoutDetail as PayoutDetailBankwireDto;
 
       let checkWhitelistBankAccount = false;
       for (const item of whitelistBankAccount.data?.data?.walletList) {
-        if (item.bankAccountNumber == payoutDetail.accountNumber) {
+        if (
+          item.bankAccountNumber == payoutDetail.accountNumber &&
+          item.beneficiaryBankName == payoutDetail.bankName &&
+          item.beneficiaryBankCountry == payoutDetail.bankCountry
+        ) {
           checkWhitelistBankAccount = true;
           break;
         }
       }
-      console.log('checkWhitelistBankAccount: ', checkWhitelistBankAccount);
 
       if (!checkWhitelistBankAccount) {
         const configAddWhitelistBankAccount = {
@@ -1382,7 +1471,7 @@ export class UserService {
           },
           data: {
             accountHolderName: payoutDetail.accountOwner,
-            accountType: 'Savings',
+            accountType: payoutDetail.accountType,
             mobile: payoutDetail.mobile,
             provider: payoutDetail.provider,
             accountHolderAddress: payoutDetail.accountOwnerAddress,
@@ -1394,19 +1483,12 @@ export class UserService {
             bankcode: payoutDetail.bankCode,
             banksubcode: payoutDetail.bankSubcode,
             country: fiatLoanDto.country,
-            fiatCurrency: 'ALL',
+            fiatCurrency: fiatLoanDto.currency,
             userEmail: user.email,
           },
         };
 
-        const resultAddWhitelistBankAccount = await axios(
-          configAddWhitelistBankAccount,
-        );
-
-        console.log(
-          'resultAddWhitelistBankAccount: ',
-          resultAddWhitelistBankAccount?.data,
-        );
+        await axios(configAddWhitelistBankAccount);
       }
 
       // Create quote and update quote_id into DB
@@ -1436,7 +1518,6 @@ export class UserService {
       };
 
       const resultCreateQuote = await axios(configCreateQuote);
-      console.log('resultCreateQuote: ', resultCreateQuote?.data);
 
       await this.fiatLoanRepository.update(
         {
@@ -1476,7 +1557,6 @@ export class UserService {
       };
 
       const resultSubmitOrder = await axios(configSubmitOrder);
-      console.log('resultSubmitOrder: ', resultSubmitOrder);
 
       await this.fiatLoanRepository.update(
         {
@@ -1491,12 +1571,9 @@ export class UserService {
         txHash: fiatLoanDto.txHash,
       });
 
-      console.log('finalObj: ', finalObj);
-
       return finalObj;
     } catch (e) {
-      console.log('error: ', e);
-      if (e?.response) {
+      if (e?.response?.data && e?.response?.status) {
         throw new HttpException(
           e?.response?.data?.message,
           e?.response?.status,
@@ -1523,7 +1600,14 @@ export class UserService {
         createdDate: item.createdAt.toISOString(),
       }));
     } catch (e) {
-      throw new HttpException(e.response, e.status);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
     }
   }
 }

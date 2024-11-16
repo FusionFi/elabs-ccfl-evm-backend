@@ -12,6 +12,10 @@ export class PayoutDetailBankwireDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  accountType: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   accountOwner: string;
 
   @ApiProperty()
