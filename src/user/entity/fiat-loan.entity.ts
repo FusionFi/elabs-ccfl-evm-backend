@@ -80,7 +80,7 @@ export class FiatLoan {
 
   @Column({
     nullable: false,
-    default: 'UNPROCESSED',
+    default: 'Acknowledged',
   })
   status: string;
 

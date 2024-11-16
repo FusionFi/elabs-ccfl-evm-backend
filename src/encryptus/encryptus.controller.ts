@@ -5,8 +5,14 @@ import {
   Param,
   Post,
   Body,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiExcludeEndpoint,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { EncryptusService } from './encryptus.service';
 import { Public } from 'src/common/decorators/public.decorator';
 import { EstimateQuoteByAmountDto } from './dto/estimate-quote-by-amount.dto';
@@ -99,6 +105,112 @@ export class EncryptusController {
     try {
       const result = await this.encryptusService.estimateQuoteByAmount(
         estimateQuoteByAmountDto,
+      );
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'List all supported banks' })
+  @ApiQuery({
+    name: 'countryCode',
+    type: String,
+    required: true,
+  })
+  @ApiQuery({
+    name: 'currencyCode',
+    type: String,
+    required: true,
+  })
+  @Get('payout/bankwire/banklist')
+  async getSupportedBanks(
+    @Query('countryCode') countryCode: string,
+    @Query('currencyCode') currencyCode: string,
+  ) {
+    try {
+      const result = await this.encryptusService.getSupportedBanks(
+        countryCode,
+        currencyCode,
+      );
+      return result;
+    } catch (e) {
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'List all submitted transactions' })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'sort',
+    type: String,
+    required: false,
+  })
+  @Get('payout/bankwire/transactions')
+  async getTransactions(
+    @Query('limit') limit: number,
+    @Query('page') page: number,
+    @Query('sort') sort: string,
+  ) {
+    try {
+      const result = await this.encryptusService.getTransactions(
+        limit,
+        page,
+        sort,
+      );
+      return result;
+    } catch (e) {
+      console.log('error: ', e);
+      throw new HttpException(e.response, e.status);
+    }
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get fx rate' })
+  @ApiQuery({
+    name: 'receivingCurrency',
+    type: String,
+    required: true,
+  })
+  @ApiQuery({
+    name: 'receivingCountry',
+    type: String,
+    required: true,
+  })
+  @ApiQuery({
+    name: 'transferType',
+    type: String,
+    required: true,
+  })
+  @ApiQuery({
+    name: 'coin',
+    type: String,
+    required: true,
+  })
+  @Get('payout/bankwire/fxrate')
+  async getRate(
+    @Query('receivingCurrency') receivingCurrency: string,
+    @Query('receivingCountry') receivingCountry: string,
+    @Query('transferType') transferType: string,
+    @Query('coin') coin: string,
+  ) {
+    try {
+      const result = await this.encryptusService.getRate(
+        receivingCurrency,
+        receivingCountry,
+        transferType,
+        coin,
       );
       return result;
     } catch (e) {

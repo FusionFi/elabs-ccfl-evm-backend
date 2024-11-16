@@ -226,6 +226,114 @@ export class EncryptusService {
     }
   }
 
+  async getSupportedBanks(countryCode: string, currencyCode: string) {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/banklist?countryCode=${countryCode}&currencyCode=${currencyCode}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const response = await axios(config);
+
+      return response.data;
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
+  async getTransactions(limit: number, page: number, sort: string) {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      if (limit === undefined) {
+        limit = 10;
+      }
+
+      if (page === undefined) {
+        page = 1;
+      }
+
+      if (sort === undefined) {
+        sort = 'desc';
+      }
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/transactions?limit=${limit}&page=${page}&sort=${sort}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const response = await axios(config);
+
+      return response.data;
+    } catch (e) {
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
+  async getRate(
+    receivingCurrency: string,
+    receivingCountry: string,
+    transferType: string,
+    coin: string,
+  ) {
+    try {
+      const token = await this.settingRepository.findOneBy({
+        key: 'ENCRYPTUS_TOKEN',
+      });
+
+      const config = {
+        method: 'GET',
+        url: `${ConfigService.Encryptus.url}/v1/payout/bankwire/fxrate?receivingCurrency=${receivingCurrency}&receivingCountry=${receivingCountry}&transferType=${transferType}&coin=${coin}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      };
+
+      const response = await axios(config);
+
+      return response.data;
+    } catch (e) {
+      console.log('error: ', e);
+      if (e?.response?.data && e?.response?.status) {
+        throw new HttpException(
+          e?.response?.data?.message,
+          e?.response?.status,
+        );
+      } else {
+        throw new HttpException(e?.response, e?.status);
+      }
+    }
+  }
+
   async updateTransactionStatus(transactionStatusDto: TransactionStatusDto) {
     try {
       await this.fiatLoanRepository.update(
