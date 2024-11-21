@@ -66,6 +66,11 @@
             "type": "bool"
           },
           {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
+          },
+          {
             "internalType": "uint256",
             "name": "closedAmount",
             "type": "uint256"
@@ -96,6 +101,37 @@
       }
     ],
     "name": "AddCollateral",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes12",
+        "name": "encryptusId",
+        "type": "bytes12"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "contract IERC20Standard",
+        "name": "stableCoin",
+        "type": "address"
+      }
+    ],
+    "name": "CreateFiatLoan",
     "type": "event"
   },
   {
@@ -154,6 +190,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
           },
           {
             "internalType": "uint256",
@@ -265,6 +306,11 @@
             "type": "bool"
           },
           {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
+          },
+          {
             "internalType": "uint256",
             "name": "closedAmount",
             "type": "uint256"
@@ -343,6 +389,11 @@
             "type": "bool"
           },
           {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
+          },
+          {
             "internalType": "uint256",
             "name": "closedAmount",
             "type": "uint256"
@@ -419,6 +470,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
           },
           {
             "internalType": "uint256",
@@ -503,6 +559,11 @@
             "internalType": "bool",
             "name": "isFiat",
             "type": "bool"
+          },
+          {
+            "internalType": "bytes12",
+            "name": "encryptusId",
+            "type": "bytes12"
           },
           {
             "internalType": "uint256",
@@ -686,6 +747,11 @@
         "internalType": "bool",
         "name": "_isFiat",
         "type": "bool"
+      },
+      {
+        "internalType": "bytes12",
+        "name": "_encryptusId",
+        "type": "bytes12"
       }
     ],
     "name": "createLoan",
@@ -719,6 +785,11 @@
         "internalType": "bool",
         "name": "_isFiat",
         "type": "bool"
+      },
+      {
+        "internalType": "bytes12",
+        "name": "_encryptusId",
+        "type": "bytes12"
       }
     ],
     "name": "createLoanByETH",
