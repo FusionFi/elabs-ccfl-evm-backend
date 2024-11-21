@@ -1107,27 +1107,33 @@ export class UserService {
         };
 
         const response = await axios(configCreateLoan);
-        const txHash = response.data.data.createLoans[0].transactionHash;
+        const txHash = response.data?.data?.createLoans[0]?.transactionHash;
 
-        const fiatLoanDetail = await this.fiatLoanRepository.findOneBy({
-          txHash,
-          networkId: chainId,
-          userWalletAddress: address,
-        });
-        const rate = await this.fiatRepository.findOneBy({
-          currency: fiatLoanDetail.currency,
-        });
+        let fiatLoanDetail = null;
+        let rate = null;
+        if (txHash != null) {
+          fiatLoanDetail = await this.fiatLoanRepository.findOneBy({
+            txHash,
+            networkId: chainId,
+            userWalletAddress: address,
+          });
+          if (fiatLoanDetail) {
+            rate = await this.fiatRepository.findOneBy({
+              currency: fiatLoanDetail.currency,
+            });
+          }
+        }
 
         allLoans.push({
           loan_id: parseInt(loanId),
           is_fiat: loanInfo.isFiat,
           fiat_loan_detail: loanInfo.isFiat
             ? {
-                country: fiatLoanDetail.country,
-                currency: fiatLoanDetail.currency,
-                amount: fiatLoanDetail.amount,
-                currency_rate: rate.price,
-                status: fiatLoanDetail.status,
+                country: fiatLoanDetail?.country,
+                currency: fiatLoanDetail?.currency,
+                amount: fiatLoanDetail?.amount,
+                currency_rate: rate?.price,
+                status: fiatLoanDetail?.status,
               }
             : null,
           asset: asset.symbol,
