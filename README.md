@@ -1,5 +1,5 @@
-# elabs-backend-nestjs
-elabs-backend-nestjs
+# FusionFi-labs-backend-nestjs
+
 
 ## NestJS basic concepts
 
